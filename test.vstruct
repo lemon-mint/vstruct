@@ -1,0 +1,57 @@
+enum Speices {
+    Human,
+    Elf,
+    Orc,
+    Dwarf,
+    Gnome,
+    Halfling,
+    HalfElf,
+    HalfOrc,
+    Dragonborn,
+    Tiefling,
+    Gnoll,
+    Goblin
+};
+
+struct Coordinate {
+    int64 x;
+    int64 y;
+};
+
+enum ItemType {
+    Weapon,
+    Armor,
+    Potion
+};
+
+struct Item {
+    ItemType type;
+    string name;
+
+    int64 damage;
+    int64 armor;
+}
+
+struct Inventory {
+    Item slot0;
+    Item slot1;
+    Item slot2;
+    Item slot3;
+    Item slot4;
+    Item slot5;
+    Item slot6;
+    Item slot7;
+    Item slot8;
+    Item slot9;
+}
+
+alias UUID = string;
+
+struct Entity {
+    UUID id;
+    Speices type;
+    Coordinate position;
+    int64 hp;
+
+    Inventory inventory;
+};
