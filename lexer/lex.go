@@ -11,6 +11,8 @@ type Lexer struct {
 
 	// The current char
 	char rune
+
+	lastToken Token
 }
 
 // NewLexer creates a new Lexer instance
@@ -19,17 +21,25 @@ func NewLexer(input []rune) *Lexer {
 		input:    input,
 		position: 0,
 		cursor:   0,
+
+		line: 1,
+		col:  0,
 	}
-	l.readChar()
+	l.ReadChar()
 	return l
 }
 
-func (l *Lexer) readChar() bool {
+func (l *Lexer) ReadChar() bool {
 	if l.cursor >= len(l.input) {
 		l.char = 0
+		l.lastToken = l.NewToken(TOKEN_EOF, "")
 		return false
 	} else {
 		l.char = l.input[l.cursor]
+		if l.char == '\n' {
+			l.line++
+			l.col = 0
+		}
 	}
 	l.position = l.cursor
 	l.cursor++
@@ -39,12 +49,7 @@ func (l *Lexer) readChar() bool {
 
 func (l *Lexer) skipWhitespace() bool {
 	for l.char == ' ' || l.char == '\t' || l.char == '\n' || l.char == '\r' {
-		if l.char == '\n' {
-			l.line++
-			l.col = 0
-		}
-
-		if !l.readChar() {
+		if !l.ReadChar() {
 			return false
 		}
 	}
@@ -52,13 +57,13 @@ func (l *Lexer) skipWhitespace() bool {
 }
 
 func (l *Lexer) isLetter(c rune) bool {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c >= '0' && c <= '9'
 }
 
 func (l *Lexer) readIdentifier() string {
 	position := l.position
 	for l.isLetter(l.char) {
-		if !l.readChar() {
+		if !l.ReadChar() {
 			break
 		}
 	}
@@ -68,7 +73,7 @@ func (l *Lexer) readIdentifier() string {
 func (l *Lexer) NewToken(tokenType TokenType, literal string) Token {
 	return Token{
 		Type:    tokenType,
-		Literal: string(l.char),
+		Literal: literal,
 		File:    "",
 		Line:    l.line,
 		Col:     l.col,
@@ -78,18 +83,30 @@ func (l *Lexer) NewToken(tokenType TokenType, literal string) Token {
 func (l *Lexer) NextToken() Token {
 	var t Token
 
-	l.skipWhitespace()
+	if !l.skipWhitespace() {
+		l.lastToken = l.NewToken(TOKEN_EOF, "")
+		return l.lastToken
+	}
+	if l.lastToken.Type == TOKEN_EOF {
+		return l.lastToken
+	}
 
 	switch l.char {
 	case '{':
 		t = l.NewToken(TOKEN_OPEN_BRACE, "{")
+		l.ReadChar()
 	case '}':
 		t = l.NewToken(TOKEN_CLOSE_BRACE, "}")
+		l.ReadChar()
 	case ',':
 		t = l.NewToken(TOKEN_COMMA, ",")
+		l.ReadChar()
 	case ';':
 		t = l.NewToken(TOKEN_SEMICOLON, ";")
-
+		l.ReadChar()
+	case '=':
+		t = l.NewToken(TOKEN_EQUAL, "=")
+		l.ReadChar()
 	default:
 		if l.isLetter(l.char) {
 			ident := l.readIdentifier()
@@ -98,6 +115,6 @@ func (l *Lexer) NextToken() Token {
 			t = l.NewToken(TOKEN_UNKNOWN, string(l.char))
 		}
 	}
-
+	l.lastToken = t
 	return t
 }

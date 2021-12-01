@@ -10,5 +10,5 @@ func LookupKeyword(s string) TokenType {
 	if t, ok := keywords[s]; ok {
 		return t
 	}
-	return TOKEN_USER_TYPE
+	return TOKEN_IDENTIFIER
 }
