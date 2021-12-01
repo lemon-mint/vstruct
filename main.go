@@ -25,16 +25,18 @@ func ReadFileAsString(fileName string) string {
 func main() {
 	input := ReadFileAsString("test.vstruct")
 	lex := lexer.NewLexer([]rune(input))
-TokenizeLoop:
+L1:
 	for {
 		token := lex.NextToken()
 		log.Printf("%v", token)
-		if token.Type == lexer.TOKEN_UNKNOWN || token.Type == lexer.TOKEN_EOF {
+		if token.Type == lexer.TOKEN_UNKNOWN || token.Type == lexer.TOKEN_EOF || token.Type == lexer.TOKEN_RESERVED {
 			switch token.Type {
 			case lexer.TOKEN_UNKNOWN:
 				log.Printf("Unknown token: %v", token)
+			case lexer.TOKEN_RESERVED:
+				log.Printf("Error: Reserved identifier: %v", token)
 			case lexer.TOKEN_EOF:
-				break TokenizeLoop
+				break L1
 			}
 		}
 	}

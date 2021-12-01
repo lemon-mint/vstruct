@@ -7,6 +7,7 @@ type TokenType int
 const (
 	TOKEN_UNKNOWN TokenType = iota
 	TOKEN_EOF
+	TOKEN_RESERVED
 	// Keywords
 	TOKEN_STRUCT
 	TOKEN_ENUM

@@ -6,7 +6,7 @@ var keywords = map[string]TokenType{
 	"alias":  TOKEN_ALIAS,
 }
 
-var reserved = map[string]TokenType{
+var types = map[string]TokenType{
 	"uint8":   TOKEN_UINT8,
 	"uint16":  TOKEN_UINT16,
 	"uint32":  TOKEN_UINT32,
@@ -22,8 +22,20 @@ var reserved = map[string]TokenType{
 	"bool":    TOKEN_BOOL,
 }
 
+var reserved = map[string]TokenType{
+	"import": TOKEN_RESERVED,
+	"as":     TOKEN_RESERVED,
+	"rpc":    TOKEN_RESERVED,
+	"func":   TOKEN_RESERVED,
+
+	"union": TOKEN_RESERVED,
+}
+
 func LookupKeyword(s string) TokenType {
 	if t, ok := keywords[s]; ok {
+		return t
+	}
+	if t, ok := types[s]; ok {
 		return t
 	}
 	if t, ok := reserved[s]; ok {
