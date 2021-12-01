@@ -30,7 +30,7 @@ struct Item {
 
     int64 damage;
     int64 armor;
-}
+};
 
 struct Inventory {
     Item slot0;
@@ -43,7 +43,7 @@ struct Inventory {
     Item slot7;
     Item slot8;
     Item slot9;
-}
+};
 
 alias UUID = string;
 
