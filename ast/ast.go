@@ -1,5 +1,13 @@
 package ast
 
+func NewFile(filename string) *File {
+	return &File{
+		Name:    filename,
+		Nodes:   nil,
+		Globals: make(map[string]*Node),
+	}
+}
+
 type File struct {
 	Name  string
 	Nodes []*Node
