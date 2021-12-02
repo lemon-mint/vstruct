@@ -1,6 +1,8 @@
 package lexer
 
 type Lexer struct {
+	filename string
+
 	input []rune
 
 	position int
@@ -16,8 +18,9 @@ type Lexer struct {
 }
 
 // NewLexer creates a new Lexer instance
-func NewLexer(input []rune) *Lexer {
+func NewLexer(input []rune, filename string) *Lexer {
 	l := &Lexer{
+		filename: filename,
 		input:    input,
 		position: 0,
 		cursor:   0,
@@ -72,9 +75,9 @@ func (l *Lexer) readIdentifier() string {
 
 func (l *Lexer) NewToken(tokenType TokenType, literal string) Token {
 	return Token{
+		File:    l.filename,
 		Type:    tokenType,
 		Literal: literal,
-		File:    "",
 		Line:    l.line,
 		Col:     l.col,
 	}

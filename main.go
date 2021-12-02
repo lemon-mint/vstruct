@@ -23,8 +23,8 @@ func ReadFileAsString(fileName string) string {
 }
 
 func main() {
-	input := ReadFileAsString("test.vstruct")
-	lex := lexer.NewLexer([]rune(input))
+	input := ReadFileAsString("./test.vstruct")
+	lex := lexer.NewLexer([]rune(input), "./test.vstruct")
 L1:
 	for {
 		token := lex.NextToken()
