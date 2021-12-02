@@ -1,5 +1,10 @@
 package ast
 
+type File struct {
+	Name  string
+	Nodes []*Node
+}
+
 type NodeType int
 
 const (
