@@ -13,6 +13,8 @@ const (
 	NodeType_STRUCT
 	NodeType_ENUM
 	NodeType_ALIAS
+
+	NodeType_RAWTYPE
 )
 
 type Node struct {
@@ -28,6 +30,8 @@ type Node struct {
 	Enum *Enum
 	// Alias
 	Alias *Alias
+	// RawType
+	RawType *RawType
 }
 
 type Field struct {
@@ -45,4 +49,8 @@ type Enum struct {
 
 type Alias struct {
 	Type *Node
+}
+
+type RawType struct {
+	Type string
 }
