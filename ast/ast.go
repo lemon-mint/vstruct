@@ -3,6 +3,8 @@ package ast
 type File struct {
 	Name  string
 	Nodes []*Node
+
+	Globals map[string]*Node
 }
 
 type NodeType int
