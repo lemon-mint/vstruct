@@ -4,6 +4,7 @@ type NodeType int
 
 const (
 	NodeType_RESERVED NodeType = iota
+
 	NodeType_STRUCT
 	NodeType_ENUM
 	NodeType_ALIAS
@@ -26,7 +27,7 @@ type Node struct {
 
 type Field struct {
 	Name string
-	Type string
+	Type *Node
 }
 
 type Struct struct {
@@ -38,5 +39,5 @@ type Enum struct {
 }
 
 type Alias struct {
-	Type string
+	Type *Node
 }
