@@ -45,8 +45,9 @@ type Node struct {
 }
 
 type Field struct {
-	Name string
-	Type *Node
+	Name    string
+	StrType string
+	Type    *Node
 }
 
 type Struct struct {
@@ -58,9 +59,17 @@ type Enum struct {
 }
 
 type Alias struct {
-	Type *Node
+	StrType string
+	Type    *Node
 }
 
 type RawType struct {
-	Type string
+	StrType string
+	Type    string
+}
+
+func NewNode(nodeType NodeType) *Node {
+	return &Node{
+		Type: nodeType,
+	}
 }

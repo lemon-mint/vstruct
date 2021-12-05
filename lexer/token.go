@@ -4,6 +4,10 @@ import "fmt"
 
 type TokenType int
 
+func (t TokenType) String() string {
+	return tokenNames[t]
+}
+
 const (
 	TOKEN_UNKNOWN TokenType = iota
 	TOKEN_EOF
@@ -20,21 +24,6 @@ const (
 	TOKEN_SEMICOLON
 	// Operators
 	TOKEN_EQUAL
-
-	// Types
-	TOKEN_UINT8
-	TOKEN_UINT16
-	TOKEN_UINT32
-	TOKEN_UINT64
-	TOKEN_INT8
-	TOKEN_INT16
-	TOKEN_INT32
-	TOKEN_INT64
-	TOKEN_FLOAT32
-	TOKEN_FLOAT64
-	TOKEN_BYTES
-	TOKEN_STRING
-	TOKEN_BOOL
 	// Literals
 	TOKEN_IDENTIFIER
 )
@@ -50,19 +39,6 @@ var tokenNames = map[TokenType]string{
 	TOKEN_COMMA:       "COMMA",
 	TOKEN_SEMICOLON:   "SEMICOLON",
 	TOKEN_EQUAL:       "EQUAL",
-	TOKEN_UINT8:       "UINT8",
-	TOKEN_UINT16:      "UINT16",
-	TOKEN_UINT32:      "UINT32",
-	TOKEN_UINT64:      "UINT64",
-	TOKEN_INT8:        "INT8",
-	TOKEN_INT16:       "INT16",
-	TOKEN_INT32:       "INT32",
-	TOKEN_INT64:       "INT64",
-	TOKEN_FLOAT32:     "FLOAT32",
-	TOKEN_FLOAT64:     "FLOAT64",
-	TOKEN_BYTES:       "BYTES",
-	TOKEN_STRING:      "STRING",
-	TOKEN_BOOL:        "BOOL",
 	TOKEN_IDENTIFIER:  "TOKEN_IDENTIFIER",
 }
 
