@@ -106,6 +106,47 @@ func (p *Parser) parseAlias() (*ast.Node, error) {
 	return node, nil
 }
 
+func (p *Parser) parseEnum() (*ast.Node, error) {
+	var node *ast.Node = ast.NewNode(ast.NodeType_ENUM)
+	if !p.expect(lexer.TOKEN_ENUM) {
+		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_ENUM, p.curToken.Type))
+	}
+	node.Enum = &ast.Enum{}
+	p.nextToken()
+	if !p.expect(lexer.TOKEN_IDENTIFIER) {
+		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+	}
+	node.Name = p.curToken.Literal
+	p.nextToken()
+	if !p.expect(lexer.TOKEN_OPEN_BRACE) {
+		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_OPEN_BRACE, p.curToken.Type))
+	}
+	p.nextToken()
+l:
+	for {
+		if !p.expect(lexer.TOKEN_IDENTIFIER) {
+			return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+		}
+		node.Enum.Enums = append(node.Enum.Enums, p.curToken.Literal)
+		p.nextToken()
+		switch p.curToken.Type {
+		case lexer.TOKEN_CLOSE_BRACE:
+			p.nextToken()
+			break l
+		case lexer.TOKEN_COMMA:
+			p.nextToken()
+			if p.expect(lexer.TOKEN_SEMICOLON) {
+				p.nextToken()
+			}
+		case lexer.TOKEN_SEMICOLON:
+			p.nextToken()
+		default:
+			return nil, fmt.Errorf(utils.Unexpected(p.curToken.Type))
+		}
+	}
+	return node, nil
+}
+
 func (p *Parser) Parse() (*ast.File, error) {
 	file := ast.NewFile(p.filename)
 
@@ -125,6 +166,14 @@ func (p *Parser) Parse() (*ast.File, error) {
 				return nil, err
 			}
 			file.Nodes = append(file.Nodes, a)
+		case lexer.TOKEN_ENUM:
+			e, err := p.parseEnum()
+			if err != nil {
+				return nil, err
+			}
+			file.Nodes = append(file.Nodes, e)
+		default:
+			return nil, fmt.Errorf(utils.Unexpected(p.curToken.Type))
 		}
 	}
 

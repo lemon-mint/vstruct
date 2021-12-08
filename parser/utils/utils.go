@@ -9,3 +9,7 @@ func PrintFileError(fileName string, line, column int, data string) {
 func Expected(expected interface{}, data interface{}) string {
 	return fmt.Sprintf("Expected %v, but found %v\n", expected, data)
 }
+
+func Unexpected(data interface{}) string {
+	return fmt.Sprintf("Unexpected %v\n", data)
+}
