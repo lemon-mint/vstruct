@@ -15,18 +15,6 @@ type File struct {
 	Globals map[string]*Node
 }
 
-type NodeType int
-
-const (
-	NodeType_RESERVED NodeType = iota
-
-	NodeType_STRUCT
-	NodeType_ENUM
-	NodeType_ALIAS
-
-	NodeType_RAWTYPE
-)
-
 type Node struct {
 	Type NodeType
 	Name string
