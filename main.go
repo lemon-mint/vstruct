@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/kr/pretty"
 	"github.com/lemon-mint/vstruct/lexer"
@@ -25,8 +26,12 @@ func ReadFileAsString(fileName string) string {
 }
 
 func main() {
-	input := ReadFileAsString("./test.vstruct")
-	lex := lexer.NewLexer([]rune(input), "./test.vstruct")
+	path, err := filepath.Abs("./test.vstruct")
+	if err != nil {
+		panic(err)
+	}
+	input := ReadFileAsString(path)
+	lex := lexer.NewLexer([]rune(input), path)
 	p := parser.New(lex)
 	file, err := p.Parse()
 	if err != nil {

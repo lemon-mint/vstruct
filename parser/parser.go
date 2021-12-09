@@ -49,6 +49,7 @@ func (p *Parser) parseStruct() (*ast.Node, error) {
 		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
 	}
 	node.Name = p.curToken.Literal
+	node.Token = p.curToken
 	p.nextToken()
 	if !p.expect(lexer.TOKEN_OPEN_BRACE) {
 		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_OPEN_BRACE, p.curToken.Type))
@@ -90,6 +91,7 @@ func (p *Parser) parseAlias() (*ast.Node, error) {
 		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
 	}
 	node.Name = p.curToken.Literal
+	node.Token = p.curToken
 	p.nextToken()
 	if !p.expect(lexer.TOKEN_EQUAL) {
 		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_EQUAL, p.curToken.Type))
@@ -117,6 +119,7 @@ func (p *Parser) parseEnum() (*ast.Node, error) {
 		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
 	}
 	node.Name = p.curToken.Literal
+	node.Token = p.curToken
 	p.nextToken()
 	if !p.expect(lexer.TOKEN_OPEN_BRACE) {
 		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_OPEN_BRACE, p.curToken.Type))
@@ -147,7 +150,7 @@ l:
 	return node, nil
 }
 
-func (p *Parser) Parse() (*ast.File, error) {
+func (p *Parser) parse() (*ast.File, error) {
 	file := ast.NewFile(p.filename)
 
 	for p.curToken.Type != lexer.TOKEN_EOF {
@@ -177,5 +180,28 @@ func (p *Parser) Parse() (*ast.File, error) {
 		}
 	}
 
+	return file, nil
+}
+
+func (p *Parser) checkRedeclaration(file *ast.File) error {
+	for _, node := range file.Nodes {
+		name := node.Name
+		if _, ok := file.Globals[name]; ok {
+			return fmt.Errorf("## %s:%d:%d\nredeclaration of %s", p.filename, node.Token.Line, node.Token.Col, name)
+		}
+		file.Globals[name] = node
+	}
+	return nil
+}
+
+func (p *Parser) Parse() (*ast.File, error) {
+	file, err := p.parse()
+	if err != nil {
+		return nil, err
+	}
+	err = p.checkRedeclaration(file)
+	if err != nil {
+		return nil, err
+	}
 	return file, nil
 }

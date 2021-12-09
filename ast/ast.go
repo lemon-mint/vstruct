@@ -1,5 +1,7 @@
 package ast
 
+import "github.com/lemon-mint/vstruct/lexer"
+
 func NewFile(filename string) *File {
 	return &File{
 		Name:    filename,
@@ -21,6 +23,8 @@ type Node struct {
 	File string
 	Line int
 	Col  int
+
+	Token lexer.Token
 
 	// Struct
 	Struct *Struct
