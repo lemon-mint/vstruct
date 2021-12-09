@@ -56,8 +56,7 @@ type Alias struct {
 }
 
 type RawType struct {
-	StrType string
-	Type    string
+	Type string
 }
 
 func NewNode(nodeType NodeType) *Node {

@@ -194,12 +194,46 @@ func (p *Parser) checkRedeclaration(file *ast.File) error {
 	return nil
 }
 
+func (p *Parser) linkType(file *ast.File) error {
+	for _, node := range file.Nodes {
+		switch node.Type {
+		case ast.NodeType_STRUCT:
+			for _, field := range node.Struct.Fields {
+				t, ok := file.Globals[field.StrType]
+				if isRawType(field.StrType) {
+					field.Type = getRawTypeNode(field.StrType)
+					continue
+				}
+				if !ok {
+					return fmt.Errorf("## %s:%d:%d\nundefined type %s", p.filename, node.Token.Line, node.Token.Col, field.StrType)
+				}
+				field.Type = t
+			}
+		case ast.NodeType_ALIAS:
+			t, ok := file.Globals[node.Alias.StrType]
+			if isRawType(node.Alias.StrType) {
+				node.Alias.Type = getRawTypeNode(node.Alias.StrType)
+				continue
+			}
+			if !ok {
+				return fmt.Errorf("## %s:%d:%d\nundefined type %s", p.filename, node.Token.Line, node.Token.Col, node.Alias.StrType)
+			}
+			node.Alias.Type = t
+		}
+	}
+	return nil
+}
+
 func (p *Parser) Parse() (*ast.File, error) {
 	file, err := p.parse()
 	if err != nil {
 		return nil, err
 	}
 	err = p.checkRedeclaration(file)
+	if err != nil {
+		return nil, err
+	}
+	err = p.linkType(file)
 	if err != nil {
 		return nil, err
 	}

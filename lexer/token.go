@@ -26,6 +26,9 @@ const (
 	TOKEN_EQUAL
 	// Literals
 	TOKEN_IDENTIFIER
+
+	// built-in types
+	TOKEN_RAWTYPE
 )
 
 var tokenNames = map[TokenType]string{
@@ -40,6 +43,7 @@ var tokenNames = map[TokenType]string{
 	TOKEN_SEMICOLON:   "SEMICOLON",
 	TOKEN_EQUAL:       "EQUAL",
 	TOKEN_IDENTIFIER:  "TOKEN_IDENTIFIER",
+	TOKEN_RAWTYPE:     "RAWTYPE",
 }
 
 type Token struct {
