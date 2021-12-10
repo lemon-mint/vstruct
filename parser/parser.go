@@ -224,6 +224,41 @@ func (p *Parser) linkType(file *ast.File) error {
 	return nil
 }
 
+func (p *Parser) checkTypeLoopWorker(targetNode *ast.Node, curNode *ast.Node) bool {
+	if targetNode == curNode {
+		return true
+	}
+	switch curNode.Type {
+	case ast.NodeType_STRUCT:
+		for _, field := range curNode.Struct.Fields {
+			if p.checkTypeLoopWorker(targetNode, field.Type) {
+				return true
+			}
+		}
+	case ast.NodeType_ALIAS:
+		return p.checkTypeLoopWorker(targetNode, curNode.Alias.Type)
+	}
+	return false
+}
+
+func (p *Parser) checkTypeLoop(file *ast.File) error {
+	for _, node := range file.Nodes {
+		switch node.Type {
+		case ast.NodeType_STRUCT:
+			for _, field := range node.Struct.Fields {
+				if p.checkTypeLoopWorker(node, field.Type) {
+					return fmt.Errorf("## %s:%d:%d\nType Loop detected", p.filename, node.Token.Line, node.Token.Col)
+				}
+			}
+		case ast.NodeType_ALIAS:
+			if p.checkTypeLoopWorker(node, node.Alias.Type) {
+				return fmt.Errorf("## %s:%d:%d\nType Loop detected", p.filename, node.Token.Line, node.Token.Col)
+			}
+		}
+	}
+	return nil
+}
+
 func (p *Parser) Parse() (*ast.File, error) {
 	file, err := p.parse()
 	if err != nil {
@@ -234,6 +269,10 @@ func (p *Parser) Parse() (*ast.File, error) {
 		return nil, err
 	}
 	err = p.linkType(file)
+	if err != nil {
+		return nil, err
+	}
+	err = p.checkTypeLoop(file)
 	if err != nil {
 		return nil, err
 	}
