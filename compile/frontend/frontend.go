@@ -12,16 +12,29 @@ type _struct struct {
 
 	isDynamic bool
 	size      int
+
+	filename string
+	line     int
+	col      int
 }
 
 type _enum struct {
-	e          *ast.Enum
+	e *ast.Enum
+
 	optionslen int
 	size       int
+
+	filename string
+	line     int
+	col      int
 }
 
 type _alias struct {
 	a *ast.Alias
+
+	filename string
+	line     int
+	col      int
 }
 
 type FrontEnd struct {
@@ -67,6 +80,9 @@ func (f *FrontEnd) compileStruct(node *ast.Node) {
 		s:         node.Struct,
 		isDynamic: sizeInfo.isDynamic,
 		size:      sizeInfo.size,
+		filename:  node.File,
+		line:      node.Token.Line,
+		col:       node.Token.Col,
 	}
 	f.structs = append(f.structs, *s)
 }
@@ -77,13 +93,19 @@ func (f *FrontEnd) compileEnum(node *ast.Node) {
 		e:          node.Enum,
 		optionslen: len(node.Enum.Enums),
 		size:       sizeInfo.size,
+		filename:   node.File,
+		line:       node.Token.Line,
+		col:        node.Token.Col,
 	}
 	f.enums = append(f.enums, *e)
 }
 
 func (f *FrontEnd) compileAlias(node *ast.Node) {
 	a := &_alias{
-		a: node.Alias,
+		a:        node.Alias,
+		filename: node.File,
+		line:     node.Token.Line,
+		col:      node.Token.Col,
 	}
 	f.aliases = append(f.aliases, *a)
 }
