@@ -1,12 +1,35 @@
 package frontend
 
 import (
+	"fmt"
+
 	"github.com/lemon-mint/vstruct/ast"
 	"github.com/lemon-mint/vstruct/ir"
 )
 
+type _struct struct {
+	s *ast.Struct
+
+	isDynamic bool
+	size      int
+}
+
+type _enum struct {
+	e          *ast.Enum
+	optionslen int
+	size       int
+}
+
+type _alias struct {
+	a *ast.Alias
+}
+
 type FrontEnd struct {
 	file *ast.File
+
+	structs []_struct
+	enums   []_enum
+	aliases []_alias
 
 	output *ir.IR
 }
@@ -20,6 +43,47 @@ func New(file *ast.File) *FrontEnd {
 	return f
 }
 
+var ErrRawTypeOnRoot = fmt.Errorf("rawtype is not supported on root")
+
 func (f *FrontEnd) Compile() error {
+	for _, node := range f.file.Nodes {
+		switch node.Type {
+		case ast.NodeType_STRUCT:
+			f.compileStruct(node)
+		case ast.NodeType_ENUM:
+			f.compileEnum(node)
+		case ast.NodeType_ALIAS:
+			f.compileAlias(node)
+		case ast.NodeType_RAWTYPE:
+			return ErrRawTypeOnRoot
+		}
+	}
 	return nil
+}
+
+func (f *FrontEnd) compileStruct(node *ast.Node) {
+	sizeInfo := f.getTypeSize(node)
+	s := &_struct{
+		s:         node.Struct,
+		isDynamic: sizeInfo.isDynamic,
+		size:      sizeInfo.size,
+	}
+	f.structs = append(f.structs, *s)
+}
+
+func (f *FrontEnd) compileEnum(node *ast.Node) {
+	sizeInfo := f.getTypeSize(node)
+	e := &_enum{
+		e:          node.Enum,
+		optionslen: len(node.Enum.Enums),
+		size:       sizeInfo.size,
+	}
+	f.enums = append(f.enums, *e)
+}
+
+func (f *FrontEnd) compileAlias(node *ast.Node) {
+	a := &_alias{
+		a: node.Alias,
+	}
+	f.aliases = append(f.aliases, *a)
 }
