@@ -20,17 +20,24 @@ type Enum struct {
 
 type Field struct {
 	Name string
-	Type FieldType
 
-	RawType string
-	//A int
-	EnumType *Enum
-	//M map[string]string
+	Offset int
+	Type   string
 }
 
 type Struct struct {
-	Name   string
-	Fields []*Field
+	Name string
+	Size int
+
+	TotalFixedFieldSize int
+	FixedFields         []*Field
+	DynamicFields       []*Field
+}
+
+type Alias struct {
+	Name string
+
+	OriginalType string
 }
 
 type IR struct {
@@ -38,4 +45,5 @@ type IR struct {
 
 	Structs []*Struct
 	Enums   []*Enum
+	Aliases []*Alias
 }
