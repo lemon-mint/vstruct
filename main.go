@@ -48,7 +48,7 @@ func main() {
 	goir := front.Output()
 	pretty.Println(goir)
 	var buf bytes.Buffer
-	err = golang.Generate(&buf, goir)
+	err = golang.Generate(&buf, goir, "main")
 	if err != nil {
 		panic(err)
 	}

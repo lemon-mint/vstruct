@@ -1,36 +1,29 @@
 package golang
 
 import (
-	"embed"
+	"fmt"
+	"go/format"
 	"io"
-	"sync"
+	"strings"
 
-	"github.com/lemon-mint/strtpl"
 	"github.com/lemon-mint/vstruct/ir"
 )
 
-//go:embed codes/* codes/**
-var tpls embed.FS
+func Generate(w io.Writer, i *ir.IR, packageName string) error {
+	var codedataBuf strings.Builder
+	writeEnums(&codedataBuf, i)
+	output := fmt.Sprintf(
+		`package %s
 
-var cache map[string]*strtpl.TPL = make(map[string]*strtpl.TPL)
-var cacheMutex sync.Mutex
-
-func getTpl(name string) *strtpl.TPL {
-	cacheMutex.Lock()
-	defer cacheMutex.Unlock()
-	if tpl, ok := cache[name]; ok {
-		return tpl
-	}
-	f, err := tpls.ReadFile(name)
+%s
+`,
+		packageName,
+		codedataBuf.String(),
+	)
+	fmted, err := format.Source([]byte(output))
 	if err != nil {
-		panic(err)
+		return err
 	}
-	t := strtpl.NewTPL(string(f))
-	cache[name] = t
-	return t
-}
-
-func Generate(w io.Writer, i *ir.IR) error {
-	panic("not implemented")
-	return nil
+	_, err = w.Write(fmted)
+	return err
 }
