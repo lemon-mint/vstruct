@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 
 	"github.com/kr/pretty"
+	"github.com/lemon-mint/vstruct/compile/backend/golang"
+	"github.com/lemon-mint/vstruct/compile/frontend"
 	"github.com/lemon-mint/vstruct/lexer"
 	"github.com/lemon-mint/vstruct/parser"
 )
@@ -37,6 +40,17 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	log.Println(file)
-	pretty.Println(file)
+	front := frontend.New(file)
+	err = front.Compile()
+	if err != nil {
+		panic(err)
+	}
+	goir := front.Output()
+	pretty.Println(goir)
+	var buf bytes.Buffer
+	err = golang.Generate(&buf, goir)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(buf.String())
 }

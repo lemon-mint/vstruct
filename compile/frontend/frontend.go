@@ -64,6 +64,10 @@ func New(file *ast.File) *FrontEnd {
 
 var ErrRawTypeOnRoot = fmt.Errorf("rawtype is not supported on root")
 
+func (f *FrontEnd) Output() *ir.IR {
+	return f.output
+}
+
 func (f *FrontEnd) Compile() error {
 	for _, node := range f.file.Nodes {
 		switch node.Type {

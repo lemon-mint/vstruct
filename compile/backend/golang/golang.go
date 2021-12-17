@@ -15,7 +15,7 @@ var tpls embed.FS
 var cache map[string]*strtpl.TPL = make(map[string]*strtpl.TPL)
 var cacheMutex sync.Mutex
 
-func GetTpl(name string) *strtpl.TPL {
+func getTpl(name string) *strtpl.TPL {
 	cacheMutex.Lock()
 	defer cacheMutex.Unlock()
 	if tpl, ok := cache[name]; ok {
