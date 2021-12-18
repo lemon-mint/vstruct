@@ -1,64 +1,72 @@
 package frontend
 
-import "github.com/lemon-mint/vstruct/ast"
+import (
+	"github.com/lemon-mint/vstruct/ast"
+	"github.com/lemon-mint/vstruct/ir"
+)
 
-type sizeInfo struct {
+type TypeInfo struct {
 	size      int
 	isDynamic bool
+
+	FieldType ir.FieldType
 }
 
-var rawTypeSizeInfo = map[string]sizeInfo{
-	"bool":    {1, false},
-	"int8":    {1, false},
-	"uint8":   {1, false},
-	"int16":   {2, false},
-	"uint16":  {2, false},
-	"int32":   {4, false},
-	"uint32":  {4, false},
-	"int64":   {8, false},
-	"uint64":  {8, false},
-	"float32": {4, false},
-	"float64": {8, false},
-	"bytes":   {8, true},
-	"string":  {8, true},
+var rawTypeSizeInfo = map[string]TypeInfo{
+	"bool":    {1, false, ir.FieldType_BOOL},
+	"int8":    {1, false, ir.FieldType_INT},
+	"uint8":   {1, false, ir.FieldType_UINT},
+	"int16":   {2, false, ir.FieldType_INT},
+	"uint16":  {2, false, ir.FieldType_UINT},
+	"int32":   {4, false, ir.FieldType_INT},
+	"uint32":  {4, false, ir.FieldType_UINT},
+	"int64":   {8, false, ir.FieldType_INT},
+	"uint64":  {8, false, ir.FieldType_UINT},
+	"float32": {4, false, ir.FieldType_FLOAT},
+	"float64": {8, false, ir.FieldType_FLOAT},
+	"bytes":   {8, true, ir.FieldType_BYTES},
+	"string":  {8, true, ir.FieldType_STRING},
 }
 
-func (f *FrontEnd) getTypeSize(node *ast.Node) sizeInfo {
-	var sizeInfo sizeInfo
+func (f *FrontEnd) getTypeSize(node *ast.Node) TypeInfo {
+	var typeInfo TypeInfo
 	switch node.Type {
 	case ast.NodeType_STRUCT:
+		typeInfo.FieldType = ir.FieldType_STRUCT
 		for _, s := range node.Struct.Fields {
 			fInfo := f.getTypeSize(s.Type)
 			if fInfo.isDynamic {
-				sizeInfo.isDynamic = true
-				sizeInfo.size = 0
-				return sizeInfo
+				typeInfo.isDynamic = true
+				typeInfo.size = 0
+				return typeInfo
 			}
-			sizeInfo.size += fInfo.size
+			typeInfo.size += fInfo.size
 		}
 	case ast.NodeType_ENUM:
+		typeInfo.FieldType = ir.FieldType_ENUM
 		enumLen := len(node.Enum.Enums)
 		switch {
 		case enumLen <= 1<<8:
-			sizeInfo.size = 1
+			typeInfo.size = 1
 		case enumLen <= 1<<16:
-			sizeInfo.size = 2
+			typeInfo.size = 2
 		case enumLen <= 1<<32:
-			sizeInfo.size = 4
+			typeInfo.size = 4
 		default:
-			sizeInfo.size = 8
+			typeInfo.size = 8
 		}
 	case ast.NodeType_ALIAS:
-		sizeInfo = f.getTypeSize(node.Alias.Type)
+		typeInfo = f.getTypeSize(node.Alias.Type)
 	case ast.NodeType_RAWTYPE:
 		tInfo, ok := rawTypeSizeInfo[node.RawType.Type]
+		typeInfo.FieldType = tInfo.FieldType
 		if !ok {
-			sizeInfo.isDynamic = true
-			sizeInfo.size = 0
-			return sizeInfo
+			typeInfo.isDynamic = true
+			typeInfo.size = 0
+			return typeInfo
 		}
-		sizeInfo.size = tInfo.size
-		sizeInfo.isDynamic = tInfo.isDynamic
+		typeInfo.size = tInfo.size
+		typeInfo.isDynamic = tInfo.isDynamic
 	}
-	return sizeInfo
+	return typeInfo
 }

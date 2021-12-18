@@ -5,10 +5,14 @@ type FieldType int
 const (
 	FieldType_RESERVED FieldType = iota
 
-	FieldType_Raw
-	FieldType_Enum
-	FieldType_Array // unused
-	FieldType_Map   // unused
+	FieldType_UINT
+	FieldType_INT
+	FieldType_FLOAT
+	FieldType_BOOL
+	FieldType_STRING
+	FieldType_BYTES
+	FieldType_ENUM
+	FieldType_STRUCT
 )
 
 type Enum struct {
@@ -19,6 +23,8 @@ type Enum struct {
 }
 
 type Field struct {
+	FT FieldType
+
 	Name string
 
 	Offset int
