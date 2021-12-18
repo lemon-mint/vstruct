@@ -48,10 +48,17 @@ func writeStructs(w io.Writer, i *ir.IR) {
 					}
 				}
 				fmt.Fprintf(w, "\nreturn %s(__v)\n", TypeConv(f.Type))
-			case ir.FieldType_STRING:
-				fmt.Fprintf(w, "return string(s[%d:%d])\n", f.Offset, f.Offset+f.TypeInfo.Size)
-			case ir.FieldType_BYTES:
-				fmt.Fprintf(w, "return []byte(s[%d:%d])\n", f.Offset, f.Offset+f.TypeInfo.Size)
+			case ir.FieldType_FLOAT:
+				fmt.Fprintf(w, "_ = s[%d]\n", f.Offset+f.TypeInfo.Size-1)
+				fmt.Fprintf(w, "var __v uint%d = ", f.TypeInfo.Size*8)
+				for i := 0; i < f.TypeInfo.Size; i++ {
+					if i == 0 {
+						fmt.Fprintf(w, "uint%d(s[%d])", f.TypeInfo.Size*8, f.Offset+i)
+					} else {
+						fmt.Fprintf(w, "|\nuint%d(s[%d])<<%d", f.TypeInfo.Size*8, f.Offset+i, i*8)
+					}
+				}
+				fmt.Fprintf(w, "\nreturn %s(math.Float%dfrombits(__v))\n", TypeConv(f.Type), f.TypeInfo.Size*8)
 			case ir.FieldType_ENUM:
 				if f.TypeInfo.Size != 1 {
 					fmt.Printf("_ = s[%d]\n", f.Offset+f.TypeInfo.Size-1)

@@ -44,7 +44,9 @@ type Struct struct {
 
 	TotalFixedFieldSize int
 	FixedFields         []*Field
-	DynamicFields       []*Field
+
+	DynamicHead   int
+	DynamicFields []*Field
 }
 
 type Alias struct {
