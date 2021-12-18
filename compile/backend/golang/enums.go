@@ -9,7 +9,7 @@ import (
 
 func writeEnums(w io.Writer, i *ir.IR) {
 	for _, e := range i.Enums {
-		fmt.Fprintf(w, "type %s int%d\n", NameConv(e.Name), e.Size*8)
+		fmt.Fprintf(w, "type %s uint%d\n", NameConv(e.Name), e.Size*8)
 		fmt.Fprintf(w, "const (\n")
 		for i, o := range e.Options {
 			fmt.Fprintf(w, "%s_%s %s = %d\n", NameConv(e.Name), NameConv(o), NameConv(e.Name), i)

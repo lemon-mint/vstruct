@@ -50,6 +50,7 @@ func main() {
 	var buf bytes.Buffer
 	err = golang.Generate(&buf, goir, "main")
 	if err != nil {
+		fmt.Println(buf.String())
 		panic(err)
 	}
 	fmt.Println(buf.String())
