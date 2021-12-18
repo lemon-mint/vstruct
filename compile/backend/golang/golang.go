@@ -16,6 +16,13 @@ func Generate(w io.Writer, i *ir.IR, packageName string) error {
 	output := fmt.Sprintf(
 		`package %s
 
+import (
+	"math"
+)
+
+var _ = math.Float32frombits
+var _ = math.Float64frombits
+
 %s
 `,
 		packageName,
