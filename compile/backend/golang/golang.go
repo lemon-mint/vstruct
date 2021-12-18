@@ -13,6 +13,7 @@ func Generate(w io.Writer, i *ir.IR, packageName string) error {
 	var codedataBuf strings.Builder
 	writeEnums(&codedataBuf, i)
 	writeStructs(&codedataBuf, i)
+	writeAliases(&codedataBuf, i)
 	output := fmt.Sprintf(
 		`package %s
 
