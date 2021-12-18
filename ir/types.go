@@ -45,8 +45,9 @@ type Struct struct {
 	TotalFixedFieldSize int
 	FixedFields         []*Field
 
-	DynamicHead   int
-	DynamicFields []*Field
+	DynamicHead             int
+	DynamicFieldHeadOffsets []int
+	DynamicFields           []*Field
 }
 
 type Alias struct {
@@ -55,8 +56,14 @@ type Alias struct {
 	OriginalType string
 }
 
+type CompileOptions struct {
+	UseUnsafe bool
+}
+
 type IR struct {
 	FileName string
+
+	Options CompileOptions
 
 	Structs []*Struct
 	Enums   []*Enum

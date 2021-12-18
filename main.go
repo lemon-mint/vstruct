@@ -46,6 +46,8 @@ func main() {
 		panic(err)
 	}
 	goir := front.Output()
+	goir.Options.UseUnsafe = true
+
 	pretty.Println(goir)
 	var buf bytes.Buffer
 	err = golang.Generate(&buf, goir, "main")

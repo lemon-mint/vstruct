@@ -93,6 +93,8 @@ func (f *FrontEnd) Compile() error {
 			Size: s.size,
 		}
 		var offset int
+		var dynOffset int
+		var last *ir.Field
 		for _, Field := range s.s.Fields {
 			ft := &ir.Field{
 				Name: Field.Name,
@@ -101,14 +103,21 @@ func (f *FrontEnd) Compile() error {
 			fInfo := f.getTypeSize(Field.Type)
 			ft.TypeInfo = fInfo
 			if fInfo.IsDynamic {
+				t.DynamicFieldHeadOffsets = append(t.DynamicFieldHeadOffsets, dynOffset)
 				t.DynamicFields = append(t.DynamicFields, ft)
+				dynOffset += 8
 			} else {
 				ft.Offset = offset
 				t.FixedFields = append(t.FixedFields, ft)
 				offset += fInfo.Size
 			}
+			last = ft
 		}
 		t.TotalFixedFieldSize = offset
+		t.DynamicHead = offset + last.TypeInfo.Size
+		for i := range t.DynamicFieldHeadOffsets {
+			t.DynamicFieldHeadOffsets[i] += t.DynamicHead
+		}
 		f.output.Structs = append(f.output.Structs, t)
 	}
 
