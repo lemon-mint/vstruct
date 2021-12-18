@@ -99,12 +99,13 @@ func (f *FrontEnd) Compile() error {
 			}
 			ft.Type = Field.StrType
 			fInfo := f.getTypeSize(Field.Type)
-			if fInfo.isDynamic {
+			ft.TypeInfo = fInfo
+			if fInfo.IsDynamic {
 				t.DynamicFields = append(t.DynamicFields, ft)
 			} else {
 				ft.Offset = offset
 				t.FixedFields = append(t.FixedFields, ft)
-				offset += fInfo.size
+				offset += fInfo.Size
 			}
 		}
 		t.TotalFixedFieldSize = offset
@@ -127,8 +128,8 @@ func (f *FrontEnd) compileStruct(node *ast.Node) {
 	s := &_struct{
 		Name:      node.Name,
 		s:         node.Struct,
-		isDynamic: sizeInfo.isDynamic,
-		size:      sizeInfo.size,
+		isDynamic: sizeInfo.IsDynamic,
+		size:      sizeInfo.Size,
 		filename:  node.File,
 		line:      node.Token.Line,
 		col:       node.Token.Col,
@@ -142,7 +143,7 @@ func (f *FrontEnd) compileEnum(node *ast.Node) {
 		Name:       node.Name,
 		e:          node.Enum,
 		optionslen: len(node.Enum.Enums),
-		size:       sizeInfo.size,
+		size:       sizeInfo.Size,
 		filename:   node.File,
 		line:       node.Token.Line,
 		col:        node.Token.Col,

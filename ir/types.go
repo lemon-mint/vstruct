@@ -2,6 +2,13 @@ package ir
 
 type FieldType int
 
+type TypeInfo struct {
+	Size      int
+	IsDynamic bool
+
+	FieldType FieldType
+}
+
 const (
 	FieldType_RESERVED FieldType = iota
 
@@ -23,7 +30,7 @@ type Enum struct {
 }
 
 type Field struct {
-	FT FieldType
+	TypeInfo TypeInfo
 
 	Name string
 
