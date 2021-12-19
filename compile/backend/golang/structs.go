@@ -92,5 +92,35 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			}
 			fmt.Fprintf(w, "}\n\n")
 		}
+		fmt.Fprintf(w, "func (s %s) Vstruct_Validate() bool {\n", NameConv(s.Name))
+
+		if s.IsFixed && len(s.DynamicFields) == 0 {
+			fmt.Fprintf(w, "return len(s) >= %d\n", s.TotalFixedFieldSize)
+		} else {
+			fmt.Fprintf(w, "if len(s) < %d {\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1]+16)
+			fmt.Fprintf(w, "return false\n")
+			fmt.Fprintf(w, "}\n")
+			for i, f := range s.DynamicFieldHeadOffsets {
+				fmt.Fprintf(w, "\nvar __off%d uint64 = ", i)
+				for j := 0; j < 8; j++ {
+					if j == 0 {
+						fmt.Fprintf(w, "uint64(s[%d])", f+j)
+					} else {
+						fmt.Fprintf(w, "|\nuint64(s[%d])<<%d", f+j, j*8)
+					}
+				}
+			}
+			fmt.Fprintf(w, "\nvar __off%d uint64 = len(s)", len(s.DynamicFieldHeadOffsets))
+			fmt.Fprintf(w, "\nreturn ")
+			for i, f := range s.DynamicFieldHeadOffsets {
+				fmt.Fprintf(w, "__off%d <= __off%d ", i, i+1)
+				if i != len(s.DynamicFieldHeadOffsets)-1 {
+					fmt.Fprintf(w, "&& ")
+				}
+				_ = f
+			}
+			fmt.Fprintf(w, "\n")
+		}
+		fmt.Fprintf(w, "}\n\n")
 	}
 }

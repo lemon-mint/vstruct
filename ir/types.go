@@ -42,6 +42,8 @@ type Struct struct {
 	Name string
 	Size int
 
+	IsFixed bool
+
 	TotalFixedFieldSize int
 	FixedFields         []*Field
 

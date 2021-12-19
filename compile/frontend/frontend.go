@@ -89,8 +89,9 @@ func (f *FrontEnd) Compile() error {
 	}
 	for _, s := range f.structs {
 		t := &ir.Struct{
-			Name: s.Name,
-			Size: s.size,
+			Name:    s.Name,
+			Size:    s.size,
+			IsFixed: true,
 		}
 		var offset int
 		var dynOffset int
@@ -106,6 +107,7 @@ func (f *FrontEnd) Compile() error {
 				t.DynamicFieldHeadOffsets = append(t.DynamicFieldHeadOffsets, dynOffset)
 				t.DynamicFields = append(t.DynamicFields, ft)
 				dynOffset += 8
+				t.IsFixed = false
 			} else {
 				ft.Offset = offset
 				t.FixedFields = append(t.FixedFields, ft)
@@ -113,6 +115,7 @@ func (f *FrontEnd) Compile() error {
 			}
 			last = ft
 		}
+		t.DynamicFieldHeadOffsets = append(t.DynamicFieldHeadOffsets, dynOffset)
 		t.TotalFixedFieldSize = offset
 		t.DynamicHead = offset + last.TypeInfo.Size
 		for i := range t.DynamicFieldHeadOffsets {
