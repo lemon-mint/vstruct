@@ -93,8 +93,8 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			}
 			fmt.Fprintf(w, "}\n\n")
 		}
-		fmt.Fprintf(w, "func (s %s) Vstruct_Validate() bool {\n", NameConv(s.Name))
 
+		fmt.Fprintf(w, "func (s %s) Vstruct_Validate() bool {\n", NameConv(s.Name))
 		if s.IsFixed && len(s.DynamicFields) == 0 {
 			fmt.Fprintf(w, "return len(s) >= %d\n", s.TotalFixedFieldSize)
 		} else {
@@ -122,6 +122,40 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			}
 			fmt.Fprintf(w, "\n")
 		}
+		fmt.Fprintf(w, "}\n\n")
+
+		fmt.Fprintf(w, "func (s %s) String() string {\n", NameConv(s.Name))
+		fmt.Fprintf(w, "var __b strings.Builder\n")
+		fmt.Fprintf(w, "__b.WriteString(\"%s {\")\n", NameConv(s.Name))
+		var allFields []*ir.Field
+		allFields = append(allFields, s.FixedFields...)
+		allFields = append(allFields, s.DynamicFields...)
+		for i, f := range allFields {
+			if i != 0 {
+				fmt.Fprintf(w, "__b.WriteString(\", \")\n")
+			}
+			fmt.Fprintf(w, "__b.WriteString(\"%s: \")\n", NameConv(f.Name))
+			switch f.TypeInfo.FieldType {
+			case ir.FieldType_STRUCT:
+				fmt.Fprintf(w, "__b.WriteString(s.%s().String())\n", NameConv(f.Name))
+			case ir.FieldType_STRING:
+				fmt.Fprintf(w, "__b.WriteString(strconv.Quote(string(s.%s())))\n", NameConv(f.Name))
+			case ir.FieldType_BYTES:
+				fmt.Fprintf(w, "__b.WriteString(fmt.Sprint(s.%s()))\n", NameConv(f.Name))
+			case ir.FieldType_BOOL:
+				fmt.Fprintf(w, "__b.WriteString(strconv.FormatBool(s.%s()))\n", NameConv(f.Name))
+			case ir.FieldType_INT:
+				fmt.Fprintf(w, "__b.WriteString(strconv.FormatInt(int64(s.%s()), 10))\n", NameConv(f.Name))
+			case ir.FieldType_UINT:
+				fmt.Fprintf(w, "__b.WriteString(strconv.FormatUint(uint64(s.%s()), 10))\n", NameConv(f.Name))
+			case ir.FieldType_FLOAT:
+				fmt.Fprintf(w, "__b.WriteString(strconv.FormatFloat(float64(s.%s()), 'g', -1, %d))\n", NameConv(f.Name), f.TypeInfo.Size)
+			case ir.FieldType_ENUM:
+				fmt.Fprintf(w, "__b.WriteString(s.%s().String())\n", NameConv(f.Name))
+			}
+		}
+		fmt.Fprintf(w, "__b.WriteString(\"}\")\n")
+		fmt.Fprintf(w, "return __b.String()\n")
 		fmt.Fprintf(w, "}\n\n")
 	}
 }

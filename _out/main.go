@@ -1,14 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"math"
+	"strconv"
+	"strings"
 	"unsafe"
 )
 
+type _ = strings.Builder
 type _ = unsafe.Pointer
 
 var _ = math.Float32frombits
 var _ = math.Float64frombits
+var _ = strconv.FormatInt
+var _ = strconv.FormatUint
+var _ = strconv.FormatFloat
+var _ = fmt.Sprint
 
 type Speices uint8
 
@@ -166,6 +174,18 @@ func (s Coordinate) Vstruct_Validate() bool {
 	return len(s) >= 16
 }
 
+func (s Coordinate) String() string {
+	var __b strings.Builder
+	__b.WriteString("Coordinate {")
+	__b.WriteString("X: ")
+	__b.WriteString(strconv.FormatInt(int64(s.X()), 10))
+	__b.WriteString(", ")
+	__b.WriteString("Y: ")
+	__b.WriteString(strconv.FormatInt(int64(s.Y()), 10))
+	__b.WriteString("}")
+	return __b.String()
+}
+
 type Item []byte
 
 func (s Item) Type() ItemType {
@@ -246,6 +266,24 @@ func (s Item) Vstruct_Validate() bool {
 	return __off0 <= __off1 && __off1 <= __off2
 }
 
+func (s Item) String() string {
+	var __b strings.Builder
+	__b.WriteString("Item {")
+	__b.WriteString("Type: ")
+	__b.WriteString(s.Type().String())
+	__b.WriteString(", ")
+	__b.WriteString("Damage: ")
+	__b.WriteString(strconv.FormatInt(int64(s.Damage()), 10))
+	__b.WriteString(", ")
+	__b.WriteString("Armor: ")
+	__b.WriteString(strconv.FormatInt(int64(s.Armor()), 10))
+	__b.WriteString(", ")
+	__b.WriteString("Name: ")
+	__b.WriteString(strconv.Quote(string(s.Name())))
+	__b.WriteString("}")
+	return __b.String()
+}
+
 type Inventory []byte
 
 func (s Inventory) RightHand() Item {
@@ -321,6 +359,18 @@ func (s Inventory) Vstruct_Validate() bool {
 		uint64(s[23])<<56
 	var __off3 uint64 = uint64(len(s))
 	return __off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3
+}
+
+func (s Inventory) String() string {
+	var __b strings.Builder
+	__b.WriteString("Inventory {")
+	__b.WriteString("RightHand: ")
+	__b.WriteString(s.RightHand().String())
+	__b.WriteString(", ")
+	__b.WriteString("LeftHand: ")
+	__b.WriteString(s.LeftHand().String())
+	__b.WriteString("}")
+	return __b.String()
 }
 
 type Entity []byte
@@ -421,6 +471,27 @@ func (s Entity) Vstruct_Validate() bool {
 		uint64(s[48])<<56
 	var __off3 uint64 = uint64(len(s))
 	return __off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3
+}
+
+func (s Entity) String() string {
+	var __b strings.Builder
+	__b.WriteString("Entity {")
+	__b.WriteString("Type: ")
+	__b.WriteString(s.Type().String())
+	__b.WriteString(", ")
+	__b.WriteString("Position: ")
+	__b.WriteString(s.Position().String())
+	__b.WriteString(", ")
+	__b.WriteString("Hp: ")
+	__b.WriteString(strconv.FormatInt(int64(s.Hp()), 10))
+	__b.WriteString(", ")
+	__b.WriteString("Id: ")
+	__b.WriteString(strconv.Quote(string(s.Id())))
+	__b.WriteString(", ")
+	__b.WriteString("Inventory: ")
+	__b.WriteString(s.Inventory().String())
+	__b.WriteString("}")
+	return __b.String()
 }
 
 type UUID = string

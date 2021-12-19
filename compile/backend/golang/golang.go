@@ -18,13 +18,22 @@ func Generate(w io.Writer, i *ir.IR, packageName string) error {
 		`package %s
 
 import (
+	"fmt"
 	"math"
+	"strconv"
+	"strings"
 	"unsafe"
 )
 
+type _ = strings.Builder
 type _ = unsafe.Pointer
+
 var _ = math.Float32frombits
 var _ = math.Float64frombits
+var _ = strconv.FormatInt
+var _ = strconv.FormatUint
+var _ = strconv.FormatFloat
+var _ = fmt.Sprint
 
 %s
 `,
