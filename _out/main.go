@@ -358,7 +358,11 @@ func (s Inventory) Vstruct_Validate() bool {
 		uint64(s[22])<<48 |
 		uint64(s[23])<<56
 	var __off3 uint64 = uint64(len(s))
-	return __off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3
+	if __off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3 {
+		return s.RightHand().Vstruct_Validate() && s.LeftHand().Vstruct_Validate()
+	}
+
+	return false
 }
 
 func (s Inventory) String() string {
@@ -470,7 +474,11 @@ func (s Entity) Vstruct_Validate() bool {
 		uint64(s[47])<<48 |
 		uint64(s[48])<<56
 	var __off3 uint64 = uint64(len(s))
-	return __off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3
+	if __off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3 {
+		return s.Inventory().Vstruct_Validate()
+	}
+
+	return false
 }
 
 func (s Entity) String() string {

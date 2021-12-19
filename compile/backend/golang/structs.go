@@ -112,15 +112,41 @@ func writeStructs(w io.Writer, i *ir.IR) {
 				}
 			}
 			fmt.Fprintf(w, "\nvar __off%d uint64 = uint64(len(s))", len(s.DynamicFieldHeadOffsets))
-			fmt.Fprintf(w, "\nreturn ")
-			for i, f := range s.DynamicFieldHeadOffsets {
-				fmt.Fprintf(w, "__off%d <= __off%d ", i, i+1)
-				if i != len(s.DynamicFieldHeadOffsets)-1 {
-					fmt.Fprintf(w, "&& ")
+			var dynStructFields []*ir.Field
+			for _, f := range s.DynamicFields {
+				if f.TypeInfo.FieldType == ir.FieldType_STRUCT {
+					dynStructFields = append(dynStructFields, f)
 				}
-				_ = f
 			}
-			fmt.Fprintf(w, "\n")
+			if len(dynStructFields) == 0 {
+				fmt.Fprintf(w, "\nreturn ")
+				for i, f := range s.DynamicFieldHeadOffsets {
+					fmt.Fprintf(w, "__off%d <= __off%d ", i, i+1)
+					if i != len(s.DynamicFieldHeadOffsets)-1 {
+						fmt.Fprintf(w, "&& ")
+					}
+					_ = f
+				}
+			} else {
+				fmt.Fprintf(w, "\nif ")
+				for i, f := range s.DynamicFieldHeadOffsets {
+					fmt.Fprintf(w, "__off%d <= __off%d ", i, i+1)
+					if i != len(s.DynamicFieldHeadOffsets)-1 {
+						fmt.Fprintf(w, "&& ")
+					}
+					_ = f
+				}
+				fmt.Fprintf(w, "{\n")
+				fmt.Fprintf(w, "return ")
+				for i, f := range dynStructFields {
+					fmt.Fprintf(w, "s.%s().Vstruct_Validate()", NameConv(f.Name))
+					if i != len(dynStructFields)-1 {
+						fmt.Fprintf(w, " && ")
+					}
+				}
+				fmt.Fprintf(w, "\n}\n")
+				fmt.Fprintf(w, "\nreturn false\n")
+			}
 		}
 		fmt.Fprintf(w, "}\n\n")
 
