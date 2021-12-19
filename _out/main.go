@@ -222,7 +222,7 @@ func (s Item) Name() string {
 }
 
 func (s Item) Vstruct_Validate() bool {
-	if len(s) < 49 {
+	if len(s) < 41 {
 		return false
 	}
 
@@ -291,7 +291,7 @@ func (s Inventory) LeftHand() Item {
 }
 
 func (s Inventory) Vstruct_Validate() bool {
-	if len(s) < 32 {
+	if len(s) < 24 {
 		return false
 	}
 
@@ -391,7 +391,7 @@ func (s Entity) Inventory() Inventory {
 }
 
 func (s Entity) Vstruct_Validate() bool {
-	if len(s) < 57 {
+	if len(s) < 49 {
 		return false
 	}
 

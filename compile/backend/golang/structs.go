@@ -98,7 +98,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		if s.IsFixed && len(s.DynamicFields) == 0 {
 			fmt.Fprintf(w, "return len(s) >= %d\n", s.TotalFixedFieldSize)
 		} else {
-			fmt.Fprintf(w, "if len(s) < %d {\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1]+16)
+			fmt.Fprintf(w, "if len(s) < %d {\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1]+8)
 			fmt.Fprintf(w, "return false\n")
 			fmt.Fprintf(w, "}\n")
 			for i, f := range s.DynamicFieldHeadOffsets {
