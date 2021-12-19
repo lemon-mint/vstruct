@@ -151,6 +151,9 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		fmt.Fprintf(w, "}\n\n")
 
 		fmt.Fprintf(w, "func (s %s) String() string {\n", NameConv(s.Name))
+		fmt.Fprintf(w, "if !s.Vstruct_Validate() {\n")
+		fmt.Fprintf(w, "return \"%s (invalid)\"\n", NameConv(s.Name))
+		fmt.Fprintf(w, "}\n")
 		fmt.Fprintf(w, "var __b strings.Builder\n")
 		fmt.Fprintf(w, "__b.WriteString(\"%s {\")\n", NameConv(s.Name))
 		var allFields []*ir.Field
@@ -165,7 +168,11 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			case ir.FieldType_STRUCT:
 				fmt.Fprintf(w, "__b.WriteString(s.%s().String())\n", NameConv(f.Name))
 			case ir.FieldType_STRING:
-				fmt.Fprintf(w, "__b.WriteString(strconv.Quote(string(s.%s())))\n", NameConv(f.Name))
+				if f.Type == "string" {
+					fmt.Fprintf(w, "__b.WriteString(strconv.Quote(s.%s()))\n", NameConv(f.Name))
+				} else {
+					fmt.Fprintf(w, "__b.WriteString(strconv.Quote(string(s.%s())))\n", NameConv(f.Name))
+				}
 			case ir.FieldType_BYTES:
 				fmt.Fprintf(w, "__b.WriteString(fmt.Sprint(s.%s()))\n", NameConv(f.Name))
 			case ir.FieldType_BOOL:

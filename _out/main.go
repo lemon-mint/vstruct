@@ -1,5 +1,3 @@
-package main
-
 import (
 	"fmt"
 	"math"
@@ -175,6 +173,9 @@ func (s Coordinate) Vstruct_Validate() bool {
 }
 
 func (s Coordinate) String() string {
+	if !s.Vstruct_Validate() {
+		return "Coordinate (invalid)"
+	}
 	var __b strings.Builder
 	__b.WriteString("Coordinate {")
 	__b.WriteString("X: ")
@@ -267,6 +268,9 @@ func (s Item) Vstruct_Validate() bool {
 }
 
 func (s Item) String() string {
+	if !s.Vstruct_Validate() {
+		return "Item (invalid)"
+	}
 	var __b strings.Builder
 	__b.WriteString("Item {")
 	__b.WriteString("Type: ")
@@ -279,7 +283,7 @@ func (s Item) String() string {
 	__b.WriteString(strconv.FormatInt(int64(s.Armor()), 10))
 	__b.WriteString(", ")
 	__b.WriteString("Name: ")
-	__b.WriteString(strconv.Quote(string(s.Name())))
+	__b.WriteString(strconv.Quote(s.Name()))
 	__b.WriteString("}")
 	return __b.String()
 }
@@ -366,6 +370,9 @@ func (s Inventory) Vstruct_Validate() bool {
 }
 
 func (s Inventory) String() string {
+	if !s.Vstruct_Validate() {
+		return "Inventory (invalid)"
+	}
 	var __b strings.Builder
 	__b.WriteString("Inventory {")
 	__b.WriteString("RightHand: ")
@@ -482,6 +489,9 @@ func (s Entity) Vstruct_Validate() bool {
 }
 
 func (s Entity) String() string {
+	if !s.Vstruct_Validate() {
+		return "Entity (invalid)"
+	}
 	var __b strings.Builder
 	__b.WriteString("Entity {")
 	__b.WriteString("Type: ")
