@@ -2,7 +2,10 @@ package main
 
 import (
 	"math"
+	"unsafe"
 )
+
+type _ = unsafe.Pointer
 
 var _ = math.Float32frombits
 var _ = math.Float64frombits
@@ -159,6 +162,10 @@ func (s Coordinate) Y() int64 {
 	return int64(__v)
 }
 
+func (s Coordinate) Vstruct_Validate() bool {
+	return len(s) >= 16
+}
+
 type Item []byte
 
 func (s Item) Type() ItemType {
@@ -209,7 +216,34 @@ func (s Item) Name() string {
 		uint64(s[38])<<40 |
 		uint64(s[39])<<48 |
 		uint64(s[40])<<56
-	return string(s[__off0:__off1])
+	var __v = s[__off0:__off1]
+
+	return *(*string)(unsafe.Pointer(&__v))
+}
+
+func (s Item) Vstruct_Validate() bool {
+	if len(s) < 49 {
+		return false
+	}
+
+	var __off0 uint64 = uint64(s[25]) |
+		uint64(s[26])<<8 |
+		uint64(s[27])<<16 |
+		uint64(s[28])<<24 |
+		uint64(s[29])<<32 |
+		uint64(s[30])<<40 |
+		uint64(s[31])<<48 |
+		uint64(s[32])<<56
+	var __off1 uint64 = uint64(s[33]) |
+		uint64(s[34])<<8 |
+		uint64(s[35])<<16 |
+		uint64(s[36])<<24 |
+		uint64(s[37])<<32 |
+		uint64(s[38])<<40 |
+		uint64(s[39])<<48 |
+		uint64(s[40])<<56
+	var __off2 uint64 = uint64(len(s))
+	return __off0 <= __off1 && __off1 <= __off2
 }
 
 type Inventory []byte
@@ -256,6 +290,39 @@ func (s Inventory) LeftHand() Item {
 	return Item(s[__off0:__off1])
 }
 
+func (s Inventory) Vstruct_Validate() bool {
+	if len(s) < 32 {
+		return false
+	}
+
+	var __off0 uint64 = uint64(s[0]) |
+		uint64(s[1])<<8 |
+		uint64(s[2])<<16 |
+		uint64(s[3])<<24 |
+		uint64(s[4])<<32 |
+		uint64(s[5])<<40 |
+		uint64(s[6])<<48 |
+		uint64(s[7])<<56
+	var __off1 uint64 = uint64(s[8]) |
+		uint64(s[9])<<8 |
+		uint64(s[10])<<16 |
+		uint64(s[11])<<24 |
+		uint64(s[12])<<32 |
+		uint64(s[13])<<40 |
+		uint64(s[14])<<48 |
+		uint64(s[15])<<56
+	var __off2 uint64 = uint64(s[16]) |
+		uint64(s[17])<<8 |
+		uint64(s[18])<<16 |
+		uint64(s[19])<<24 |
+		uint64(s[20])<<32 |
+		uint64(s[21])<<40 |
+		uint64(s[22])<<48 |
+		uint64(s[23])<<56
+	var __off3 uint64 = uint64(len(s))
+	return __off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3
+}
+
 type Entity []byte
 
 func (s Entity) Type() Speices {
@@ -297,7 +364,9 @@ func (s Entity) Id() UUID {
 		uint64(s[38])<<40 |
 		uint64(s[39])<<48 |
 		uint64(s[40])<<56
-	return UUID(s[__off0:__off1])
+	var __v = s[__off0:__off1]
+
+	return *(*UUID)(unsafe.Pointer(&__v))
 }
 
 func (s Entity) Inventory() Inventory {
@@ -319,6 +388,39 @@ func (s Entity) Inventory() Inventory {
 		uint64(s[47])<<48 |
 		uint64(s[48])<<56
 	return Inventory(s[__off0:__off1])
+}
+
+func (s Entity) Vstruct_Validate() bool {
+	if len(s) < 57 {
+		return false
+	}
+
+	var __off0 uint64 = uint64(s[25]) |
+		uint64(s[26])<<8 |
+		uint64(s[27])<<16 |
+		uint64(s[28])<<24 |
+		uint64(s[29])<<32 |
+		uint64(s[30])<<40 |
+		uint64(s[31])<<48 |
+		uint64(s[32])<<56
+	var __off1 uint64 = uint64(s[33]) |
+		uint64(s[34])<<8 |
+		uint64(s[35])<<16 |
+		uint64(s[36])<<24 |
+		uint64(s[37])<<32 |
+		uint64(s[38])<<40 |
+		uint64(s[39])<<48 |
+		uint64(s[40])<<56
+	var __off2 uint64 = uint64(s[41]) |
+		uint64(s[42])<<8 |
+		uint64(s[43])<<16 |
+		uint64(s[44])<<24 |
+		uint64(s[45])<<32 |
+		uint64(s[46])<<40 |
+		uint64(s[47])<<48 |
+		uint64(s[48])<<56
+	var __off3 uint64 = uint64(len(s))
+	return __off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3
 }
 
 type UUID = string

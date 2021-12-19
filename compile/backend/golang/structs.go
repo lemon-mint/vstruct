@@ -82,10 +82,11 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			case ir.FieldType_STRUCT:
 				fmt.Fprintf(w, "\nreturn %s(s[__off0:__off1])\n", TypeConv(f.Type))
 			case ir.FieldType_STRING:
+				fmt.Fprintf(w, "\nvar __v = s[__off0:__off1]\n")
 				if f.Type == "string" {
-					fmt.Fprintf(w, "\nreturn *(*string)(unsafe.Pointer(&s[__off0:__off1]))\n")
+					fmt.Fprintf(w, "\nreturn *(*string)(unsafe.Pointer(&__v))\n")
 				} else {
-					fmt.Fprintf(w, "\nreturn *(*%s)(unsafe.Pointer(&s[__off0:__off1]))\n", TypeConv(f.Type))
+					fmt.Fprintf(w, "\nreturn *(*%s)(unsafe.Pointer(&__v))\n", TypeConv(f.Type))
 				}
 			case ir.FieldType_BYTES:
 				fmt.Fprintf(w, "\nreturn %s(s[__off0:__off1])\n", TypeConv(f.Type))
@@ -110,7 +111,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 					}
 				}
 			}
-			fmt.Fprintf(w, "\nvar __off%d uint64 = len(s)", len(s.DynamicFieldHeadOffsets))
+			fmt.Fprintf(w, "\nvar __off%d uint64 = uint64(len(s))", len(s.DynamicFieldHeadOffsets))
 			fmt.Fprintf(w, "\nreturn ")
 			for i, f := range s.DynamicFieldHeadOffsets {
 				fmt.Fprintf(w, "__off%d <= __off%d ", i, i+1)
