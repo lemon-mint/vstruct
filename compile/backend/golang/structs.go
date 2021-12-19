@@ -61,21 +61,25 @@ func writeStructs(w io.Writer, i *ir.IR) {
 
 		for i, f := range s.DynamicFields {
 			fmt.Fprintf(w, "func (s %s) %s() %s {\n", NameConv(s.Name), NameConv(f.Name), TypeConv(f.Type))
-			fmt.Fprintf(w, "_ = s[%d]\n", s.DynamicFieldHeadOffsets[i]+15)
+			fmt.Fprintf(w, "_ = s[%d]\n", s.DynamicFieldHeadOffsets[i+1]-1)
 			fmt.Fprintf(w, "var __off0 uint64 = ")
-			for j := 0; j < 8; j++ {
-				if j == 0 {
-					fmt.Fprintf(w, "uint64(s[%d])", s.DynamicFieldHeadOffsets[i]+j)
-				} else {
-					fmt.Fprintf(w, "|\nuint64(s[%d])<<%d", s.DynamicFieldHeadOffsets[i]+j, j*8)
+			if i == 0 {
+				fmt.Fprintf(w, "%d", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+			} else {
+				for j := 0; j < 8; j++ {
+					if j == 0 {
+						fmt.Fprintf(w, "uint64(s[%d])", s.DynamicFieldHeadOffsets[i]-8+j)
+					} else {
+						fmt.Fprintf(w, "|\nuint64(s[%d])<<%d", s.DynamicFieldHeadOffsets[i]-8+j, j*8)
+					}
 				}
 			}
 			fmt.Fprintf(w, "\nvar __off1 uint64 = ")
 			for j := 0; j < 8; j++ {
 				if j == 0 {
-					fmt.Fprintf(w, "uint64(s[%d])", s.DynamicFieldHeadOffsets[i]+8+j)
+					fmt.Fprintf(w, "uint64(s[%d])", s.DynamicFieldHeadOffsets[i]+j)
 				} else {
-					fmt.Fprintf(w, "|\nuint64(s[%d])<<%d", s.DynamicFieldHeadOffsets[i]+8+j, j*8)
+					fmt.Fprintf(w, "|\nuint64(s[%d])<<%d", s.DynamicFieldHeadOffsets[i]+j, j*8)
 				}
 			}
 			switch f.TypeInfo.FieldType {
@@ -98,16 +102,21 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		if s.IsFixed && len(s.DynamicFields) == 0 {
 			fmt.Fprintf(w, "return len(s) >= %d\n", s.TotalFixedFieldSize)
 		} else {
-			fmt.Fprintf(w, "if len(s) < %d {\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1]+8)
+			fmt.Fprintf(w, "if len(s) < %d {\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
 			fmt.Fprintf(w, "return false\n")
 			fmt.Fprintf(w, "}\n")
 			for i, f := range s.DynamicFieldHeadOffsets {
+				_ = f
 				fmt.Fprintf(w, "\nvar __off%d uint64 = ", i)
-				for j := 0; j < 8; j++ {
-					if j == 0 {
-						fmt.Fprintf(w, "uint64(s[%d])", f+j)
-					} else {
-						fmt.Fprintf(w, "|\nuint64(s[%d])<<%d", f+j, j*8)
+				if i == 0 {
+					fmt.Fprintf(w, "%d", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+				} else {
+					for j := 0; j < 8; j++ {
+						if j == 0 {
+							fmt.Fprintf(w, "uint64(s[%d])", s.DynamicFieldHeadOffsets[i]-8+j)
+						} else {
+							fmt.Fprintf(w, "|\nuint64(s[%d])<<%d", s.DynamicFieldHeadOffsets[i]-8+j, j*8)
+						}
 					}
 				}
 			}
@@ -189,6 +198,102 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		}
 		fmt.Fprintf(w, "__b.WriteString(\"}\")\n")
 		fmt.Fprintf(w, "return __b.String()\n")
+		fmt.Fprintf(w, "}\n\n")
+	}
+
+	for _, s := range i.Structs {
+		fmt.Fprintf(w, "func Serialize_%s(dst %s", TypeConv(s.Name), TypeConv(s.Name))
+		var allFields []*ir.Field
+		allFields = append(allFields, s.FixedFields...)
+		allFields = append(allFields, s.DynamicFields...)
+		for _, f := range allFields {
+			fmt.Fprintf(w, ", %s %s", NameConv(f.Name), TypeConv(f.Type))
+		}
+
+		var IsFixed bool = len(s.DynamicFields) == 0
+
+		fmt.Fprintf(w, ") %s {\n", TypeConv(s.Name))
+		if IsFixed && len(s.FixedFields) > 0 {
+			fmt.Fprintf(w, "_ = dst[%d]\n", s.TotalFixedFieldSize-1)
+		} else if !IsFixed {
+			fmt.Fprintf(w, "_ = dst[%d]\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1]-1)
+		}
+		var tmpIdx int = 0
+		for _, f := range s.FixedFields {
+			switch f.TypeInfo.FieldType {
+			case ir.FieldType_STRUCT:
+				fmt.Fprintf(w, "copy(dst[%d:%d], %s)\n", f.Offset, f.Offset+f.TypeInfo.Size, NameConv(f.Name))
+			case ir.FieldType_BOOL:
+				fmt.Fprintf(w, "dst[%d] = *(*byte)(unsafe.Pointer(&%s))\n", f.Offset, NameConv(f.Name))
+			case ir.FieldType_INT:
+				fmt.Fprintf(w, "var __tmp_%d = uint%d(%s)\n", tmpIdx, f.TypeInfo.Size*8, NameConv(f.Name))
+				for i := 0; i < f.TypeInfo.Size; i++ {
+					if i == 0 {
+						fmt.Fprintf(w, "dst[%d] = byte(__tmp_%d)\n", f.Offset+i, tmpIdx)
+					} else {
+						fmt.Fprintf(w, "dst[%d] = byte(__tmp_%d >> %d)\n", f.Offset+i, tmpIdx, 8*i)
+					}
+				}
+			case ir.FieldType_UINT:
+				for i := 0; i < f.TypeInfo.Size; i++ {
+					if i == 0 {
+						fmt.Fprintf(w, "dst[%d] = byte(%s)\n", f.Offset+i, NameConv(f.Name))
+					} else {
+						fmt.Fprintf(w, "dst[%d] = byte(%s >> %d)\n", f.Offset+i, NameConv(f.Name), 8*i)
+					}
+				}
+			case ir.FieldType_FLOAT:
+				fmt.Fprintf(w, "var __tmp_%d = math.Float%dbits(%s)\n", tmpIdx, f.TypeInfo.Size*8, NameConv(f.Name))
+				for i := 0; i < f.TypeInfo.Size; i++ {
+					if i == 0 {
+						fmt.Fprintf(w, "dst[%d] = byte(__tmp_%d)\n", f.Offset+i, tmpIdx)
+					} else {
+						fmt.Fprintf(w, "dst[%d] = byte(__tmp_%d >> %d)\n", f.Offset+i, tmpIdx, 8*i)
+					}
+				}
+			case ir.FieldType_ENUM:
+				if f.TypeInfo.Size == 1 {
+					fmt.Fprintf(w, "dst[%d] = byte(%s)\n", f.Offset, NameConv(f.Name))
+				} else {
+					fmt.Fprintf(w, "var __tmp_%d = uint%d(%s)\n", tmpIdx, f.TypeInfo.Size*8, NameConv(f.Name))
+					for i := 0; i < f.TypeInfo.Size; i++ {
+						if i == 0 {
+							fmt.Fprintf(w, "dst[%d] = byte(__tmp_%d)\n", f.Offset+i, tmpIdx)
+						} else {
+							fmt.Fprintf(w, "dst[%d] = byte(__tmp_%d >> %d)\n", f.Offset+i, tmpIdx, 8*i)
+						}
+					}
+				}
+			}
+			tmpIdx++
+		}
+		fmt.Fprintf(w, "\n")
+		if !IsFixed {
+			fmt.Fprintf(w, "var __index = uint64(%d)\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+			for i, f := range s.DynamicFields {
+				fmt.Fprintf(w, "__tmp_%d := uint64(len(%s))\n", tmpIdx, NameConv(f.Name))
+				for j := 0; j < 8; j++ {
+					if j == 0 {
+						fmt.Fprintf(w, "dst[%d] = byte(__tmp_%d)\n", s.DynamicFieldHeadOffsets[i]+j, tmpIdx)
+					} else {
+						fmt.Fprintf(w, "dst[%d] = byte(__tmp_%d >> %d)\n", s.DynamicFieldHeadOffsets[i]+j, tmpIdx, 8*j)
+					}
+				}
+				switch f.TypeInfo.FieldType {
+				case ir.FieldType_STRUCT:
+					fmt.Fprintf(w, "copy(dst[__index:__index+__tmp_%d], %s)\n", tmpIdx, NameConv(f.Name))
+				case ir.FieldType_BYTES:
+					fmt.Fprintf(w, "copy(dst[__index:__index+__tmp_%d], %s)\n", tmpIdx, NameConv(f.Name))
+				case ir.FieldType_STRING:
+					fmt.Fprintf(w, "copy(dst[__index:__index+__tmp_%d], %s)\n", tmpIdx, NameConv(f.Name))
+				}
+				if i != len(s.DynamicFields)-1 {
+					fmt.Fprintf(w, "__index += __tmp_%d\n", tmpIdx)
+				}
+				tmpIdx++
+			}
+		}
+		fmt.Fprintf(w, "return dst\n")
 		fmt.Fprintf(w, "}\n\n")
 	}
 }

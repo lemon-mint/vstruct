@@ -115,9 +115,10 @@ func (f *FrontEnd) Compile() error {
 			}
 			last = ft
 		}
+		_ = last
 		t.DynamicFieldHeadOffsets = append(t.DynamicFieldHeadOffsets, dynOffset)
 		t.TotalFixedFieldSize = offset
-		t.DynamicHead = offset + last.TypeInfo.Size
+		t.DynamicHead = offset
 		for i := range t.DynamicFieldHeadOffsets {
 			t.DynamicFieldHeadOffsets[i] += t.DynamicHead
 		}

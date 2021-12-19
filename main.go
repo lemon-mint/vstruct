@@ -55,5 +55,12 @@ func main() {
 		fmt.Println(buf.String())
 		panic(err)
 	}
-	fmt.Println(buf.String())
+	out := buf.String()
+	fmt.Println(out)
+	f, err := os.Create("./_out/main.go")
+	if err != nil {
+		panic(err)
+	}
+	f.WriteString(out)
+	f.Close()
 }

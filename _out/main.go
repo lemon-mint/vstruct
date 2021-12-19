@@ -222,49 +222,35 @@ func (s Item) Armor() int64 {
 }
 
 func (s Item) Name() string {
-	_ = s[40]
-	var __off0 uint64 = uint64(s[25]) |
-		uint64(s[26])<<8 |
-		uint64(s[27])<<16 |
-		uint64(s[28])<<24 |
-		uint64(s[29])<<32 |
-		uint64(s[30])<<40 |
-		uint64(s[31])<<48 |
-		uint64(s[32])<<56
-	var __off1 uint64 = uint64(s[33]) |
-		uint64(s[34])<<8 |
-		uint64(s[35])<<16 |
-		uint64(s[36])<<24 |
-		uint64(s[37])<<32 |
-		uint64(s[38])<<40 |
-		uint64(s[39])<<48 |
-		uint64(s[40])<<56
+	_ = s[24]
+	var __off0 uint64 = 25
+	var __off1 uint64 = uint64(s[17]) |
+		uint64(s[18])<<8 |
+		uint64(s[19])<<16 |
+		uint64(s[20])<<24 |
+		uint64(s[21])<<32 |
+		uint64(s[22])<<40 |
+		uint64(s[23])<<48 |
+		uint64(s[24])<<56
 	var __v = s[__off0:__off1]
 
 	return *(*string)(unsafe.Pointer(&__v))
 }
 
 func (s Item) Vstruct_Validate() bool {
-	if len(s) < 41 {
+	if len(s) < 25 {
 		return false
 	}
 
-	var __off0 uint64 = uint64(s[25]) |
-		uint64(s[26])<<8 |
-		uint64(s[27])<<16 |
-		uint64(s[28])<<24 |
-		uint64(s[29])<<32 |
-		uint64(s[30])<<40 |
-		uint64(s[31])<<48 |
-		uint64(s[32])<<56
-	var __off1 uint64 = uint64(s[33]) |
-		uint64(s[34])<<8 |
-		uint64(s[35])<<16 |
-		uint64(s[36])<<24 |
-		uint64(s[37])<<32 |
-		uint64(s[38])<<40 |
-		uint64(s[39])<<48 |
-		uint64(s[40])<<56
+	var __off0 uint64 = 25
+	var __off1 uint64 = uint64(s[17]) |
+		uint64(s[18])<<8 |
+		uint64(s[19])<<16 |
+		uint64(s[20])<<24 |
+		uint64(s[21])<<32 |
+		uint64(s[22])<<40 |
+		uint64(s[23])<<48 |
+		uint64(s[24])<<56
 	var __off2 uint64 = uint64(len(s))
 	return __off0 <= __off1 && __off1 <= __off2
 }
@@ -293,6 +279,20 @@ func (s Item) String() string {
 type Inventory []byte
 
 func (s Inventory) RightHand() Item {
+	_ = s[7]
+	var __off0 uint64 = 16
+	var __off1 uint64 = uint64(s[0]) |
+		uint64(s[1])<<8 |
+		uint64(s[2])<<16 |
+		uint64(s[3])<<24 |
+		uint64(s[4])<<32 |
+		uint64(s[5])<<40 |
+		uint64(s[6])<<48 |
+		uint64(s[7])<<56
+	return Item(s[__off0:__off1])
+}
+
+func (s Inventory) LeftHand() Item {
 	_ = s[15]
 	var __off0 uint64 = uint64(s[0]) |
 		uint64(s[1])<<8 |
@@ -313,33 +313,13 @@ func (s Inventory) RightHand() Item {
 	return Item(s[__off0:__off1])
 }
 
-func (s Inventory) LeftHand() Item {
-	_ = s[23]
-	var __off0 uint64 = uint64(s[8]) |
-		uint64(s[9])<<8 |
-		uint64(s[10])<<16 |
-		uint64(s[11])<<24 |
-		uint64(s[12])<<32 |
-		uint64(s[13])<<40 |
-		uint64(s[14])<<48 |
-		uint64(s[15])<<56
-	var __off1 uint64 = uint64(s[16]) |
-		uint64(s[17])<<8 |
-		uint64(s[18])<<16 |
-		uint64(s[19])<<24 |
-		uint64(s[20])<<32 |
-		uint64(s[21])<<40 |
-		uint64(s[22])<<48 |
-		uint64(s[23])<<56
-	return Item(s[__off0:__off1])
-}
-
 func (s Inventory) Vstruct_Validate() bool {
-	if len(s) < 24 {
+	if len(s) < 16 {
 		return false
 	}
 
-	var __off0 uint64 = uint64(s[0]) |
+	var __off0 uint64 = 16
+	var __off1 uint64 = uint64(s[0]) |
 		uint64(s[1])<<8 |
 		uint64(s[2])<<16 |
 		uint64(s[3])<<24 |
@@ -347,7 +327,7 @@ func (s Inventory) Vstruct_Validate() bool {
 		uint64(s[5])<<40 |
 		uint64(s[6])<<48 |
 		uint64(s[7])<<56
-	var __off1 uint64 = uint64(s[8]) |
+	var __off2 uint64 = uint64(s[8]) |
 		uint64(s[9])<<8 |
 		uint64(s[10])<<16 |
 		uint64(s[11])<<24 |
@@ -355,14 +335,6 @@ func (s Inventory) Vstruct_Validate() bool {
 		uint64(s[13])<<40 |
 		uint64(s[14])<<48 |
 		uint64(s[15])<<56
-	var __off2 uint64 = uint64(s[16]) |
-		uint64(s[17])<<8 |
-		uint64(s[18])<<16 |
-		uint64(s[19])<<24 |
-		uint64(s[20])<<32 |
-		uint64(s[21])<<40 |
-		uint64(s[22])<<48 |
-		uint64(s[23])<<56
 	var __off3 uint64 = uint64(len(s))
 	if __off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3 {
 		return s.RightHand().Vstruct_Validate() && s.LeftHand().Vstruct_Validate()
@@ -410,6 +382,22 @@ func (s Entity) Hp() int64 {
 }
 
 func (s Entity) Id() UUID {
+	_ = s[32]
+	var __off0 uint64 = 41
+	var __off1 uint64 = uint64(s[25]) |
+		uint64(s[26])<<8 |
+		uint64(s[27])<<16 |
+		uint64(s[28])<<24 |
+		uint64(s[29])<<32 |
+		uint64(s[30])<<40 |
+		uint64(s[31])<<48 |
+		uint64(s[32])<<56
+	var __v = s[__off0:__off1]
+
+	return *(*UUID)(unsafe.Pointer(&__v))
+}
+
+func (s Entity) Inventory() Inventory {
 	_ = s[40]
 	var __off0 uint64 = uint64(s[25]) |
 		uint64(s[26])<<8 |
@@ -427,38 +415,16 @@ func (s Entity) Id() UUID {
 		uint64(s[38])<<40 |
 		uint64(s[39])<<48 |
 		uint64(s[40])<<56
-	var __v = s[__off0:__off1]
-
-	return *(*UUID)(unsafe.Pointer(&__v))
-}
-
-func (s Entity) Inventory() Inventory {
-	_ = s[48]
-	var __off0 uint64 = uint64(s[33]) |
-		uint64(s[34])<<8 |
-		uint64(s[35])<<16 |
-		uint64(s[36])<<24 |
-		uint64(s[37])<<32 |
-		uint64(s[38])<<40 |
-		uint64(s[39])<<48 |
-		uint64(s[40])<<56
-	var __off1 uint64 = uint64(s[41]) |
-		uint64(s[42])<<8 |
-		uint64(s[43])<<16 |
-		uint64(s[44])<<24 |
-		uint64(s[45])<<32 |
-		uint64(s[46])<<40 |
-		uint64(s[47])<<48 |
-		uint64(s[48])<<56
 	return Inventory(s[__off0:__off1])
 }
 
 func (s Entity) Vstruct_Validate() bool {
-	if len(s) < 49 {
+	if len(s) < 41 {
 		return false
 	}
 
-	var __off0 uint64 = uint64(s[25]) |
+	var __off0 uint64 = 41
+	var __off1 uint64 = uint64(s[25]) |
 		uint64(s[26])<<8 |
 		uint64(s[27])<<16 |
 		uint64(s[28])<<24 |
@@ -466,7 +432,7 @@ func (s Entity) Vstruct_Validate() bool {
 		uint64(s[30])<<40 |
 		uint64(s[31])<<48 |
 		uint64(s[32])<<56
-	var __off1 uint64 = uint64(s[33]) |
+	var __off2 uint64 = uint64(s[33]) |
 		uint64(s[34])<<8 |
 		uint64(s[35])<<16 |
 		uint64(s[36])<<24 |
@@ -474,14 +440,6 @@ func (s Entity) Vstruct_Validate() bool {
 		uint64(s[38])<<40 |
 		uint64(s[39])<<48 |
 		uint64(s[40])<<56
-	var __off2 uint64 = uint64(s[41]) |
-		uint64(s[42])<<8 |
-		uint64(s[43])<<16 |
-		uint64(s[44])<<24 |
-		uint64(s[45])<<32 |
-		uint64(s[46])<<40 |
-		uint64(s[47])<<48 |
-		uint64(s[48])<<56
 	var __off3 uint64 = uint64(len(s))
 	if __off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3 {
 		return s.Inventory().Vstruct_Validate()
@@ -512,6 +470,133 @@ func (s Entity) String() string {
 	__b.WriteString(s.Inventory().String())
 	__b.WriteString("}")
 	return __b.String()
+}
+
+func Serialize_Coordinate(dst Coordinate, X int64, Y int64) Coordinate {
+	_ = dst[15]
+	var __tmp_0 = uint64(X)
+	dst[0] = byte(__tmp_0)
+	dst[1] = byte(__tmp_0 >> 8)
+	dst[2] = byte(__tmp_0 >> 16)
+	dst[3] = byte(__tmp_0 >> 24)
+	dst[4] = byte(__tmp_0 >> 32)
+	dst[5] = byte(__tmp_0 >> 40)
+	dst[6] = byte(__tmp_0 >> 48)
+	dst[7] = byte(__tmp_0 >> 56)
+	var __tmp_1 = uint64(Y)
+	dst[8] = byte(__tmp_1)
+	dst[9] = byte(__tmp_1 >> 8)
+	dst[10] = byte(__tmp_1 >> 16)
+	dst[11] = byte(__tmp_1 >> 24)
+	dst[12] = byte(__tmp_1 >> 32)
+	dst[13] = byte(__tmp_1 >> 40)
+	dst[14] = byte(__tmp_1 >> 48)
+	dst[15] = byte(__tmp_1 >> 56)
+
+	return dst
+}
+
+func Serialize_Item(dst Item, Type ItemType, Damage int64, Armor int64, Name string) Item {
+	_ = dst[24]
+	dst[0] = byte(Type)
+	var __tmp_1 = uint64(Damage)
+	dst[1] = byte(__tmp_1)
+	dst[2] = byte(__tmp_1 >> 8)
+	dst[3] = byte(__tmp_1 >> 16)
+	dst[4] = byte(__tmp_1 >> 24)
+	dst[5] = byte(__tmp_1 >> 32)
+	dst[6] = byte(__tmp_1 >> 40)
+	dst[7] = byte(__tmp_1 >> 48)
+	dst[8] = byte(__tmp_1 >> 56)
+	var __tmp_2 = uint64(Armor)
+	dst[9] = byte(__tmp_2)
+	dst[10] = byte(__tmp_2 >> 8)
+	dst[11] = byte(__tmp_2 >> 16)
+	dst[12] = byte(__tmp_2 >> 24)
+	dst[13] = byte(__tmp_2 >> 32)
+	dst[14] = byte(__tmp_2 >> 40)
+	dst[15] = byte(__tmp_2 >> 48)
+	dst[16] = byte(__tmp_2 >> 56)
+
+	var __index = uint64(25)
+	__tmp_3 := uint64(len(Name))
+	dst[17] = byte(__tmp_3)
+	dst[18] = byte(__tmp_3 >> 8)
+	dst[19] = byte(__tmp_3 >> 16)
+	dst[20] = byte(__tmp_3 >> 24)
+	dst[21] = byte(__tmp_3 >> 32)
+	dst[22] = byte(__tmp_3 >> 40)
+	dst[23] = byte(__tmp_3 >> 48)
+	dst[24] = byte(__tmp_3 >> 56)
+	copy(dst[__index:__index+__tmp_3], Name)
+	return dst
+}
+
+func Serialize_Inventory(dst Inventory, RightHand Item, LeftHand Item) Inventory {
+	_ = dst[15]
+
+	var __index = uint64(16)
+	__tmp_0 := uint64(len(RightHand))
+	dst[0] = byte(__tmp_0)
+	dst[1] = byte(__tmp_0 >> 8)
+	dst[2] = byte(__tmp_0 >> 16)
+	dst[3] = byte(__tmp_0 >> 24)
+	dst[4] = byte(__tmp_0 >> 32)
+	dst[5] = byte(__tmp_0 >> 40)
+	dst[6] = byte(__tmp_0 >> 48)
+	dst[7] = byte(__tmp_0 >> 56)
+	copy(dst[__index:__index+__tmp_0], RightHand)
+	__index += __tmp_0
+	__tmp_1 := uint64(len(LeftHand))
+	dst[8] = byte(__tmp_1)
+	dst[9] = byte(__tmp_1 >> 8)
+	dst[10] = byte(__tmp_1 >> 16)
+	dst[11] = byte(__tmp_1 >> 24)
+	dst[12] = byte(__tmp_1 >> 32)
+	dst[13] = byte(__tmp_1 >> 40)
+	dst[14] = byte(__tmp_1 >> 48)
+	dst[15] = byte(__tmp_1 >> 56)
+	copy(dst[__index:__index+__tmp_1], LeftHand)
+	return dst
+}
+
+func Serialize_Entity(dst Entity, Type Speices, Position Coordinate, Hp int64, Id UUID, Inventory Inventory) Entity {
+	_ = dst[40]
+	dst[0] = byte(Type)
+	copy(dst[1:17], Position)
+	var __tmp_2 = uint64(Hp)
+	dst[17] = byte(__tmp_2)
+	dst[18] = byte(__tmp_2 >> 8)
+	dst[19] = byte(__tmp_2 >> 16)
+	dst[20] = byte(__tmp_2 >> 24)
+	dst[21] = byte(__tmp_2 >> 32)
+	dst[22] = byte(__tmp_2 >> 40)
+	dst[23] = byte(__tmp_2 >> 48)
+	dst[24] = byte(__tmp_2 >> 56)
+
+	var __index = uint64(41)
+	__tmp_3 := uint64(len(Id))
+	dst[25] = byte(__tmp_3)
+	dst[26] = byte(__tmp_3 >> 8)
+	dst[27] = byte(__tmp_3 >> 16)
+	dst[28] = byte(__tmp_3 >> 24)
+	dst[29] = byte(__tmp_3 >> 32)
+	dst[30] = byte(__tmp_3 >> 40)
+	dst[31] = byte(__tmp_3 >> 48)
+	dst[32] = byte(__tmp_3 >> 56)
+	copy(dst[__index:__index+__tmp_3], Id)
+	__index += __tmp_3
+	__tmp_4 := uint64(len(Inventory))
+	dst[33] = byte(__tmp_4)
+	dst[34] = byte(__tmp_4 >> 8)
+	dst[35] = byte(__tmp_4 >> 16)
+	dst[36] = byte(__tmp_4 >> 24)
+	dst[37] = byte(__tmp_4 >> 32)
+	dst[38] = byte(__tmp_4 >> 40)
+	dst[39] = byte(__tmp_4 >> 48)
+	dst[40] = byte(__tmp_4 >> 56)
+	copy(dst[__index:__index+__tmp_4], Inventory)
+	return dst
 }
 
 type UUID = string
