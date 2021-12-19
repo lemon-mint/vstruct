@@ -19,8 +19,10 @@ func Generate(w io.Writer, i *ir.IR, packageName string) error {
 
 import (
 	"math"
+	"unsafe"
 )
 
+type _ = unsafe.Pointer
 var _ = math.Float32frombits
 var _ = math.Float64frombits
 
