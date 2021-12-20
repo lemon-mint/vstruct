@@ -271,7 +271,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		if !IsFixed {
 			fmt.Fprintf(w, "var __index = uint64(%d)\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
 			for i, f := range s.DynamicFields {
-				fmt.Fprintf(w, "__tmp_%d := uint64(len(%s))\n", tmpIdx, NameConv(f.Name))
+				fmt.Fprintf(w, "__tmp_%d := uint64(len(%s)) +__index\n", tmpIdx, NameConv(f.Name))
 				for j := 0; j < 8; j++ {
 					if j == 0 {
 						fmt.Fprintf(w, "dst[%d] = byte(__tmp_%d)\n", s.DynamicFieldHeadOffsets[i]+j, tmpIdx)
@@ -281,14 +281,14 @@ func writeStructs(w io.Writer, i *ir.IR) {
 				}
 				switch f.TypeInfo.FieldType {
 				case ir.FieldType_STRUCT:
-					fmt.Fprintf(w, "copy(dst[__index:__index+__tmp_%d], %s)\n", tmpIdx, NameConv(f.Name))
+					fmt.Fprintf(w, "copy(dst[__index:__tmp_%d], %s)\n", tmpIdx, NameConv(f.Name))
 				case ir.FieldType_BYTES:
-					fmt.Fprintf(w, "copy(dst[__index:__index+__tmp_%d], %s)\n", tmpIdx, NameConv(f.Name))
+					fmt.Fprintf(w, "copy(dst[__index:__tmp_%d], %s)\n", tmpIdx, NameConv(f.Name))
 				case ir.FieldType_STRING:
-					fmt.Fprintf(w, "copy(dst[__index:__index+__tmp_%d], %s)\n", tmpIdx, NameConv(f.Name))
+					fmt.Fprintf(w, "copy(dst[__index:__tmp_%d], %s)\n", tmpIdx, NameConv(f.Name))
 				}
 				if i != len(s.DynamicFields)-1 {
-					fmt.Fprintf(w, "__index += __tmp_%d\n", tmpIdx)
+					fmt.Fprintf(w, "__index += uint64(len(%s))\n", NameConv(f.Name))
 				}
 				tmpIdx++
 			}

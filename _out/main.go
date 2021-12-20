@@ -526,7 +526,7 @@ func Serialize_Item(dst Item, Type ItemType, Damage int64, Armor int64, Name str
 	dst[16] = byte(__tmp_2 >> 56)
 
 	var __index = uint64(25)
-	__tmp_3 := uint64(len(Name))
+	__tmp_3 := uint64(len(Name)) + __index
 	dst[17] = byte(__tmp_3)
 	dst[18] = byte(__tmp_3 >> 8)
 	dst[19] = byte(__tmp_3 >> 16)
@@ -535,7 +535,7 @@ func Serialize_Item(dst Item, Type ItemType, Damage int64, Armor int64, Name str
 	dst[22] = byte(__tmp_3 >> 40)
 	dst[23] = byte(__tmp_3 >> 48)
 	dst[24] = byte(__tmp_3 >> 56)
-	copy(dst[__index:__index+__tmp_3], Name)
+	copy(dst[__index:__tmp_3], Name)
 	return dst
 }
 
@@ -550,7 +550,7 @@ func Serialize_Inventory(dst Inventory, RightHand Item, LeftHand Item) Inventory
 	_ = dst[15]
 
 	var __index = uint64(16)
-	__tmp_0 := uint64(len(RightHand))
+	__tmp_0 := uint64(len(RightHand)) + __index
 	dst[0] = byte(__tmp_0)
 	dst[1] = byte(__tmp_0 >> 8)
 	dst[2] = byte(__tmp_0 >> 16)
@@ -559,9 +559,9 @@ func Serialize_Inventory(dst Inventory, RightHand Item, LeftHand Item) Inventory
 	dst[5] = byte(__tmp_0 >> 40)
 	dst[6] = byte(__tmp_0 >> 48)
 	dst[7] = byte(__tmp_0 >> 56)
-	copy(dst[__index:__index+__tmp_0], RightHand)
-	__index += __tmp_0
-	__tmp_1 := uint64(len(LeftHand))
+	copy(dst[__index:__tmp_0], RightHand)
+	__index += uint64(len(RightHand))
+	__tmp_1 := uint64(len(LeftHand)) + __index
 	dst[8] = byte(__tmp_1)
 	dst[9] = byte(__tmp_1 >> 8)
 	dst[10] = byte(__tmp_1 >> 16)
@@ -570,7 +570,7 @@ func Serialize_Inventory(dst Inventory, RightHand Item, LeftHand Item) Inventory
 	dst[13] = byte(__tmp_1 >> 40)
 	dst[14] = byte(__tmp_1 >> 48)
 	dst[15] = byte(__tmp_1 >> 56)
-	copy(dst[__index:__index+__tmp_1], LeftHand)
+	copy(dst[__index:__tmp_1], LeftHand)
 	return dst
 }
 
@@ -596,7 +596,7 @@ func Serialize_Entity(dst Entity, Type Speices, Position Coordinate, Hp int64, I
 	dst[24] = byte(__tmp_2 >> 56)
 
 	var __index = uint64(41)
-	__tmp_3 := uint64(len(Id))
+	__tmp_3 := uint64(len(Id)) + __index
 	dst[25] = byte(__tmp_3)
 	dst[26] = byte(__tmp_3 >> 8)
 	dst[27] = byte(__tmp_3 >> 16)
@@ -605,9 +605,9 @@ func Serialize_Entity(dst Entity, Type Speices, Position Coordinate, Hp int64, I
 	dst[30] = byte(__tmp_3 >> 40)
 	dst[31] = byte(__tmp_3 >> 48)
 	dst[32] = byte(__tmp_3 >> 56)
-	copy(dst[__index:__index+__tmp_3], Id)
-	__index += __tmp_3
-	__tmp_4 := uint64(len(Inventory))
+	copy(dst[__index:__tmp_3], Id)
+	__index += uint64(len(Id))
+	__tmp_4 := uint64(len(Inventory)) + __index
 	dst[33] = byte(__tmp_4)
 	dst[34] = byte(__tmp_4 >> 8)
 	dst[35] = byte(__tmp_4 >> 16)
@@ -616,7 +616,7 @@ func Serialize_Entity(dst Entity, Type Speices, Position Coordinate, Hp int64, I
 	dst[38] = byte(__tmp_4 >> 40)
 	dst[39] = byte(__tmp_4 >> 48)
 	dst[40] = byte(__tmp_4 >> 56)
-	copy(dst[__index:__index+__tmp_4], Inventory)
+	copy(dst[__index:__tmp_4], Inventory)
 	return dst
 }
 
