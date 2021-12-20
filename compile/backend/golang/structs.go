@@ -295,5 +295,27 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		}
 		fmt.Fprintf(w, "return dst\n")
 		fmt.Fprintf(w, "}\n\n")
+
+		fmt.Fprintf(w, "func New_%s(", TypeConv(s.Name))
+		for i, f := range allFields {
+			if i != 0 {
+				fmt.Fprintf(w, ", ")
+			}
+			fmt.Fprintf(w, "%s %s", NameConv(f.Name), TypeConv(f.Type))
+		}
+		fmt.Fprintf(w, ") %s {\n", TypeConv(s.Name))
+		fmt.Fprintf(w, "var __vstruct__size = %d", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+		for _, f := range s.DynamicFields {
+			fmt.Fprintf(w, "+len(%s)", NameConv(f.Name))
+		}
+		fmt.Fprintf(w, "\n")
+		fmt.Fprintf(w, "var __vstruct__buf = make(%s, __vstruct__size)\n", TypeConv(s.Name))
+		fmt.Fprintf(w, "__vstruct__buf = Serialize_%s(__vstruct__buf", TypeConv(s.Name))
+		for _, f := range allFields {
+			fmt.Fprintf(w, ", %s", NameConv(f.Name))
+		}
+		fmt.Fprintf(w, ")\n")
+		fmt.Fprintf(w, "return __vstruct__buf\n")
+		fmt.Fprintf(w, "}\n\n")
 	}
 }

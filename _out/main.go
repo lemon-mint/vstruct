@@ -496,6 +496,13 @@ func Serialize_Coordinate(dst Coordinate, X int64, Y int64) Coordinate {
 	return dst
 }
 
+func New_Coordinate(X int64, Y int64) Coordinate {
+	var __vstruct__size = 16
+	var __vstruct__buf = make(Coordinate, __vstruct__size)
+	__vstruct__buf = Serialize_Coordinate(__vstruct__buf, X, Y)
+	return __vstruct__buf
+}
+
 func Serialize_Item(dst Item, Type ItemType, Damage int64, Armor int64, Name string) Item {
 	_ = dst[24]
 	dst[0] = byte(Type)
@@ -532,6 +539,13 @@ func Serialize_Item(dst Item, Type ItemType, Damage int64, Armor int64, Name str
 	return dst
 }
 
+func New_Item(Type ItemType, Damage int64, Armor int64, Name string) Item {
+	var __vstruct__size = 25 + len(Name)
+	var __vstruct__buf = make(Item, __vstruct__size)
+	__vstruct__buf = Serialize_Item(__vstruct__buf, Type, Damage, Armor, Name)
+	return __vstruct__buf
+}
+
 func Serialize_Inventory(dst Inventory, RightHand Item, LeftHand Item) Inventory {
 	_ = dst[15]
 
@@ -558,6 +572,13 @@ func Serialize_Inventory(dst Inventory, RightHand Item, LeftHand Item) Inventory
 	dst[15] = byte(__tmp_1 >> 56)
 	copy(dst[__index:__index+__tmp_1], LeftHand)
 	return dst
+}
+
+func New_Inventory(RightHand Item, LeftHand Item) Inventory {
+	var __vstruct__size = 16 + len(RightHand) + len(LeftHand)
+	var __vstruct__buf = make(Inventory, __vstruct__size)
+	__vstruct__buf = Serialize_Inventory(__vstruct__buf, RightHand, LeftHand)
+	return __vstruct__buf
 }
 
 func Serialize_Entity(dst Entity, Type Speices, Position Coordinate, Hp int64, Id UUID, Inventory Inventory) Entity {
@@ -597,6 +618,13 @@ func Serialize_Entity(dst Entity, Type Speices, Position Coordinate, Hp int64, I
 	dst[40] = byte(__tmp_4 >> 56)
 	copy(dst[__index:__index+__tmp_4], Inventory)
 	return dst
+}
+
+func New_Entity(Type Speices, Position Coordinate, Hp int64, Id UUID, Inventory Inventory) Entity {
+	var __vstruct__size = 41 + len(Id) + len(Inventory)
+	var __vstruct__buf = make(Entity, __vstruct__size)
+	__vstruct__buf = Serialize_Entity(__vstruct__buf, Type, Position, Hp, Id, Inventory)
+	return __vstruct__buf
 }
 
 type UUID = string
