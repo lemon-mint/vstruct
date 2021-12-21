@@ -9,6 +9,7 @@ import (
 
 	"github.com/kr/pretty"
 	"github.com/lemon-mint/vstruct/compile/backend/golang"
+	"github.com/lemon-mint/vstruct/compile/backend/rust"
 	"github.com/lemon-mint/vstruct/compile/frontend"
 	"github.com/lemon-mint/vstruct/lexer"
 	"github.com/lemon-mint/vstruct/parser"
@@ -58,6 +59,21 @@ func main() {
 	out := buf.String()
 	fmt.Println(out)
 	f, err := os.Create("./_out/main.go")
+	if err != nil {
+		panic(err)
+	}
+	f.WriteString(out)
+	f.Close()
+
+	buf.Reset()
+	err = rust.Generate(&buf, goir, "main")
+	if err != nil {
+		fmt.Println(buf.String())
+		panic(err)
+	}
+	out = buf.String()
+	fmt.Println(out)
+	f, err = os.Create("./_out/main.rs")
 	if err != nil {
 		panic(err)
 	}
