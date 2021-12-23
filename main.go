@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/kr/pretty"
+	"github.com/lemon-mint/vstruct/compile/backend/dart"
 	"github.com/lemon-mint/vstruct/compile/backend/golang"
 	"github.com/lemon-mint/vstruct/compile/backend/rust"
 	"github.com/lemon-mint/vstruct/compile/frontend"
@@ -74,6 +75,21 @@ func main() {
 	out = buf.String()
 	fmt.Println(out)
 	f, err = os.Create("./_out/main.rs")
+	if err != nil {
+		panic(err)
+	}
+	f.WriteString(out)
+	f.Close()
+
+	buf.Reset()
+	err = dart.Generate(&buf, goir, "main")
+	if err != nil {
+		fmt.Println(buf.String())
+		panic(err)
+	}
+	out = buf.String()
+	fmt.Println(out)
+	f, err = os.Create("./_out/main.dart")
 	if err != nil {
 		panic(err)
 	}
