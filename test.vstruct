@@ -1,16 +1,16 @@
 enum Speices {
-    Human,
-    Elf,
-    Orc,
-    Dwarf,
-    Gnome,
-    Halfling,
-    HalfElf,
-    HalfOrc,
-    Dragonborn,
-    Tiefling,
-    Gnoll,
-    Goblin
+    human,
+    elf,
+    orc,
+    dwarf,
+    gnome,
+    halfling,
+    halfElf,
+    halfOrc,
+    dragonborn,
+    tiefling,
+    gnoll,
+    goblin
 }
 
 struct Coordinate {
@@ -19,9 +19,9 @@ struct Coordinate {
 }
 
 enum ItemType {
-    Weapon,
-    Armor,
-    Potion
+    weapon,
+    armor,
+    potion
 }
 
 struct Item {

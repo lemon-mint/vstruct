@@ -1,9 +1,7 @@
 package dart
 
-import "strings"
-
 func NameConv(in string) string {
-	return strings.Title(in)
+	return in
 }
 
 func TypeConv(in string) string {

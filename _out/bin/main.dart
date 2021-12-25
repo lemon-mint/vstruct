@@ -6,52 +6,52 @@ import 'dart:convert';
 // Package Name: main
 
 enum Speices {
-	Human,
-	Elf,
-	Orc,
-	Dwarf,
-	Gnome,
-	Halfling,
-	HalfElf,
-	HalfOrc,
-	Dragonborn,
-	Tiefling,
-	Gnoll,
-	Goblin,
+	human,
+	elf,
+	orc,
+	dwarf,
+	gnome,
+	halfling,
+	halfElf,
+	halfOrc,
+	dragonborn,
+	tiefling,
+	gnoll,
+	goblin,
 }
 
 enum ItemType {
-	Weapon,
-	Armor,
-	Potion,
+	weapon,
+	armor,
+	potion,
 }
 
 class Coordinate {
-  Uint8List vstruct__buf = Uint8List(0);
+  Uint8List vData = Uint8List(0);
 
-  Coordinate(I64 X, I64 Y) {
-    int __vstruct__size = 16;
-    vstruct__buf = Uint8List(__vstruct__size);
-    vstruct__buf = Serialize(vstruct__buf, X, Y);
+  Coordinate(I64 _x, I64 _y) {
+    int vSize = 16;
+    vData = Uint8List(vSize);
+    vData = vSerialize(vData, _x, _y);
   }
 
-  int get lengthInBytes => vstruct__buf.lengthInBytes;
+  int get lengthInBytes => vData.lengthInBytes;
 
-  Uint8List as_bytes_mut() {
-    return vstruct__buf;
+  Uint8List toBytes() {
+    return vData;
   }
 
   Coordinate.fromBytes(Uint8List b) {
-    vstruct__buf = b;
+    vData = b;
   }
 
-  Uint8List Serialize(Uint8List dst, I64 X, I64 Y) {
-    Uint8List __tmp_0 = X.toBytes();
+  Uint8List vSerialize(Uint8List dst, I64 x, I64 y) {
+    Uint8List __tmp_0 = x.toBytes();
     for (int i = 0; i < 8; i++) {
       dst[0 + i] = __tmp_0[i];
     }
 
-    Uint8List __tmp_1 = Y.toBytes();
+    Uint8List __tmp_1 = y.toBytes();
     for (int i = 0; i < 8; i++) {
       dst[8 + i] = __tmp_1[i];
     }
@@ -59,187 +59,222 @@ class Coordinate {
     return dst;
   }
 
-  I64 X() {
-    I64 _value = I64.fromBytes(vstruct__buf.sublist(0, 8));
+  I64 get x {
+    I64 _value = I64.fromBytes(vData.sublist(0, 8));
     return _value;
   }
 
-  I64 Y() {
-    I64 _value = I64.fromBytes(vstruct__buf.sublist(8, 16));
+  I64 get y {
+    I64 _value = I64.fromBytes(vData.sublist(8, 16));
     return _value;
   }
 
 }
 
 class Item {
-  Uint8List vstruct__buf = Uint8List(0);
+  Uint8List vData = Uint8List(0);
 
-  Item(ItemType Type, I64 Damage, I64 Armor, String Name) {
-    int __vstruct__size = 25 + Name.length;
-    vstruct__buf = Uint8List(__vstruct__size);
-    vstruct__buf = Serialize(vstruct__buf, Type, Damage, Armor, Name);
+  Item(ItemType _type, I64 _damage, I64 _armor, String _name) {
+    int vSize = 25 + _name.length;
+    vData = Uint8List(vSize);
+    vData = vSerialize(vData, _type, _damage, _armor, _name);
   }
 
-  int get lengthInBytes => vstruct__buf.lengthInBytes;
+  int get lengthInBytes => vData.lengthInBytes;
 
-  Uint8List as_bytes_mut() {
-    return vstruct__buf;
+  Uint8List toBytes() {
+    return vData;
   }
 
   Item.fromBytes(Uint8List b) {
-    vstruct__buf = b;
+    vData = b;
   }
 
-  Uint8List Serialize(Uint8List dst, ItemType Type, I64 Damage, I64 Armor, String Name) {
-    dst[0] = Type.index;
+  Uint8List vSerialize(Uint8List dst, ItemType type, I64 damage, I64 armor, String name) {
+    dst[0] = type.index;
 
-    Uint8List __tmp_1 = Damage.toBytes();
+    Uint8List __tmp_1 = damage.toBytes();
     for (int i = 0; i < 8; i++) {
       dst[1 + i] = __tmp_1[i];
     }
 
-    Uint8List __tmp_2 = Armor.toBytes();
+    Uint8List __tmp_2 = armor.toBytes();
     for (int i = 0; i < 8; i++) {
       dst[9 + i] = __tmp_2[i];
     }
 
     U64 __index = U64(25);
-    Uint8List __tmp_3 = (U64(Name.length) + __index).toBytes();
+    Uint8List __tmp_3 = (U64(name.length) + __index).toBytes();
     for (int i = 0; i < 8; i++) {
       dst[17 + i] = __tmp_3[i];
     }
-    List<int> __tmp_4 = utf8.encode(Name);
+    List<int> __tmp_4 = utf8.encode(name);
     Uint8List __tmp_5 = Uint8List.fromList(__tmp_4);
-    for (int i = 0; i < Name.length; i++) {
+    for (int i = 0; i < name.length; i++) {
       dst[(__index + U64(i)).value.toInt()] = __tmp_5[i];
     }
     return dst;
   }
 
-  ItemType Type() {
-    return ItemType.values[vstruct__buf[0]];
+  ItemType get type {
+    return ItemType.values[vData[0]];
   }
 
-  I64 Damage() {
-    I64 _value = I64.fromBytes(vstruct__buf.sublist(1, 9));
+  I64 get damage {
+    I64 _value = I64.fromBytes(vData.sublist(1, 9));
     return _value;
   }
 
-  I64 Armor() {
-    I64 _value = I64.fromBytes(vstruct__buf.sublist(9, 17));
+  I64 get armor {
+    I64 _value = I64.fromBytes(vData.sublist(9, 17));
     return _value;
+  }
+
+  String get name {
+    U64 __off0 = U64(25);
+    U64 __off1 = U64.fromBytes(vData.sublist(17, 25));
+
+    return utf8.decode(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
   }
 
 }
 
 class Inventory {
-  Uint8List vstruct__buf = Uint8List(0);
+  Uint8List vData = Uint8List(0);
 
-  Inventory(Item RightHand, Item LeftHand) {
-    int __vstruct__size = 16 + RightHand.lengthInBytes + LeftHand.lengthInBytes;
-    vstruct__buf = Uint8List(__vstruct__size);
-    vstruct__buf = Serialize(vstruct__buf, RightHand, LeftHand);
+  Inventory(Item _rightHand, Item _leftHand) {
+    int vSize = 16 + _rightHand.lengthInBytes + _leftHand.lengthInBytes;
+    vData = Uint8List(vSize);
+    vData = vSerialize(vData, _rightHand, _leftHand);
   }
 
-  int get lengthInBytes => vstruct__buf.lengthInBytes;
+  int get lengthInBytes => vData.lengthInBytes;
 
-  Uint8List as_bytes_mut() {
-    return vstruct__buf;
+  Uint8List toBytes() {
+    return vData;
   }
 
   Inventory.fromBytes(Uint8List b) {
-    vstruct__buf = b;
+    vData = b;
   }
 
-  Uint8List Serialize(Uint8List dst, Item RightHand, Item LeftHand) {
+  Uint8List vSerialize(Uint8List dst, Item rightHand, Item leftHand) {
     U64 __index = U64(16);
-    Uint8List __tmp_0 = (U64(RightHand.lengthInBytes) + __index).toBytes();
+    Uint8List __tmp_0 = (U64(rightHand.lengthInBytes) + __index).toBytes();
     for (int i = 0; i < 8; i++) {
       dst[0 + i] = __tmp_0[i];
     }
-    Uint8List __tmp_1 = RightHand.as_bytes_mut();
-    for (int i = 0; i < RightHand.lengthInBytes; i++) {
+    Uint8List __tmp_1 = rightHand.toBytes();
+    for (int i = 0; i < rightHand.lengthInBytes; i++) {
       dst[(__index + U64(i)).value.toInt()] = __tmp_1[i];
     }
-    __index = __index + U64(RightHand.lengthInBytes);
-    Uint8List __tmp_2 = (U64(LeftHand.lengthInBytes) + __index).toBytes();
+    __index = __index + U64(rightHand.lengthInBytes);
+    Uint8List __tmp_2 = (U64(leftHand.lengthInBytes) + __index).toBytes();
     for (int i = 0; i < 8; i++) {
       dst[8 + i] = __tmp_2[i];
     }
-    Uint8List __tmp_3 = LeftHand.as_bytes_mut();
-    for (int i = 0; i < LeftHand.lengthInBytes; i++) {
+    Uint8List __tmp_3 = leftHand.toBytes();
+    for (int i = 0; i < leftHand.lengthInBytes; i++) {
       dst[(__index + U64(i)).value.toInt()] = __tmp_3[i];
     }
     return dst;
   }
 
+  Item get rightHand {
+    U64 __off0 = U64(16);
+    U64 __off1 = U64.fromBytes(vData.sublist(0, 8));
+
+    return Item.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
+  }
+
+  Item get leftHand {
+    U64 __off0 = U64.fromBytes(vData.sublist(0, 8));
+    U64 __off1 = U64.fromBytes(vData.sublist(8, 16));
+
+    return Item.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
+  }
+
 }
 
 class Entity {
-  Uint8List vstruct__buf = Uint8List(0);
+  Uint8List vData = Uint8List(0);
 
-  Entity(Speices Type, Coordinate Position, I64 Hp, UUID Id, Inventory Inventory) {
-    int __vstruct__size = 41 + Id.length + Inventory.lengthInBytes;
-    vstruct__buf = Uint8List(__vstruct__size);
-    vstruct__buf = Serialize(vstruct__buf, Type, Position, Hp, Id, Inventory);
+  Entity(Speices _type, Coordinate _position, I64 _hp, UUID _id, Inventory _inventory) {
+    int vSize = 41 + _id.length + _inventory.lengthInBytes;
+    vData = Uint8List(vSize);
+    vData = vSerialize(vData, _type, _position, _hp, _id, _inventory);
   }
 
-  int get lengthInBytes => vstruct__buf.lengthInBytes;
+  int get lengthInBytes => vData.lengthInBytes;
 
-  Uint8List as_bytes_mut() {
-    return vstruct__buf;
+  Uint8List toBytes() {
+    return vData;
   }
 
   Entity.fromBytes(Uint8List b) {
-    vstruct__buf = b;
+    vData = b;
   }
 
-  Uint8List Serialize(Uint8List dst, Speices Type, Coordinate Position, I64 Hp, UUID Id, Inventory Inventory) {
-    dst[0] = Type.index;
+  Uint8List vSerialize(Uint8List dst, Speices type, Coordinate position, I64 hp, UUID id, Inventory inventory) {
+    dst[0] = type.index;
 
-    Uint8List __tmp_1 = Position.as_bytes_mut();
-    for (int i = 0; i < Position.lengthInBytes; i++) {
+    Uint8List __tmp_1 = position.toBytes();
+    for (int i = 0; i < position.lengthInBytes; i++) {
       dst[1 + i] = __tmp_1[i];
     }
 
-    Uint8List __tmp_2 = Hp.toBytes();
+    Uint8List __tmp_2 = hp.toBytes();
     for (int i = 0; i < 8; i++) {
       dst[17 + i] = __tmp_2[i];
     }
 
     U64 __index = U64(41);
-    Uint8List __tmp_3 = (U64(Id.length) + __index).toBytes();
+    Uint8List __tmp_3 = (U64(id.length) + __index).toBytes();
     for (int i = 0; i < 8; i++) {
       dst[25 + i] = __tmp_3[i];
     }
-    List<int> __tmp_4 = utf8.encode(Id);
+    List<int> __tmp_4 = utf8.encode(id);
     Uint8List __tmp_5 = Uint8List.fromList(__tmp_4);
-    for (int i = 0; i < Id.length; i++) {
+    for (int i = 0; i < id.length; i++) {
       dst[(__index + U64(i)).value.toInt()] = __tmp_5[i];
     }
-    __index = __index + U64(Id.length);
-    Uint8List __tmp_6 = (U64(Inventory.lengthInBytes) + __index).toBytes();
+    __index = __index + U64(id.length);
+    Uint8List __tmp_6 = (U64(inventory.lengthInBytes) + __index).toBytes();
     for (int i = 0; i < 8; i++) {
       dst[33 + i] = __tmp_6[i];
     }
-    Uint8List __tmp_7 = Inventory.as_bytes_mut();
-    for (int i = 0; i < Inventory.lengthInBytes; i++) {
+    Uint8List __tmp_7 = inventory.toBytes();
+    for (int i = 0; i < inventory.lengthInBytes; i++) {
       dst[(__index + U64(i)).value.toInt()] = __tmp_7[i];
     }
     return dst;
   }
 
-  Speices Type() {
-    return Speices.values[vstruct__buf[0]];
+  Speices get type {
+    return Speices.values[vData[0]];
   }
 
-  Coordinate Position() {
-    return Coordinate.fromBytes(vstruct__buf.sublist(1, 17));
+  Coordinate get position {
+    return Coordinate.fromBytes(vData.sublist(1, 17));
   }
 
-  I64 Hp() {
-    I64 _value = I64.fromBytes(vstruct__buf.sublist(17, 25));
+  I64 get hp {
+    I64 _value = I64.fromBytes(vData.sublist(17, 25));
     return _value;
+  }
+
+  UUID get id {
+    U64 __off0 = U64(41);
+    U64 __off1 = U64.fromBytes(vData.sublist(25, 33));
+
+    return utf8.decode(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
+  }
+
+  Inventory get inventory {
+    U64 __off0 = U64.fromBytes(vData.sublist(25, 33));
+    U64 __off1 = U64.fromBytes(vData.sublist(33, 41));
+
+    return Inventory.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
   }
 
 }

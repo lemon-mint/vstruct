@@ -10,7 +10,7 @@ import (
 func writeStructs(w io.Writer, i *ir.IR) {
 	for _, s := range i.Structs {
 		fmt.Fprintf(w, "class %s {\n", NameConv(s.Name))
-		fmt.Fprintf(w, "  Uint8List vstruct__buf = Uint8List(0);\n\n")
+		fmt.Fprintf(w, "  Uint8List vData = Uint8List(0);\n\n")
 		var allFields []*ir.Field
 		allFields = append(allFields, s.FixedFields...)
 		allFields = append(allFields, s.DynamicFields...)
@@ -19,39 +19,39 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			if i != 0 {
 				fmt.Fprintf(w, ", ")
 			}
-			fmt.Fprintf(w, "%s %s", TypeConv(f.Type), NameConv(f.Name))
+			fmt.Fprintf(w, "%s _%s", TypeConv(f.Type), NameConv(f.Name))
 		}
 		fmt.Fprintf(w, ") {\n")
-		fmt.Fprintf(w, "    int __vstruct__size = %d", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+		fmt.Fprintf(w, "    int vSize = %d", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
 		for _, f := range s.DynamicFields {
 			switch f.TypeInfo.FieldType {
 			case ir.FieldType_BYTES:
-				fmt.Fprintf(w, " + %s.lengthInBytes", NameConv(f.Name))
+				fmt.Fprintf(w, " + _%s.lengthInBytes", NameConv(f.Name))
 			case ir.FieldType_STRING:
-				fmt.Fprintf(w, " + %s.length", NameConv(f.Name))
+				fmt.Fprintf(w, " + _%s.length", NameConv(f.Name))
 			case ir.FieldType_STRUCT:
-				fmt.Fprintf(w, " + %s.lengthInBytes", NameConv(f.Name))
+				fmt.Fprintf(w, " + _%s.lengthInBytes", NameConv(f.Name))
 			}
 		}
 		fmt.Fprintf(w, ";\n")
-		fmt.Fprintf(w, "    vstruct__buf = Uint8List(__vstruct__size);\n")
-		fmt.Fprintf(w, "    vstruct__buf = Serialize(vstruct__buf")
+		fmt.Fprintf(w, "    vData = Uint8List(vSize);\n")
+		fmt.Fprintf(w, "    vData = vSerialize(vData")
 		for _, f := range allFields {
-			fmt.Fprintf(w, ", %s", NameConv(f.Name))
+			fmt.Fprintf(w, ", _%s", NameConv(f.Name))
 		}
 		fmt.Fprintf(w, ");\n")
 		fmt.Fprintf(w, "  }\n\n")
-		fmt.Fprintf(w, "  int get lengthInBytes => vstruct__buf.lengthInBytes;\n\n")
+		fmt.Fprintf(w, "  int get lengthInBytes => vData.lengthInBytes;\n\n")
 
-		fmt.Fprintf(w, "  Uint8List as_bytes_mut() {\n")
-		fmt.Fprintf(w, "    return vstruct__buf;\n")
+		fmt.Fprintf(w, "  Uint8List toBytes() {\n")
+		fmt.Fprintf(w, "    return vData;\n")
 		fmt.Fprintf(w, "  }\n\n")
 
 		fmt.Fprintf(w, "  %s.fromBytes(Uint8List b) {\n", TypeConv(s.Name))
-		fmt.Fprintf(w, "    vstruct__buf = b;\n")
+		fmt.Fprintf(w, "    vData = b;\n")
 		fmt.Fprintf(w, "  }\n\n")
 
-		fmt.Fprintf(w, "  Uint8List Serialize(Uint8List dst")
+		fmt.Fprintf(w, "  Uint8List vSerialize(Uint8List dst")
 		for _, f := range allFields {
 			fmt.Fprintf(w, ", %s %s", TypeConv(f.Type), NameConv(f.Name))
 		}
@@ -64,7 +64,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			switch f.TypeInfo.FieldType {
 			case ir.FieldType_STRUCT:
 				//fmt.Fprintf(w, "copy(dst[%d:%d], %s)\n", f.Offset, f.Offset+f.TypeInfo.Size, NameConv(f.Name))
-				fmt.Fprintf(w, "    Uint8List __tmp_%d = %s.as_bytes_mut();\n", tmpIdx, NameConv(f.Name))
+				fmt.Fprintf(w, "    Uint8List __tmp_%d = %s.toBytes();\n", tmpIdx, NameConv(f.Name))
 				fmt.Fprintf(w, "    for (int i = 0; i < %s.lengthInBytes; i++) {\n", NameConv(f.Name))
 				fmt.Fprintf(w, "      dst[%d + i] = __tmp_%d[i];\n", f.Offset, tmpIdx)
 				fmt.Fprintf(w, "    }\n")
@@ -125,7 +125,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 				tmpIdx++
 				switch f.TypeInfo.FieldType {
 				case ir.FieldType_STRUCT:
-					fmt.Fprintf(w, "    Uint8List __tmp_%d = %s.as_bytes_mut();\n", tmpIdx, NameConv(f.Name))
+					fmt.Fprintf(w, "    Uint8List __tmp_%d = %s.toBytes();\n", tmpIdx, NameConv(f.Name))
 					fmt.Fprintf(w, "    for (int i = 0; i < %s.lengthInBytes; i++) {\n", NameConv(f.Name))
 					fmt.Fprintf(w, "      dst[(__index + U64(i)).value.toInt()] = __tmp_%d[i];\n", tmpIdx)
 					fmt.Fprintf(w, "    }\n")
@@ -246,28 +246,74 @@ func writeStructs(w io.Writer, i *ir.IR) {
 							}
 		*/
 		for _, f := range s.FixedFields {
-			fmt.Fprintf(w, "  %s %s() {\n", TypeConv(f.Type), NameConv(f.Name))
+			fmt.Fprintf(w, "  %s get %s {\n", TypeConv(f.Type), NameConv(f.Name))
 			switch f.TypeInfo.FieldType {
 			case ir.FieldType_BOOL:
 				fmt.Fprintf(w, "    return s[%d] != 0;\n", f.Offset)
 			case ir.FieldType_UINT:
-				fmt.Fprintf(w, "    U%d _value = U%d.fromBytes(vstruct__buf.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
+				fmt.Fprintf(w, "    U%d _value = U%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
 				fmt.Fprintf(w, "    return _value;\n")
 			case ir.FieldType_INT:
-				fmt.Fprintf(w, "    I%d _value = I%d.fromBytes(vstruct__buf.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
+				fmt.Fprintf(w, "    I%d _value = I%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
 				fmt.Fprintf(w, "    return _value;\n")
 			case ir.FieldType_FLOAT:
-				fmt.Fprintf(w, "    F%d _value = F%d.fromBytes(vstruct__buf.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
+				fmt.Fprintf(w, "    F%d _value = F%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
 				fmt.Fprintf(w, "    return _value;\n")
 			case ir.FieldType_STRUCT:
-				fmt.Fprintf(w, "    return %s.fromBytes(vstruct__buf.sublist(%d, %d));\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
+				fmt.Fprintf(w, "    return %s.fromBytes(vData.sublist(%d, %d));\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
 			case ir.FieldType_ENUM:
 				if f.TypeInfo.Size == 1 {
-					fmt.Fprintf(w, "    return %s.values[vstruct__buf[%d]];\n", TypeConv(f.Type), f.Offset)
+					fmt.Fprintf(w, "    return %s.values[vData[%d]];\n", TypeConv(f.Type), f.Offset)
 				} else {
-					fmt.Fprintf(w, "    U%d _value = U%d.fromBytes(vstruct__buf.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
+					fmt.Fprintf(w, "    U%d _value = U%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
 					fmt.Fprintf(w, "    return %s.values[_value.value];\n", TypeConv(f.Type))
 				}
+			}
+			fmt.Fprintf(w, "  }\n\n")
+		}
+
+		for i, f := range s.DynamicFields {
+			fmt.Fprintf(w, "  %s get %s {\n", TypeConv(f.Type), NameConv(f.Name))
+			fmt.Fprintf(w, "    U64 __off0 = ")
+			if i == 0 {
+				//fmt.Fprintf(w, "%d;", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+				fmt.Fprintf(w, "U64(%d);", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+			} else {
+				/*for j := 0; j < 8; j++ {
+					if j == 0 {
+						fmt.Fprintf(w, "uint64(s[%d])", s.DynamicFieldHeadOffsets[i]-8+j)
+					} else {
+						fmt.Fprintf(w, "|\nuint64(s[%d])<<%d", s.DynamicFieldHeadOffsets[i]-8+j, j*8)
+					}
+				}*/
+				fmt.Fprintf(w, "U64.fromBytes(vData.sublist(%d, %d));", s.DynamicFieldHeadOffsets[i]-8, s.DynamicFieldHeadOffsets[i])
+			}
+			fmt.Fprintf(w, "\n    U64 __off1 = ")
+			/*
+				for j := 0; j < 8; j++ {
+					if j == 0 {
+						fmt.Fprintf(w, "uint64(s[%d])", s.DynamicFieldHeadOffsets[i]+j)
+					} else {
+						fmt.Fprintf(w, "|\nuint64(s[%d])<<%d", s.DynamicFieldHeadOffsets[i]+j, j*8)
+					}
+				}
+			*/
+			fmt.Fprintf(w, "U64.fromBytes(vData.sublist(%d, %d));\n", s.DynamicFieldHeadOffsets[i], s.DynamicFieldHeadOffsets[i]+8)
+			switch f.TypeInfo.FieldType {
+			case ir.FieldType_STRUCT:
+				// fmt.Fprintf(w, "\nreturn %s(s[__off0:__off1])\n", TypeConv(f.Type))
+				fmt.Fprintf(w, "\n    return %s.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));\n", TypeConv(f.Type))
+			case ir.FieldType_STRING:
+				// fmt.Fprintf(w, "\nvar __v = s[__off0:__off1]\n")
+				// if f.Type == "string" {
+				// 	fmt.Fprintf(w, "\nreturn *(*string)(unsafe.Pointer(&__v))\n")
+				// } else {
+				// 	fmt.Fprintf(w, "\nreturn *(*%s)(unsafe.Pointer(&__v))\n", TypeConv(f.Type))
+				// }
+				fmt.Fprintf(w, "\n    return utf8.decode(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));\n")
+			case ir.FieldType_BYTES:
+				//fmt.Fprintf(w, "\nreturn %s(s[__off0:__off1])\n", TypeConv(f.Type))
+				fmt.Fprintf(w, "\n    return vData.sublist(__off0.value.toInt(), __off1.value.toInt());\n")
 			}
 			fmt.Fprintf(w, "  }\n\n")
 		}
