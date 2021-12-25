@@ -13,4 +13,4 @@ environment:
 dev_dependencies:
   lints: ^1.0.0
 dependencies: 
-  primitive: ^1.0.1
+  primitive: ^2.1.0
