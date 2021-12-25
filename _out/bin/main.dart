@@ -27,18 +27,22 @@ enum ItemType {
 }
 
 class Coordinate {
-  Uint8List __vstruct__buf = Uint8List(0);
+  Uint8List vstruct__buf = Uint8List(0);
 
   Coordinate(I64 X, I64 Y) {
     int __vstruct__size = 16;
-    __vstruct__buf = Uint8List(__vstruct__size);
-    __vstruct__buf = Serialize(__vstruct__buf, X, Y);
+    vstruct__buf = Uint8List(__vstruct__size);
+    vstruct__buf = Serialize(vstruct__buf, X, Y);
   }
 
-  int get lengthInBytes => __vstruct__buf.lengthInBytes;
+  int get lengthInBytes => vstruct__buf.lengthInBytes;
 
   Uint8List as_bytes_mut() {
-    return __vstruct__buf;
+    return vstruct__buf;
+  }
+
+  Coordinate.fromBytes(Uint8List b) {
+    vstruct__buf = b;
   }
 
   Uint8List Serialize(Uint8List dst, I64 X, I64 Y) {
@@ -55,21 +59,35 @@ class Coordinate {
     return dst;
   }
 
+  I64 X() {
+    I64 _value = I64.fromBytes(vstruct__buf.sublist(0, 8));
+    return _value;
+  }
+
+  I64 Y() {
+    I64 _value = I64.fromBytes(vstruct__buf.sublist(8, 16));
+    return _value;
+  }
+
 }
 
 class Item {
-  Uint8List __vstruct__buf = Uint8List(0);
+  Uint8List vstruct__buf = Uint8List(0);
 
   Item(ItemType Type, I64 Damage, I64 Armor, String Name) {
     int __vstruct__size = 25 + Name.length;
-    __vstruct__buf = Uint8List(__vstruct__size);
-    __vstruct__buf = Serialize(__vstruct__buf, Type, Damage, Armor, Name);
+    vstruct__buf = Uint8List(__vstruct__size);
+    vstruct__buf = Serialize(vstruct__buf, Type, Damage, Armor, Name);
   }
 
-  int get lengthInBytes => __vstruct__buf.lengthInBytes;
+  int get lengthInBytes => vstruct__buf.lengthInBytes;
 
   Uint8List as_bytes_mut() {
-    return __vstruct__buf;
+    return vstruct__buf;
+  }
+
+  Item.fromBytes(Uint8List b) {
+    vstruct__buf = b;
   }
 
   Uint8List Serialize(Uint8List dst, ItemType Type, I64 Damage, I64 Armor, String Name) {
@@ -98,21 +116,39 @@ class Item {
     return dst;
   }
 
+  ItemType Type() {
+    return ItemType.values[vstruct__buf[0]];
+  }
+
+  I64 Damage() {
+    I64 _value = I64.fromBytes(vstruct__buf.sublist(1, 9));
+    return _value;
+  }
+
+  I64 Armor() {
+    I64 _value = I64.fromBytes(vstruct__buf.sublist(9, 17));
+    return _value;
+  }
+
 }
 
 class Inventory {
-  Uint8List __vstruct__buf = Uint8List(0);
+  Uint8List vstruct__buf = Uint8List(0);
 
   Inventory(Item RightHand, Item LeftHand) {
     int __vstruct__size = 16 + RightHand.lengthInBytes + LeftHand.lengthInBytes;
-    __vstruct__buf = Uint8List(__vstruct__size);
-    __vstruct__buf = Serialize(__vstruct__buf, RightHand, LeftHand);
+    vstruct__buf = Uint8List(__vstruct__size);
+    vstruct__buf = Serialize(vstruct__buf, RightHand, LeftHand);
   }
 
-  int get lengthInBytes => __vstruct__buf.lengthInBytes;
+  int get lengthInBytes => vstruct__buf.lengthInBytes;
 
   Uint8List as_bytes_mut() {
-    return __vstruct__buf;
+    return vstruct__buf;
+  }
+
+  Inventory.fromBytes(Uint8List b) {
+    vstruct__buf = b;
   }
 
   Uint8List Serialize(Uint8List dst, Item RightHand, Item LeftHand) {
@@ -140,18 +176,22 @@ class Inventory {
 }
 
 class Entity {
-  Uint8List __vstruct__buf = Uint8List(0);
+  Uint8List vstruct__buf = Uint8List(0);
 
   Entity(Speices Type, Coordinate Position, I64 Hp, UUID Id, Inventory Inventory) {
     int __vstruct__size = 41 + Id.length + Inventory.lengthInBytes;
-    __vstruct__buf = Uint8List(__vstruct__size);
-    __vstruct__buf = Serialize(__vstruct__buf, Type, Position, Hp, Id, Inventory);
+    vstruct__buf = Uint8List(__vstruct__size);
+    vstruct__buf = Serialize(vstruct__buf, Type, Position, Hp, Id, Inventory);
   }
 
-  int get lengthInBytes => __vstruct__buf.lengthInBytes;
+  int get lengthInBytes => vstruct__buf.lengthInBytes;
 
   Uint8List as_bytes_mut() {
-    return __vstruct__buf;
+    return vstruct__buf;
+  }
+
+  Entity.fromBytes(Uint8List b) {
+    vstruct__buf = b;
   }
 
   Uint8List Serialize(Uint8List dst, Speices Type, Coordinate Position, I64 Hp, UUID Id, Inventory Inventory) {
@@ -187,6 +227,19 @@ class Entity {
       dst[(__index + U64(i)).value.toInt()] = __tmp_7[i];
     }
     return dst;
+  }
+
+  Speices Type() {
+    return Speices.values[vstruct__buf[0]];
+  }
+
+  Coordinate Position() {
+    return Coordinate.fromBytes(vstruct__buf.sublist(1, 17));
+  }
+
+  I64 Hp() {
+    I64 _value = I64.fromBytes(vstruct__buf.sublist(17, 25));
+    return _value;
   }
 
 }
