@@ -1,10 +1,6 @@
 package dart
 
-import (
-	"strings"
-
-	"github.com/lemon-mint/vstruct/ir"
-)
+import "strings"
 
 func NameConv(in string) string {
 	return strings.Title(in)
@@ -41,8 +37,4 @@ func TypeConv(in string) string {
 	default:
 		return NameConv(in)
 	}
-}
-
-func NeedRef(in ir.FieldType) bool {
-	return false
 }
