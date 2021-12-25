@@ -89,7 +89,7 @@ func main() {
 	}
 	out = buf.String()
 	fmt.Println(out)
-	f, err = os.Create("./_out/main.dart")
+	f, err = os.Create("./_out/bin/main.dart")
 	if err != nil {
 		panic(err)
 	}
