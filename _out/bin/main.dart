@@ -69,6 +69,10 @@ class Coordinate {
     return _value;
   }
 
+  bool vStructValidate() {
+    return vData.lengthInBytes >= 16;
+  }
+
 }
 
 class Item {
@@ -137,6 +141,17 @@ class Item {
     return utf8.decode(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
   }
 
+  bool vStructValidate() {
+    if (vData.lengthInBytes < 25) {
+      return false;
+    }
+
+    U64 __off0 = U64(25);
+    U64 __off1 = U64.fromBytes(vData.sublist(17, 25));
+    U64 __off2 = U64(vData.lengthInBytes);
+    return __off0 <= __off1 && __off1 <= __off2 ;
+  }
+
 }
 
 class Inventory {
@@ -192,6 +207,22 @@ class Inventory {
     U64 __off1 = U64.fromBytes(vData.sublist(8, 16));
 
     return Item.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
+  }
+
+  bool vStructValidate() {
+    if (vData.lengthInBytes < 16) {
+      return false;
+    }
+
+    U64 __off0 = U64(16);
+    U64 __off1 = U64.fromBytes(vData.sublist(0, 8));
+    U64 __off2 = U64.fromBytes(vData.sublist(8, 16));
+    U64 __off3 = U64(vData.lengthInBytes);
+    if (__off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3 ) {
+      return rightHand.vStructValidate() && leftHand.vStructValidate();
+    }
+
+    return false;
   }
 
 }
@@ -275,6 +306,22 @@ class Entity {
     U64 __off1 = U64.fromBytes(vData.sublist(33, 41));
 
     return Inventory.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
+  }
+
+  bool vStructValidate() {
+    if (vData.lengthInBytes < 41) {
+      return false;
+    }
+
+    U64 __off0 = U64(41);
+    U64 __off1 = U64.fromBytes(vData.sublist(25, 33));
+    U64 __off2 = U64.fromBytes(vData.sublist(33, 41));
+    U64 __off3 = U64(vData.lengthInBytes);
+    if (__off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3 ) {
+      return inventory.vStructValidate();
+    }
+
+    return false;
   }
 
 }

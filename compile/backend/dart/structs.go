@@ -319,67 +319,140 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		}
 
 		/*
-					fmt.Fprintf(w, "func (s %s) Vstruct_Validate() bool {\n", NameConv(s.Name))
-				if s.IsFixed && len(s.DynamicFields) == 0 {
-					fmt.Fprintf(w, "return len(s) >= %d\n", s.TotalFixedFieldSize)
-					} else {
-						fmt.Fprintf(w, "if len(s) < %d {\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
-						fmt.Fprintf(w, "return false\n")
-					fmt.Fprintf(w, "}\n")
-					for i, f := range s.DynamicFieldHeadOffsets {
-						_ = f
-						fmt.Fprintf(w, "\nvar __off%d uint64 = ", i)
-						if i == 0 {
-							fmt.Fprintf(w, "%d", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
-							} else {
-							for j := 0; j < 8; j++ {
-								if j == 0 {
-									fmt.Fprintf(w, "uint64(s[%d])", s.DynamicFieldHeadOffsets[i]-8+j)
-									} else {
-									fmt.Fprintf(w, "|\nuint64(s[%d])<<%d", s.DynamicFieldHeadOffsets[i]-8+j, j*8)
-								}
-							}
-						}
-					}
-					fmt.Fprintf(w, "\nvar __off%d uint64 = uint64(len(s))", len(s.DynamicFieldHeadOffsets))
-					var dynStructFields []*ir.Field
-					for _, f := range s.DynamicFields {
-						if f.TypeInfo.FieldType == ir.FieldType_STRUCT {
-							dynStructFields = append(dynStructFields, f)
-						}
-					}
-					if len(dynStructFields) == 0 {
-						fmt.Fprintf(w, "\nreturn ")
-						for i, f := range s.DynamicFieldHeadOffsets {
-							fmt.Fprintf(w, "__off%d <= __off%d ", i, i+1)
-							if i != len(s.DynamicFieldHeadOffsets)-1 {
-								fmt.Fprintf(w, "&& ")
-							}
-							_ = f
-						}
+				fmt.Fprintf(w, "func (s %s) Vstruct_Validate() bool {\n", NameConv(s.Name))
+			if s.IsFixed && len(s.DynamicFields) == 0 {
+				fmt.Fprintf(w, "return len(s) >= %d\n", s.TotalFixedFieldSize)
+				} else {
+					fmt.Fprintf(w, "if len(s) < %d {\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+					fmt.Fprintf(w, "return false\n")
+				fmt.Fprintf(w, "}\n")
+				for i, f := range s.DynamicFieldHeadOffsets {
+					_ = f
+					fmt.Fprintf(w, "\nvar __off%d uint64 = ", i)
+					if i == 0 {
+						fmt.Fprintf(w, "%d", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
 						} else {
-							fmt.Fprintf(w, "\nif ")
-							for i, f := range s.DynamicFieldHeadOffsets {
-							fmt.Fprintf(w, "__off%d <= __off%d ", i, i+1)
-							if i != len(s.DynamicFieldHeadOffsets)-1 {
-								fmt.Fprintf(w, "&& ")
-							}
-							_ = f
-						}
-						fmt.Fprintf(w, "{\n")
-						fmt.Fprintf(w, "return ")
-						for i, f := range dynStructFields {
-							fmt.Fprintf(w, "s.%s().Vstruct_Validate()", NameConv(f.Name))
-							if i != len(dynStructFields)-1 {
-								fmt.Fprintf(w, " && ")
+						for j := 0; j < 8; j++ {
+							if j == 0 {
+								fmt.Fprintf(w, "uint64(s[%d])", s.DynamicFieldHeadOffsets[i]-8+j)
+								} else {
+								fmt.Fprintf(w, "|\nuint64(s[%d])<<%d", s.DynamicFieldHeadOffsets[i]-8+j, j*8)
 							}
 						}
-						fmt.Fprintf(w, "\n}\n")
-						fmt.Fprintf(w, "\nreturn false\n")
 					}
 				}
-				fmt.Fprintf(w, "}\n\n")
+				fmt.Fprintf(w, "\nvar __off%d uint64 = uint64(len(s))", len(s.DynamicFieldHeadOffsets))
+				var dynStructFields []*ir.Field
+				for _, f := range s.DynamicFields {
+					if f.TypeInfo.FieldType == ir.FieldType_STRUCT {
+						dynStructFields = append(dynStructFields, f)
+					}
+				}
+				if len(dynStructFields) == 0 {
+					fmt.Fprintf(w, "\nreturn ")
+					for i, f := range s.DynamicFieldHeadOffsets {
+						fmt.Fprintf(w, "__off%d <= __off%d ", i, i+1)
+						if i != len(s.DynamicFieldHeadOffsets)-1 {
+							fmt.Fprintf(w, "&& ")
+						}
+						_ = f
+					}
+					} else {
+						fmt.Fprintf(w, "\nif ")
+						for i, f := range s.DynamicFieldHeadOffsets {
+						fmt.Fprintf(w, "__off%d <= __off%d ", i, i+1)
+						if i != len(s.DynamicFieldHeadOffsets)-1 {
+							fmt.Fprintf(w, "&& ")
+						}
+						_ = f
+					}
+					fmt.Fprintf(w, "{\n")
+					fmt.Fprintf(w, "return ")
+					for i, f := range dynStructFields {
+						fmt.Fprintf(w, "s.%s().Vstruct_Validate()", NameConv(f.Name))
+						if i != len(dynStructFields)-1 {
+							fmt.Fprintf(w, " && ")
+						}
+					}
+					fmt.Fprintf(w, "\n}\n")
+					fmt.Fprintf(w, "\nreturn false\n")
+				}
+			}
+			fmt.Fprintf(w, "}\n\n")
+		*/
+		fmt.Fprintf(w, "  bool vStructValidate() {\n")
 
+		if s.IsFixed && len(s.DynamicFields) == 0 {
+			//fmt.Fprintf(w, "return len(s) >= %d\n", s.TotalFixedFieldSize)
+			fmt.Fprintf(w, "    return vData.lengthInBytes >= %d;\n", s.TotalFixedFieldSize)
+		} else {
+			//fmt.Fprintf(w, "if len(s) < %d {\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+			fmt.Fprintf(w, "    if (vData.lengthInBytes < %d) {\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+			fmt.Fprintf(w, "      return false;\n")
+			fmt.Fprintf(w, "    }\n")
+			for i, f := range s.DynamicFieldHeadOffsets {
+				_ = f
+				//fmt.Fprintf(w, "\nvar __off%d uint64 = ", i)
+				fmt.Fprintf(w, "\n    U64 __off%d = ", i)
+				if i == 0 {
+					//fmt.Fprintf(w, "%d", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+					fmt.Fprintf(w, "U64(%d);", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+				} else {
+					/*
+						for j := 0; j < 8; j++ {
+							if j == 0 {
+								fmt.Fprintf(w, "uint64(s[%d])", s.DynamicFieldHeadOffsets[i]-8+j)
+							} else {
+								fmt.Fprintf(w, "|\nuint64(s[%d])<<%d", s.DynamicFieldHeadOffsets[i]-8+j, j*8)
+							}
+						}
+					*/
+					fmt.Fprintf(w, "U64.fromBytes(vData.sublist(%d, %d));", s.DynamicFieldHeadOffsets[i]-8, s.DynamicFieldHeadOffsets[i])
+				}
+			}
+			//fmt.Fprintf(w, "\nvar __off%d uint64 = uint64(len(s))", len(s.DynamicFieldHeadOffsets))
+			fmt.Fprintf(w, "\n    U64 __off%d = U64(vData.lengthInBytes);", len(s.DynamicFieldHeadOffsets))
+			var dynStructFields []*ir.Field
+			for _, f := range s.DynamicFields {
+				if f.TypeInfo.FieldType == ir.FieldType_STRUCT {
+					dynStructFields = append(dynStructFields, f)
+				}
+			}
+			if len(dynStructFields) == 0 {
+				//fmt.Fprintf(w, "\nreturn ")
+				fmt.Fprintf(w, "\n    return ")
+				for i, f := range s.DynamicFieldHeadOffsets {
+					fmt.Fprintf(w, "__off%d <= __off%d ", i, i+1)
+					if i != len(s.DynamicFieldHeadOffsets)-1 {
+						fmt.Fprintf(w, "&& ")
+					}
+					_ = f
+				}
+				fmt.Fprintf(w, ";\n")
+			} else {
+				fmt.Fprintf(w, "\n    if (")
+				for i, f := range s.DynamicFieldHeadOffsets {
+					fmt.Fprintf(w, "__off%d <= __off%d ", i, i+1)
+					if i != len(s.DynamicFieldHeadOffsets)-1 {
+						fmt.Fprintf(w, "&& ")
+					}
+					_ = f
+				}
+				fmt.Fprintf(w, ") {\n")
+				fmt.Fprintf(w, "      return ")
+				for i, f := range dynStructFields {
+					fmt.Fprintf(w, "%s.vStructValidate()", NameConv(f.Name))
+					if i != len(dynStructFields)-1 {
+						fmt.Fprintf(w, " && ")
+					}
+				}
+				fmt.Fprintf(w, ";")
+				fmt.Fprintf(w, "\n    }\n")
+				fmt.Fprintf(w, "\n    return false;\n")
+			}
+		}
+		fmt.Fprintf(w, "  }\n\n")
+		/*
 				fmt.Fprintf(w, "func (s %s) String() string {\n", NameConv(s.Name))
 				fmt.Fprintf(w, "if !s.Vstruct_Validate() {\n")
 				fmt.Fprintf(w, "return \"%s (invalid)\"\n", NameConv(s.Name))
