@@ -144,7 +144,8 @@ l:
 		case lexer.TOKEN_SEMICOLON:
 			p.nextToken()
 		default:
-			return nil, fmt.Errorf(utils.Unexpected(p.curToken.Type))
+			//return nil, fmt.Errorf(utils.Unexpected(p.curToken.Type))
+			return nil, fmt.Errorf("#%s:%d:%d: unexpected token %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, p.curToken, p.curToken.Literal)
 		}
 	}
 	return node, nil
@@ -176,7 +177,7 @@ func (p *Parser) parse() (*ast.File, error) {
 			}
 			file.Nodes = append(file.Nodes, e)
 		default:
-			return nil, fmt.Errorf(utils.Unexpected(p.curToken.Type))
+			return nil, fmt.Errorf("#%s:%d:%d: unexpected token %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, p.curToken, p.curToken.Literal)
 		}
 	}
 
