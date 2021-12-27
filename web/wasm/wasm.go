@@ -33,7 +33,7 @@ func main() {
 
 			lang := args[0].String()
 			pkgname := args[1].String()
-			input := args[2].String()
+			input := args[2].String() + "\n"
 
 			if pkgname == "" {
 				pkgname = "main"
