@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/kr/pretty"
 	"github.com/lemon-mint/vstruct/compile/backend/dart"
 	"github.com/lemon-mint/vstruct/compile/backend/golang"
 	"github.com/lemon-mint/vstruct/compile/backend/rust"
@@ -50,7 +49,6 @@ func main() {
 	goir := front.Output()
 	goir.Options.UseUnsafe = true
 
-	pretty.Println(goir)
 	var buf bytes.Buffer
 	err = golang.Generate(&buf, goir, "main")
 	if err != nil {
