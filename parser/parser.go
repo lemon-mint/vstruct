@@ -41,34 +41,40 @@ func (p *Parser) expect(t lexer.TokenType) bool {
 func (p *Parser) parseStruct() (*ast.Node, error) {
 	var node *ast.Node = ast.NewNode(ast.NodeType_STRUCT)
 	if !p.expect(lexer.TOKEN_STRUCT) {
-		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_STRUCT, p.curToken.Type))
+		//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_STRUCT, p.curToken.Type))
+		return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_STRUCT, p.curToken.Type), p.curToken.Literal)
 	}
 	node.Struct = &ast.Struct{}
 	p.nextToken()
 	if !p.expect(lexer.TOKEN_IDENTIFIER) {
-		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+		//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+		return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type), p.curToken.Literal)
 	}
 	node.Name = p.curToken.Literal
 	node.Token = p.curToken
 	p.nextToken()
 	if !p.expect(lexer.TOKEN_OPEN_BRACE) {
-		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_OPEN_BRACE, p.curToken.Type))
+		//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_OPEN_BRACE, p.curToken.Type))
+		return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_OPEN_BRACE, p.curToken.Type), p.curToken.Literal)
 	}
 	p.nextToken()
 	for {
 		var field *ast.Field = &ast.Field{}
 		if !p.expect(lexer.TOKEN_IDENTIFIER) {
-			return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+			//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+			return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type), p.curToken.Literal)
 		}
 		field.StrType = p.curToken.Literal
 		p.nextToken()
 		if !p.expect(lexer.TOKEN_IDENTIFIER) {
-			return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+			//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+			return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type), p.curToken.Literal)
 		}
 		field.Name = p.curToken.Literal
 		p.nextToken()
 		if !p.expect(lexer.TOKEN_SEMICOLON) {
-			return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_SEMICOLON, p.curToken.Type))
+			//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_SEMICOLON, p.curToken.Type))
+			return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_SEMICOLON, p.curToken.Type), p.curToken.Literal)
 		}
 		p.nextToken()
 		node.Struct.Fields = append(node.Struct.Fields, field)
@@ -83,27 +89,32 @@ func (p *Parser) parseStruct() (*ast.Node, error) {
 func (p *Parser) parseAlias() (*ast.Node, error) {
 	var node *ast.Node = ast.NewNode(ast.NodeType_ALIAS)
 	if !p.expect(lexer.TOKEN_ALIAS) {
-		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_ALIAS, p.curToken.Type))
+		//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_ALIAS, p.curToken.Type))
+		return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_ALIAS, p.curToken.Type), p.curToken.Literal)
 	}
 	node.Alias = &ast.Alias{}
 	p.nextToken()
 	if !p.expect(lexer.TOKEN_IDENTIFIER) {
-		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+		//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+		return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type), p.curToken.Literal)
 	}
 	node.Name = p.curToken.Literal
 	node.Token = p.curToken
 	p.nextToken()
 	if !p.expect(lexer.TOKEN_EQUAL) {
-		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_EQUAL, p.curToken.Type))
+		//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_EQUAL, p.curToken.Type))
+		return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_EQUAL, p.curToken.Type), p.curToken.Literal)
 	}
 	p.nextToken()
 	if !p.expect(lexer.TOKEN_IDENTIFIER) {
-		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+		//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+		return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type), p.curToken.Literal)
 	}
 	node.Alias.StrType = p.curToken.Literal
 	p.nextToken()
 	if !p.expect(lexer.TOKEN_SEMICOLON) {
-		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_SEMICOLON, p.curToken.Type))
+		//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_SEMICOLON, p.curToken.Type))
+		return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_SEMICOLON, p.curToken.Type), p.curToken.Literal)
 	}
 	return node, nil
 }
@@ -111,24 +122,28 @@ func (p *Parser) parseAlias() (*ast.Node, error) {
 func (p *Parser) parseEnum() (*ast.Node, error) {
 	var node *ast.Node = ast.NewNode(ast.NodeType_ENUM)
 	if !p.expect(lexer.TOKEN_ENUM) {
-		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_ENUM, p.curToken.Type))
+		//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_ENUM, p.curToken.Type))
+		return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_ENUM, p.curToken.Type), p.curToken.Literal)
 	}
 	node.Enum = &ast.Enum{}
 	p.nextToken()
 	if !p.expect(lexer.TOKEN_IDENTIFIER) {
-		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+		//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+		return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type), p.curToken.Literal)
 	}
 	node.Name = p.curToken.Literal
 	node.Token = p.curToken
 	p.nextToken()
 	if !p.expect(lexer.TOKEN_OPEN_BRACE) {
-		return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_OPEN_BRACE, p.curToken.Type))
+		//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_OPEN_BRACE, p.curToken.Type))
+		return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_OPEN_BRACE, p.curToken.Type), p.curToken.Literal)
 	}
 	p.nextToken()
 l:
 	for {
 		if !p.expect(lexer.TOKEN_IDENTIFIER) {
-			return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+			//return nil, fmt.Errorf(utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type))
+			return nil, fmt.Errorf("#%s:%d:%d: %s \"%s\"", p.curToken.File, p.curToken.Line, p.curToken.Col, utils.Expected(lexer.TOKEN_IDENTIFIER, p.curToken.Type), p.curToken.Literal)
 		}
 		node.Enum.Enums = append(node.Enum.Enums, p.curToken.Literal)
 		p.nextToken()
