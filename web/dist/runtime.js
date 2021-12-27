@@ -29,7 +29,7 @@ var v_loaded = false;
                 return await WebAssembly.instantiate(source, importObject);
             };
         }
-        const result = await WebAssembly.instantiateStreaming(fetch("dist/app.wasm"), go.importObject);
+        const result = await WebAssembly.instantiateStreaming(fetch("/dist/app.wasm"), go.importObject);
         go.run(result.instance);
 
         const pkgname = document.getElementById("pkgname");
