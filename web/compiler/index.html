@@ -1,0 +1,158 @@
+<!--
+    ----- BEGIN LICENSE BLOCK -----
+
+    ******************************************************************************
+    Go Standard library : https://github.com/golang/go
+    ******************************************************************************
+
+    Copyright (c) 2009 The Go Authors. All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are
+    met:
+
+       * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+       * Redistributions in binary form must reproduce the above
+    copyright notice, this list of conditions and the following disclaimer
+    in the documentation and/or other materials provided with the
+    distribution.
+       * Neither the name of Google Inc. nor the names of its
+    contributors may be used to endorse or promote products derived from
+    this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+    ******************************************************************************
+    vstruct : https://github.com/lemon-mint/vstruct
+    ******************************************************************************
+
+    MIT License
+
+    Copyright (c) 2021 lemon-mint
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+    ******************************************************************************
+    gdcss : https://github.com/hawkz/gdcss
+    ******************************************************************************
+    MIT License
+
+    Copyright (c) 2020 Stephen Hawkes
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+    ----- END LICENSE BLOCK -----
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/hawkz/gdcss/gd.min.css">
+  <title>Online Vstruct Compiler</title>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="/">Vstruct</a>
+      <ul>
+        <li>
+          <a href="/compiler">Online Compiler</a>
+        </li>
+
+        <li>
+          <a href="/dist/LICENSE">License</a>
+        </li>
+
+        <li>
+          <a href="https://github.com/lemon-mint/vstruct">Github</a>
+        </li>
+
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <header>
+      <h1>Online Vstruct Compiler</h1>
+
+      <p>
+        This Site uses the WebAssembly to run the Vstruct compiler module.
+      </p>
+    </header>
+    <article>
+      <h2>Language</h2>
+      <input type="radio" id="go" name="lang" value="go" checked>
+      <label for="go">Go</label>
+      <input type="radio" id="dart" name="lang" value="dart">
+      <label for="dart">Dart</label>
+      <input type="radio" id="rust" name="lang" value="rust">
+      <label for="rust">Rust</label>
+      <h2>Package Name</h2>
+      <input type="text" id="pkgname" value="main">
+      <label for="pkgname">Package Name</label>
+      <hr>
+      <textarea id="code" placeholder="struct Coordinate { int64 x; int64 y; }"></textarea>
+      <header>
+        <button id="compile">Compile It!</button>
+      </header>
+      <div hidden id="errordiv">
+        <mark>
+          <pre id="error"></pre>
+        </mark>
+      </div>
+      <textarea id="output" placeholder="Output Goes Here"></textarea>
+    </article>
+  </main>
+
+  <script src="/dist/runtime.js"></script>
+</body>
+
+</html>
