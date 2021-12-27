@@ -83,6 +83,10 @@ func main() {
 			}
 		}()
 
+		if output.Err != "" {
+			js.Global().Get("console").Call("error", output.Err)
+		}
+
 		jsonout, err := json.Marshal(output)
 		if err != nil {
 			return ":ERROR:" + err.Error()
