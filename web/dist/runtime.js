@@ -22,16 +22,20 @@ var v_loaded = false;
     async function main() {
         await loadJS(RuntimeURL);
 
-        const go = new Go();
-        if (!WebAssembly.instantiateStreaming) {
-            WebAssembly.instantiateStreaming = async (resp, importObject) => {
-                const source = await (await resp).arrayBuffer();
-                return await WebAssembly.instantiate(source, importObject);
-            };
-        }
-        const result = await WebAssembly.instantiateStreaming(fetch("/dist/app.wasm"), go.importObject);
-        go.run(result.instance);
+        const wasmURL = "/dist/app.wasm";
 
+        const go = new Go();
+
+        try {
+            const result = await WebAssembly.instantiateStreaming(fetch(wasmURL), go.importObject);
+            go.run(result.instance);
+        } catch (e) {
+            console.log(e);
+            const wasmdata = await (await fetch(wasmURL)).arrayBuffer();
+            const result = await WebAssembly.instantiate(wasmdata, go.importObject);
+            go.run(result.instance);
+        }
+        
         const pkgname = document.getElementById("pkgname");
         const compileBtn = document.getElementById("compile");
         const errordiv = document.getElementById("errordiv");
