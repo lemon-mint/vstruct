@@ -26,7 +26,7 @@ func main() {
 	var bufOutFile = bufio.NewWriter(outputFile)
 	bufOutFile.WriteString("data:" + mimetype + ";base64,")
 
-	var b64out = base64.NewEncoder(base64.RawURLEncoding, bufOutFile)
+	var b64out = base64.NewEncoder(base64.StdEncoding, bufOutFile)
 	_, err = io.Copy(b64out, inputFile)
 	if err != nil {
 		panic(err)
