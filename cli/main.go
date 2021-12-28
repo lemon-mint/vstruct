@@ -82,10 +82,10 @@ func main() {
 		out := buf.String()
 		fmt.Println(out)
 
-		if err := CreateDirectory(filepath.Join(".", "vstruct", "model")); err != nil {
+		if err := CreateDirectory(filepath.Join(".", "vstruct", "model", packageName)); err != nil {
 			panic(err)
 		}
-		f, err := os.Create(filepath.Join(".", "vstruct", "model", packageName+".go"))
+		f, err := os.Create(filepath.Join(".", "vstruct", "model", packageName, packageName+".go"))
 		if err != nil {
 			panic(err)
 		}
