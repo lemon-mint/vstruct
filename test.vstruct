@@ -49,7 +49,7 @@ struct Entity {
 }
 
 service TestService {
-    request InitCoordinate() reply Coordinate
-    request Move(Coordinate) reply Coordinate
-    request NewItem(ItemType, string, int64, int64) Item
+    Coordinate InitCoordinate();
+    Coordinate Move(Coordinate position);
+    Item NewItem(ItemType type, string name, int64 damage, int64 armor);
 }
