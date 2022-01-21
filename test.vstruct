@@ -47,3 +47,9 @@ struct Entity {
 
     Inventory inventory;
 }
+
+service TestService {
+    request InitCoordinate() reply Coordinate
+    request Move(Coordinate) reply Coordinate
+    request NewItem(ItemType, string, int64, int64) Item
+}
