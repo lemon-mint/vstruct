@@ -37,7 +37,7 @@ func (f *FrontEnd) getTypeSize(node *ast.Node) ir.TypeInfo {
 		}
 	case ast.NodeType_ENUM:
 		typeInfo.FieldType = ir.FieldType_ENUM
-		enumLen := len(node.Enum.Enums)
+		enumLen := uint64(len(node.Enum.Enums))
 		switch {
 		case enumLen <= 1<<8:
 			typeInfo.Size = 1
