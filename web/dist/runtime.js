@@ -22,7 +22,7 @@ var v_loaded = false;
     async function main() {
         await loadJS(RuntimeURL);
 
-        const wasmURL = "/dist/app.wasm";
+        const wasmURL = "/dist/app.min.wasm";
 
         const go = new Go();
 
