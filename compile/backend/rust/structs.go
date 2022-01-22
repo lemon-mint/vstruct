@@ -9,7 +9,7 @@ import (
 
 func writeStructs(w io.Writer, i *ir.IR) {
 	for _, s := range i.Structs {
-		fmt.Fprintf(w, "struct %s {\n", NameConv(s.Name))
+		fmt.Fprintf(w, "pub struct %s {\n", NameConv(s.Name))
 		fmt.Fprintf(w, "    buffer: Vec<u8>,\n")
 		fmt.Fprintf(w, "}\n\n")
 
