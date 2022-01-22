@@ -108,17 +108,10 @@ func main() {
 		out := buf.String()
 		fmt.Println(out)
 
-<<<<<<< HEAD:cli/main.go
-		if err := CreateDirectory(filepath.Join(".", "vstruct", "model", packageName)); err != nil {
-			panic(err)
-		}
-		f, err := os.Create(filepath.Join(".", "vstruct", "model", packageName, packageName+".go"))
-=======
 		if err := CreateDirectory(filepath.Join(modelPath, packageName)); err != nil {
 			panic(err)
 		}
 		f, err := os.Create(filepath.Join(modelPath, packageName, packageName+ext))
->>>>>>> ccc5fc14c9f9652f095b08e9dc4e97001e082efb:cli/vstruct/main.go
 		if err != nil {
 			panic(err)
 		}
