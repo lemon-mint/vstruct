@@ -9,8 +9,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/lemon-mint/vstruct/compile/backend/dart"
 	"github.com/lemon-mint/vstruct/compile/backend/golang"
+	"github.com/lemon-mint/vstruct/compile/backend/rust"
 	"github.com/lemon-mint/vstruct/compile/frontend"
+	"github.com/lemon-mint/vstruct/ir"
 	"github.com/lemon-mint/vstruct/lexer"
 	"github.com/lemon-mint/vstruct/parser"
 )
@@ -40,11 +43,34 @@ func CreateDirectory(path string) error {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Usage: vstruct <file>")
+	if len(os.Args) < 3 {
+		fmt.Println("Usage: vstruct <language: go, rust, dart> <file>...")
 		os.Exit(1)
 	}
-	for _, path := range os.Args[1:] {
+	generate := (func(w io.Writer, i *ir.IR, packageName string) error)(nil)
+	modelPath := filepath.Join("vstruct", "model")
+	ext := ""
+
+	language := os.Args[1]
+	switch language {
+	case "go":
+		generate = golang.Generate
+		modelPath = filepath.Join(".", modelPath)
+		ext = ".go"
+	case "rust":
+		generate = rust.Generate
+		modelPath = filepath.Join("src", modelPath)
+		ext = ".rs"
+	case "dart":
+		generate = dart.Generate
+		modelPath = filepath.Join("lib", modelPath)
+		ext = ".dart"
+	default:
+		fmt.Printf("Unknown language: %s\n", language)
+		os.Exit(1)
+	}
+
+	for _, path := range os.Args[2:] {
 		if !strings.HasSuffix(path, ".vstruct") {
 			path = path + ".vstruct"
 		}
@@ -74,7 +100,7 @@ func main() {
 		packageName = strings.TrimSuffix(packageName, ".vstruct")
 
 		var buf bytes.Buffer
-		err = golang.Generate(&buf, goir, packageName)
+		err = generate(&buf, goir, packageName)
 		if err != nil {
 			fmt.Println(buf.String())
 			panic(err)
@@ -82,10 +108,10 @@ func main() {
 		out := buf.String()
 		fmt.Println(out)
 
-		if err := CreateDirectory(filepath.Join(".", "vstruct", "model", packageName)); err != nil {
+		if err := CreateDirectory(filepath.Join(modelPath, packageName)); err != nil {
 			panic(err)
 		}
-		f, err := os.Create(filepath.Join(".", "vstruct", "model", packageName, packageName+".go"))
+		f, err := os.Create(filepath.Join(modelPath, packageName, packageName+ext))
 		if err != nil {
 			panic(err)
 		}
