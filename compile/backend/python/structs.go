@@ -21,7 +21,8 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			//fmt.Fprintf(w, "%s _%s", TypeConv(f.Type), NameConv(f.Name))
 			fmt.Fprintf(w, "%s: %s", NameConv(f.Name), TypeConv(f.Type))
 		}
-		fmt.Fprintf(w, ") {\n")
+		//fmt.Fprintf(w, ") {\n")
+		fmt.Fprintf(w, "):\n")
 		//fmt.Fprintf(w, "  Uint8List vData = Uint8List(0);\n\n")
 		//fmt.Fprintf(w, "        self.vData = bytearray(0)\n")
 		//fmt.Fprintf(w, "    int vSize = %d", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
@@ -42,9 +43,9 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		//fmt.Fprintf(w, ";\n")
 		fmt.Fprintf(w, "\n")
 		//fmt.Fprintf(w, "        vData = Uint8List(vSize);\n")
-		fmt.Fprintf(w, "        vData = bytearray(vSize)\n")
+		fmt.Fprintf(w, "        self.vData = bytearray(vSize)\n")
 		//fmt.Fprintf(w, "        vData = vSerialize(vData")
-		fmt.Fprintf(w, "        vData = self.vSerialize(self.vData")
+		fmt.Fprintf(w, "        self.vData = self.vSerialize(self.vData")
 		for _, f := range allFields {
 			//fmt.Fprintf(w, ", _%s", NameConv(f.Name))
 			fmt.Fprintf(w, ", %s", NameConv(f.Name))
@@ -91,7 +92,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 				fmt.Fprintf(w, "        __tmp_%d = %s.toBytes()\n", tmpIdx, NameConv(f.Name))
 				fmt.Fprintf(w, "        dst[%d:%d+len(__tmp_%d)] = __tmp_%d\n", f.Offset, f.Offset, tmpIdx, tmpIdx)
 			case ir.FieldType_BOOL:
-				//fmt.Fprintf(w, "	dst[%d] = %s ? 1 : 0;\n", f.Offset, NameConv(f.Name))
+				//fmt.Fprintf(w, "    dst[%d] = %s ? 1 : 0;\n", f.Offset, NameConv(f.Name))
 				fmt.Fprintf(w, "        dst[%d] = 1 if %s else 0\n", f.Offset, NameConv(f.Name))
 			case ir.FieldType_UINT, ir.FieldType_INT, ir.FieldType_FLOAT:
 				//fmt.Fprintf(w, "    Uint8List __tmp_%d = %s.toBytes();\n", tmpIdx, NameConv(f.Name))
@@ -126,15 +127,15 @@ func writeStructs(w io.Writer, i *ir.IR) {
 					fmt.Fprintf(w, "        __tmp_%d = (len(%s) + __index).to_bytes(8, 'little')\n", tmpIdx, NameConv(f.Name))
 				case ir.FieldType_STRING:
 					//fmt.Fprintf(w, "    Uint8List __tmp_%d = (U64(%s.length) + __index).toBytes();\n", tmpIdx, NameConv(f.Name))
-					fmt.Fprintf(w, "    	__tmp_%d = (len(%s) + __index).to_bytes(8, 'little')\n", tmpIdx, NameConv(f.Name))
+					fmt.Fprintf(w, "        __tmp_%d = (len(%s) + __index).to_bytes(8, 'little')\n", tmpIdx, NameConv(f.Name))
 				case ir.FieldType_STRUCT:
 					//fmt.Fprintf(w, "    Uint8List __tmp_%d = (U64(%s.lengthInBytes) + __index).toBytes();\n", tmpIdx, NameConv(f.Name))
-					fmt.Fprintf(w, "    	__tmp_%d = (%s.__len__() + __index).to_bytes(8, 'little')\n", tmpIdx, NameConv(f.Name))
+					fmt.Fprintf(w, "        __tmp_%d = (%s.__len__() + __index).to_bytes(8, 'little')\n", tmpIdx, NameConv(f.Name))
 				}
 				//fmt.Fprintf(w, "    for (int i = 0; i < 8; i++) {\n")
 				//fmt.Fprintf(w, "      dst[%d + i] = __tmp_%d[i];\n", s.DynamicFieldHeadOffsets[i], tmpIdx)
 				//fmt.Fprintf(w, "    }\n")
-				fmt.Fprintf(w, "    	dst[%d:%d] = __tmp_%d\n", s.DynamicFieldHeadOffsets[i], s.DynamicFieldHeadOffsets[i]+8, tmpIdx)
+				fmt.Fprintf(w, "        dst[%d:%d] = __tmp_%d\n", s.DynamicFieldHeadOffsets[i], s.DynamicFieldHeadOffsets[i]+8, tmpIdx)
 				tmpIdx++
 				switch f.TypeInfo.FieldType {
 				case ir.FieldType_STRUCT:
@@ -142,13 +143,13 @@ func writeStructs(w io.Writer, i *ir.IR) {
 					//fmt.Fprintf(w, "    for (int i = 0; i < %s.lengthInBytes; i++) {\n", NameConv(f.Name))
 					//fmt.Fprintf(w, "      dst[(__index + U64(i)).value.toInt()] = __tmp_%d[i];\n", tmpIdx)
 					//fmt.Fprintf(w, "    }\n")
-					fmt.Fprintf(w, "    	__tmp_%d = %s.toBytes()\n", tmpIdx, NameConv(f.Name))
-					fmt.Fprintf(w, "    	dst[__index:__index+len(__tmp_%d)] = __tmp_%d\n", tmpIdx, tmpIdx)
+					fmt.Fprintf(w, "        __tmp_%d = %s.toBytes()\n", tmpIdx, NameConv(f.Name))
+					fmt.Fprintf(w, "        dst[__index:__index+len(__tmp_%d)] = __tmp_%d\n", tmpIdx, tmpIdx)
 				case ir.FieldType_BYTES:
 					//fmt.Fprintf(w, "    for (int i = 0; i < %s.lengthInBytes; i++) {\n", NameConv(f.Name))
 					//fmt.Fprintf(w, "      dst[(__index + U64(i)).value.toInt()] = %s[i];\n", NameConv(f.Name))
 					//fmt.Fprintf(w, "    }\n")
-					fmt.Fprintf(w, "    	dst[__index:__index+len(%s)] = %s\n", NameConv(f.Name), NameConv(f.Name))
+					fmt.Fprintf(w, "        dst[__index:__index+len(%s)] = %s\n", NameConv(f.Name), NameConv(f.Name))
 				case ir.FieldType_STRING:
 					//fmt.Fprintf(w, "    List<int> __tmp_%d = utf8.encode(%s);\n", tmpIdx, NameConv(f.Name))
 					//tmpIdx++
@@ -157,27 +158,27 @@ func writeStructs(w io.Writer, i *ir.IR) {
 					//fmt.Fprintf(w, "      dst[(__index + U64(i)).value.toInt()] = __tmp_%d[i];\n", tmpIdx)
 					//fmt.Fprintf(w, "    }\n")
 					fmt.Fprintf(w, "        __tmp_%d = %s.encode('utf-8')\n", tmpIdx, NameConv(f.Name))
-					fmt.Fprintf(w, "    	dst[__index:__index+len(__tmp_%d)] = __tmp_%d\n", tmpIdx, tmpIdx)
+					fmt.Fprintf(w, "        dst[__index:__index+len(__tmp_%d)] = __tmp_%d\n", tmpIdx, tmpIdx)
 				}
 
 				if i != len(s.DynamicFields)-1 {
 					switch f.TypeInfo.FieldType {
 					case ir.FieldType_STRUCT:
 						//fmt.Fprintf(w, "    __index = __index + U64(%s.lengthInBytes);\n", NameConv(f.Name))
-						fmt.Fprintf(w, "    	__index = __index + %s.__len__()\n", NameConv(f.Name))
+						fmt.Fprintf(w, "        __index = __index + %s.__len__()\n", NameConv(f.Name))
 					case ir.FieldType_BYTES:
-						//fmt.Fprintf(w, "	__index = __index + U64(%s.lengthInBytes);\n", NameConv(f.Name))
-						fmt.Fprintf(w, "		__index = __index + len(%s)\n", NameConv(f.Name))
+						//fmt.Fprintf(w, "    __index = __index + U64(%s.lengthInBytes);\n", NameConv(f.Name))
+						fmt.Fprintf(w, "        __index = __index + len(%s)\n", NameConv(f.Name))
 					case ir.FieldType_STRING:
 						//fmt.Fprintf(w, "    __index = __index + U64(%s.length);\n", NameConv(f.Name))
-						fmt.Fprintf(w, "    	__index = __index + len(%s)\n", NameConv(f.Name))
+						fmt.Fprintf(w, "        __index = __index + len(%s)\n", NameConv(f.Name))
 					}
 				}
 				tmpIdx++
 			}
 		}
 		//fmt.Fprintf(w, "    return dst;\n")
-		fmt.Fprintf(w, "    	return dst\n\n")
+		fmt.Fprintf(w, "        return dst\n\n")
 		//fmt.Fprintf(w, "  }\n\n")
 
 		for _, f := range s.FixedFields {
@@ -186,34 +187,34 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			fmt.Fprintf(w, "    def %s(self) -> %s:\n", NameConv(f.Name), TypeConv(f.Type))
 			switch f.TypeInfo.FieldType {
 			case ir.FieldType_BOOL:
-				fmt.Fprintf(w, "    	return s[%d] != 0;\n", f.Offset)
+				fmt.Fprintf(w, "        return self.vData[%d] != 0;\n", f.Offset)
 			case ir.FieldType_UINT:
 				//fmt.Fprintf(w, "    U%d _value = U%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
 				//fmt.Fprintf(w, "    return _value;\n")
-				fmt.Fprintf(w, "    	return %s.from_bytes(s[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
+				fmt.Fprintf(w, "        return %s.from_bytes(self.vData[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
 			case ir.FieldType_INT:
-				fmt.Fprintf(w, "    	return %s.from_bytes(s[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
+				fmt.Fprintf(w, "        return %s.from_bytes(self.vData[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
 			case ir.FieldType_FLOAT:
 				//fmt.Fprintf(w, "    F%d _value = F%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
 				//fmt.Fprintf(w, "    return _value;\n")
 				switch f.TypeInfo.Size {
 				case 4:
-					fmt.Fprintf(w, "    	return struct.unpack('<f', s[%d:%d])[0]\n", f.Offset, f.Offset+f.TypeInfo.Size)
+					fmt.Fprintf(w, "        return struct.unpack('<f', self.vData[%d:%d])[0]\n", f.Offset, f.Offset+f.TypeInfo.Size)
 				case 8:
-					fmt.Fprintf(w, "    	return struct.unpack('<d', s[%d:%d])[0]\n", f.Offset, f.Offset+f.TypeInfo.Size)
+					fmt.Fprintf(w, "        return struct.unpack('<d', self.vData[%d:%d])[0]\n", f.Offset, f.Offset+f.TypeInfo.Size)
 				}
 			case ir.FieldType_STRUCT:
 				//fmt.Fprintf(w, "    return %s.fromBytes(vData.sublist(%d, %d));\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
-				fmt.Fprintf(w, "    	return %s.fromBytes(s[%d:%d])\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
+				fmt.Fprintf(w, "        return %s.fromBytes(self.vData[%d:%d])\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
 			case ir.FieldType_ENUM:
 				if f.TypeInfo.Size == 1 {
 					//fmt.Fprintf(w, "    return %s.values[vData[%d]];\n", TypeConv(f.Type), f.Offset)
-					fmt.Fprintf(w, "    return %s(s[%d])\n", TypeConv(f.Type), f.Offset)
+					fmt.Fprintf(w, "        return %s(self.vData[%d])\n", TypeConv(f.Type), f.Offset)
 				} else {
 					//fmt.Fprintf(w, "    U%d _value = U%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
 					//fmt.Fprintf(w, "    return %s.values[_value.value];\n", TypeConv(f.Type))
-					fmt.Fprintf(w, "    _value = %s.from_bytes(s[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
-					fmt.Fprintf(w, "    return %s(_value)\n", TypeConv(f.Type))
+					fmt.Fprintf(w, "        _value = %s.from_bytes(self.vData[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
+					fmt.Fprintf(w, "        return %s(_value)\n", TypeConv(f.Type))
 				}
 			}
 			fmt.Fprintf(w, "\n")
@@ -221,8 +222,8 @@ func writeStructs(w io.Writer, i *ir.IR) {
 
 		for i, f := range s.DynamicFields {
 			//fmt.Fprintf(w, "  %s get %s {\n", TypeConv(f.Type), NameConv(f.Name))
-			fmt.Fprintf(w, "	@property\n")
-			fmt.Fprintf(w, "	def %s(self) -> %s:\n", NameConv(f.Name), TypeConv(f.Type))
+			fmt.Fprintf(w, "    @property\n")
+			fmt.Fprintf(w, "    def %s(self) -> %s:\n", NameConv(f.Name), TypeConv(f.Type))
 			//fmt.Fprintf(w, "    U64 __off0 = ")
 			fmt.Fprintf(w, "        __off0 = ")
 			if i == 0 {
@@ -230,22 +231,22 @@ func writeStructs(w io.Writer, i *ir.IR) {
 				fmt.Fprintf(w, "%d", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
 			} else {
 				//fmt.Fprintf(w, "U64.fromBytes(vData.sublist(%d, %d));", s.DynamicFieldHeadOffsets[i]-8, s.DynamicFieldHeadOffsets[i])
-				fmt.Fprintf(w, "int.from_bytes(s[%d:%d], byteorder='little')", s.DynamicFieldHeadOffsets[i-1], s.DynamicFieldHeadOffsets[i])
+				fmt.Fprintf(w, "int.from_bytes(self.vData[%d:%d], byteorder='little')", s.DynamicFieldHeadOffsets[i-1], s.DynamicFieldHeadOffsets[i])
 			}
 			//fmt.Fprintf(w, "\n    U64 __off1 = ")
 			fmt.Fprintf(w, "\n        __off1 = ")
 			//fmt.Fprintf(w, "U64.fromBytes(vData.sublist(%d, %d));\n", s.DynamicFieldHeadOffsets[i], s.DynamicFieldHeadOffsets[i]+8)
-			fmt.Fprintf(w, "int.from_bytes(s[%d:%d], byteorder='little')\n", s.DynamicFieldHeadOffsets[i], s.DynamicFieldHeadOffsets[i]+8)
+			fmt.Fprintf(w, "int.from_bytes(self.vData[%d:%d], byteorder='little')\n", s.DynamicFieldHeadOffsets[i], s.DynamicFieldHeadOffsets[i]+8)
 			switch f.TypeInfo.FieldType {
 			case ir.FieldType_STRUCT:
 				//fmt.Fprintf(w, "\n    return %s.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));\n", TypeConv(f.Type))
-				fmt.Fprintf(w, "\n        return %s.fromBytes(s[__off0:__off1])\n", TypeConv(f.Type))
+				fmt.Fprintf(w, "\n        return %s.fromBytes(self.vData[__off0:__off1])\n", TypeConv(f.Type))
 			case ir.FieldType_STRING:
 				//fmt.Fprintf(w, "\n    return utf8.decode(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));\n")
-				fmt.Fprintf(w, "\n        return s[__off0:__off1].decode('utf-8')\n")
+				fmt.Fprintf(w, "\n        return self.vData[__off0:__off1].decode('utf-8')\n")
 			case ir.FieldType_BYTES:
 				//fmt.Fprintf(w, "\n    return vData.sublist(__off0.value.toInt(), __off1.value.toInt());\n")
-				fmt.Fprintf(w, "\n        return s[__off0:__off1]\n")
+				fmt.Fprintf(w, "\n        return self.vData[__off0:__off1]\n")
 			}
 			fmt.Fprintf(w, "\n")
 		}
@@ -255,12 +256,12 @@ func writeStructs(w io.Writer, i *ir.IR) {
 
 		if s.IsFixed && len(s.DynamicFields) == 0 {
 			//fmt.Fprintf(w, "    return vData.lengthInBytes >= %d;\n", s.TotalFixedFieldSize)
-			fmt.Fprintf(w, "        return len(s) >= %d\n", s.TotalFixedFieldSize)
+			fmt.Fprintf(w, "        return len(self.vData) >= %d\n", s.TotalFixedFieldSize)
 		} else {
 			//fmt.Fprintf(w, "    if (vData.lengthInBytes < %d) {\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
-			fmt.Fprintf(w, "        if len(s) < %d:\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
-			//fmt.Fprintf(w, "      return false;\n")
-			fmt.Fprintf(w, "            return false\n")
+			fmt.Fprintf(w, "        if len(self.vData) < %d:\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+			//fmt.Fprintf(w, "      return False;\n")
+			fmt.Fprintf(w, "            return False\n")
 			//fmt.Fprintf(w, "    }\n")
 			for i, f := range s.DynamicFieldHeadOffsets {
 				_ = f
@@ -271,11 +272,11 @@ func writeStructs(w io.Writer, i *ir.IR) {
 					fmt.Fprintf(w, "%d", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
 				} else {
 					//fmt.Fprintf(w, "U64.fromBytes(vData.sublist(%d, %d));", s.DynamicFieldHeadOffsets[i]-8, s.DynamicFieldHeadOffsets[i])
-					fmt.Fprintf(w, "int.from_bytes(s[%d:%d], byteorder='little')", s.DynamicFieldHeadOffsets[i]-8, s.DynamicFieldHeadOffsets[i])
+					fmt.Fprintf(w, "int.from_bytes(self.vData[%d:%d], byteorder='little')", s.DynamicFieldHeadOffsets[i]-8, s.DynamicFieldHeadOffsets[i])
 				}
 			}
 			//fmt.Fprintf(w, "\n    U64 __off%d = U64(vData.lengthInBytes);", len(s.DynamicFieldHeadOffsets))
-			fmt.Fprintf(w, "\n        __off%d = len(s)\n", len(s.DynamicFieldHeadOffsets))
+			fmt.Fprintf(w, "\n        __off%d = len(self.vData)\n", len(s.DynamicFieldHeadOffsets))
 			var dynStructFields []*ir.Field
 			for _, f := range s.DynamicFields {
 				if f.TypeInfo.FieldType == ir.FieldType_STRUCT {
@@ -317,8 +318,8 @@ func writeStructs(w io.Writer, i *ir.IR) {
 				}
 				//fmt.Fprintf(w, ";")
 				//fmt.Fprintf(w, "\n    }\n")
-				//fmt.Fprintf(w, "\n    return false;\n")
-				fmt.Fprintf(w, "\n        return false\n")
+				//fmt.Fprintf(w, "\n    return False;\n")
+				fmt.Fprintf(w, "\n        return False\n")
 			}
 		}
 		//fmt.Fprintf(w, "  }\n\n")

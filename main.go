@@ -104,7 +104,7 @@ func main() {
 	}
 	out = buf.String()
 	fmt.Println(out)
-	f, err = os.Create("./_out/main.python")
+	f, err = os.Create("./_out/main.py")
 	if err != nil {
 		panic(err)
 	}
