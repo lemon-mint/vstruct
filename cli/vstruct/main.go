@@ -44,7 +44,7 @@ func CreateDirectory(path string) error {
 
 func main() {
 	if len(os.Args) < 3 {
-		fmt.Println("Usage: vstruct <language: go, rust, dart> <file>...")
+		fmt.Println("Usage: vstruct <language: go, rust, dart, py> <file>...")
 		os.Exit(1)
 	}
 	generate := (func(w io.Writer, i *ir.IR, packageName string) error)(nil)
@@ -65,6 +65,10 @@ func main() {
 		generate = dart.Generate
 		modelPath = filepath.Join("lib", modelPath)
 		ext = ".dart"
+	case "py":
+		generate = python.Generate
+		modelPath = filepath.Join(".", modelPath)
+		ext = ".py"
 	default:
 		fmt.Printf("Unknown language: %s\n", language)
 		os.Exit(1)
