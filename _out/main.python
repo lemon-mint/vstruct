@@ -65,7 +65,7 @@ class Coordinate():
     def y(self) -> int:
     	return int.from_bytes(s[8:16], byteorder='little')
 
-  bool vStructValidate() {
+    def vStructValidate(self) -> bool:
     return vData.lengthInBytes >= 16;
   }
 
@@ -118,13 +118,14 @@ class Item():
     def armor(self) -> int:
     	return int.from_bytes(s[9:17], byteorder='little')
 
-  str get name {
-    U64 __off0 = U64(25);
-    U64 __off1 = U64.fromBytes(vData.sublist(17, 25));
+	@property
+	def name(self) -> str:
+        __off0 = 25
+        __off1 = int.from_bytes(s[17:25], byteorder='little')
 
-    return utf8.decode(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
+        return s[__off0:__off1].decode('utf-8')
 
-  bool vStructValidate() {
+    def vStructValidate(self) -> bool:
     if (vData.lengthInBytes < 25) {
       return false;
     }
@@ -169,19 +170,21 @@ class Inventory():
     	dst[__index:__index+len(__tmp_3)] = __tmp_3
     	return dst
 
-  Item get rightHand {
-    U64 __off0 = U64(16);
-    U64 __off1 = U64.fromBytes(vData.sublist(0, 8));
+	@property
+	def rightHand(self) -> Item:
+        __off0 = 16
+        __off1 = int.from_bytes(s[0:8], byteorder='little')
 
-    return Item.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
+        return Item.fromBytes(s[__off0:__off1])
 
-  Item get leftHand {
-    U64 __off0 = U64.fromBytes(vData.sublist(0, 8));
-    U64 __off1 = U64.fromBytes(vData.sublist(8, 16));
+	@property
+	def leftHand(self) -> Item:
+        __off0 = int.from_bytes(s[0:8], byteorder='little')
+        __off1 = int.from_bytes(s[8:16], byteorder='little')
 
-    return Item.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
+        return Item.fromBytes(s[__off0:__off1])
 
-  bool vStructValidate() {
+    def vStructValidate(self) -> bool:
     if (vData.lengthInBytes < 16) {
       return false;
     }
@@ -251,19 +254,21 @@ class Entity():
     def hp(self) -> int:
     	return int.from_bytes(s[17:25], byteorder='little')
 
-  UUID get id {
-    U64 __off0 = U64(41);
-    U64 __off1 = U64.fromBytes(vData.sublist(25, 33));
+	@property
+	def id(self) -> UUID:
+        __off0 = 41
+        __off1 = int.from_bytes(s[25:33], byteorder='little')
 
-    return utf8.decode(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
+        return s[__off0:__off1].decode('utf-8')
 
-  Inventory get inventory {
-    U64 __off0 = U64.fromBytes(vData.sublist(25, 33));
-    U64 __off1 = U64.fromBytes(vData.sublist(33, 41));
+	@property
+	def inventory(self) -> Inventory:
+        __off0 = int.from_bytes(s[25:33], byteorder='little')
+        __off1 = int.from_bytes(s[33:41], byteorder='little')
 
-    return Inventory.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
+        return Inventory.fromBytes(s[__off0:__off1])
 
-  bool vStructValidate() {
+    def vStructValidate(self) -> bool:
     if (vData.lengthInBytes < 41) {
       return false;
     }

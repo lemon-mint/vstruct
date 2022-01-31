@@ -220,27 +220,38 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		}
 
 		for i, f := range s.DynamicFields {
-			fmt.Fprintf(w, "  %s get %s {\n", TypeConv(f.Type), NameConv(f.Name))
-			fmt.Fprintf(w, "    U64 __off0 = ")
+			//fmt.Fprintf(w, "  %s get %s {\n", TypeConv(f.Type), NameConv(f.Name))
+			fmt.Fprintf(w, "	@property\n")
+			fmt.Fprintf(w, "	def %s(self) -> %s:\n", NameConv(f.Name), TypeConv(f.Type))
+			//fmt.Fprintf(w, "    U64 __off0 = ")
+			fmt.Fprintf(w, "        __off0 = ")
 			if i == 0 {
-				fmt.Fprintf(w, "U64(%d);", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+				//fmt.Fprintf(w, "U64(%d);", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+				fmt.Fprintf(w, "%d", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
 			} else {
-				fmt.Fprintf(w, "U64.fromBytes(vData.sublist(%d, %d));", s.DynamicFieldHeadOffsets[i]-8, s.DynamicFieldHeadOffsets[i])
+				//fmt.Fprintf(w, "U64.fromBytes(vData.sublist(%d, %d));", s.DynamicFieldHeadOffsets[i]-8, s.DynamicFieldHeadOffsets[i])
+				fmt.Fprintf(w, "int.from_bytes(s[%d:%d], byteorder='little')", s.DynamicFieldHeadOffsets[i-1], s.DynamicFieldHeadOffsets[i])
 			}
-			fmt.Fprintf(w, "\n    U64 __off1 = ")
-			fmt.Fprintf(w, "U64.fromBytes(vData.sublist(%d, %d));\n", s.DynamicFieldHeadOffsets[i], s.DynamicFieldHeadOffsets[i]+8)
+			//fmt.Fprintf(w, "\n    U64 __off1 = ")
+			fmt.Fprintf(w, "\n        __off1 = ")
+			//fmt.Fprintf(w, "U64.fromBytes(vData.sublist(%d, %d));\n", s.DynamicFieldHeadOffsets[i], s.DynamicFieldHeadOffsets[i]+8)
+			fmt.Fprintf(w, "int.from_bytes(s[%d:%d], byteorder='little')\n", s.DynamicFieldHeadOffsets[i], s.DynamicFieldHeadOffsets[i]+8)
 			switch f.TypeInfo.FieldType {
 			case ir.FieldType_STRUCT:
-				fmt.Fprintf(w, "\n    return %s.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));\n", TypeConv(f.Type))
+				//fmt.Fprintf(w, "\n    return %s.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));\n", TypeConv(f.Type))
+				fmt.Fprintf(w, "\n        return %s.fromBytes(s[__off0:__off1])\n", TypeConv(f.Type))
 			case ir.FieldType_STRING:
-				fmt.Fprintf(w, "\n    return utf8.decode(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));\n")
+				//fmt.Fprintf(w, "\n    return utf8.decode(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));\n")
+				fmt.Fprintf(w, "\n        return s[__off0:__off1].decode('utf-8')\n")
 			case ir.FieldType_BYTES:
-				fmt.Fprintf(w, "\n    return vData.sublist(__off0.value.toInt(), __off1.value.toInt());\n")
+				//fmt.Fprintf(w, "\n    return vData.sublist(__off0.value.toInt(), __off1.value.toInt());\n")
+				fmt.Fprintf(w, "\n        return s[__off0:__off1]\n")
 			}
 			fmt.Fprintf(w, "\n")
 		}
 
-		fmt.Fprintf(w, "  bool vStructValidate() {\n")
+		//fmt.Fprintf(w, "  bool vStructValidate() {\n")
+		fmt.Fprintf(w, "    def vStructValidate(self) -> bool:\n")
 
 		if s.IsFixed && len(s.DynamicFields) == 0 {
 			fmt.Fprintf(w, "    return vData.lengthInBytes >= %d;\n", s.TotalFixedFieldSize)
