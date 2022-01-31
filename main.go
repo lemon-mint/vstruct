@@ -78,6 +78,7 @@ func main() {
 		panic(err)
 	}
 	f.WriteString(out)
+	f.WriteString("fn main() {}\n")
 	f.Close()
 
 	buf.Reset()

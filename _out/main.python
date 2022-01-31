@@ -32,31 +32,26 @@ class Coordinate():
         vData = self.vSerialize(self.vData, x, y)
 
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.vData)
 
-    def toBytes(self):
+    def toBytes(self) -> bytearray:
         return self.vData
 
     @staticmethod
-    def fromBytes(b: bytearray):
+    def fromBytes(b: bytearray) -> Coordinate:
         self = Coordinate.__new__()
         self.vData = b
         return self
 
-  Uint8List vSerialize(Uint8List dst, I64 x, I64 y) {
-    Uint8List __tmp_0 = x.toBytes();
-    for (int i = 0; i < 8; i++) {
-      dst[0 + i] = __tmp_0[i];
-    }
+    def vSerialize(self, dst: bytearray, x: I64, y: I64) -> bytearray:
+        __tmp_0 = x.to_bytes(8, 'little')
+        dst[0:8] = __tmp_0
 
-    Uint8List __tmp_1 = y.toBytes();
-    for (int i = 0; i < 8; i++) {
-      dst[8 + i] = __tmp_1[i];
-    }
+        __tmp_1 = y.to_bytes(8, 'little')
+        dst[8:16] = __tmp_1
 
-    return dst;
-  }
+    	return dst
 
   I64 get x {
     I64 _value = I64.fromBytes(vData.sublist(0, 8));
@@ -81,43 +76,33 @@ class Item():
         vData = self.vSerialize(self.vData, type, damage, armor, name)
 
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.vData)
 
-    def toBytes(self):
+    def toBytes(self) -> bytearray:
         return self.vData
 
     @staticmethod
-    def fromBytes(b: bytearray):
+    def fromBytes(b: bytearray) -> Item:
         self = Item.__new__()
         self.vData = b
         return self
 
-  Uint8List vSerialize(Uint8List dst, ItemType type, I64 damage, I64 armor, String name) {
-    dst[0] = type.index;
+    def vSerialize(self, dst: bytearray, type: ItemType, damage: I64, armor: I64, name: String) -> bytearray:
+        dst[0] = type.value
 
-    Uint8List __tmp_1 = damage.toBytes();
-    for (int i = 0; i < 8; i++) {
-      dst[1 + i] = __tmp_1[i];
-    }
+        __tmp_1 = damage.to_bytes(8, 'little')
+        dst[1:9] = __tmp_1
 
-    Uint8List __tmp_2 = armor.toBytes();
-    for (int i = 0; i < 8; i++) {
-      dst[9 + i] = __tmp_2[i];
-    }
+        __tmp_2 = armor.to_bytes(8, 'little')
+        dst[9:17] = __tmp_2
 
-    U64 __index = U64(25);
-    Uint8List __tmp_3 = (U64(name.length) + __index).toBytes();
-    for (int i = 0; i < 8; i++) {
-      dst[17 + i] = __tmp_3[i];
-    }
-    List<int> __tmp_4 = utf8.encode(name);
-    Uint8List __tmp_5 = Uint8List.fromList(__tmp_4);
-    for (int i = 0; i < name.length; i++) {
-      dst[(__index + U64(i)).value.toInt()] = __tmp_5[i];
-    }
-    return dst;
-  }
+        __index = 25
+    	__tmp_3 = (len(name) + __index).to_bytes(8, 'little')
+    	dst[17:25] = __tmp_3
+        __tmp_4 = name.encode('utf-8')
+    	dst[__index:__index+len(__tmp_4)] = __tmp_4
+    	return dst
 
   ItemType get type {
     return ItemType.values[vData[0]];
@@ -160,39 +145,30 @@ class Inventory():
         vData = self.vSerialize(self.vData, rightHand, leftHand)
 
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.vData)
 
-    def toBytes(self):
+    def toBytes(self) -> bytearray:
         return self.vData
 
     @staticmethod
-    def fromBytes(b: bytearray):
+    def fromBytes(b: bytearray) -> Inventory:
         self = Inventory.__new__()
         self.vData = b
         return self
 
-  Uint8List vSerialize(Uint8List dst, Item rightHand, Item leftHand) {
-    U64 __index = U64(16);
-    Uint8List __tmp_0 = (U64(rightHand.lengthInBytes) + __index).toBytes();
-    for (int i = 0; i < 8; i++) {
-      dst[0 + i] = __tmp_0[i];
-    }
-    Uint8List __tmp_1 = rightHand.toBytes();
-    for (int i = 0; i < rightHand.lengthInBytes; i++) {
-      dst[(__index + U64(i)).value.toInt()] = __tmp_1[i];
-    }
-    __index = __index + U64(rightHand.lengthInBytes);
-    Uint8List __tmp_2 = (U64(leftHand.lengthInBytes) + __index).toBytes();
-    for (int i = 0; i < 8; i++) {
-      dst[8 + i] = __tmp_2[i];
-    }
-    Uint8List __tmp_3 = leftHand.toBytes();
-    for (int i = 0; i < leftHand.lengthInBytes; i++) {
-      dst[(__index + U64(i)).value.toInt()] = __tmp_3[i];
-    }
-    return dst;
-  }
+    def vSerialize(self, dst: bytearray, rightHand: Item, leftHand: Item) -> bytearray:
+        __index = 16
+    	__tmp_0 = (rightHand.__len__() + __index).to_bytes(8, 'little')
+    	dst[0:8] = __tmp_0
+    	__tmp_1 = rightHand.toBytes()
+    	dst[__index:__index+len(__tmp_1)] = __tmp_1
+    	__index = __index + rightHand.__len__()
+    	__tmp_2 = (leftHand.__len__() + __index).to_bytes(8, 'little')
+    	dst[8:16] = __tmp_2
+    	__tmp_3 = leftHand.toBytes()
+    	dst[__index:__index+len(__tmp_3)] = __tmp_3
+    	return dst
 
   Item get rightHand {
     U64 __off0 = U64(16);
@@ -233,52 +209,38 @@ class Entity():
         vData = self.vSerialize(self.vData, type, position, hp, id, inventory)
 
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.vData)
 
-    def toBytes(self):
+    def toBytes(self) -> bytearray:
         return self.vData
 
     @staticmethod
-    def fromBytes(b: bytearray):
+    def fromBytes(b: bytearray) -> Entity:
         self = Entity.__new__()
         self.vData = b
         return self
 
-  Uint8List vSerialize(Uint8List dst, Speices type, Coordinate position, I64 hp, UUID id, Inventory inventory) {
-    dst[0] = type.index;
+    def vSerialize(self, dst: bytearray, type: Speices, position: Coordinate, hp: I64, id: UUID, inventory: Inventory) -> bytearray:
+        dst[0] = type.value
 
-    Uint8List __tmp_1 = position.toBytes();
-    for (int i = 0; i < position.lengthInBytes; i++) {
-      dst[1 + i] = __tmp_1[i];
-    }
+        __tmp_1 = position.toBytes()
+        dst[1:1+len(__tmp_1)] = __tmp_1
 
-    Uint8List __tmp_2 = hp.toBytes();
-    for (int i = 0; i < 8; i++) {
-      dst[17 + i] = __tmp_2[i];
-    }
+        __tmp_2 = hp.to_bytes(8, 'little')
+        dst[17:25] = __tmp_2
 
-    U64 __index = U64(41);
-    Uint8List __tmp_3 = (U64(id.length) + __index).toBytes();
-    for (int i = 0; i < 8; i++) {
-      dst[25 + i] = __tmp_3[i];
-    }
-    List<int> __tmp_4 = utf8.encode(id);
-    Uint8List __tmp_5 = Uint8List.fromList(__tmp_4);
-    for (int i = 0; i < id.length; i++) {
-      dst[(__index + U64(i)).value.toInt()] = __tmp_5[i];
-    }
-    __index = __index + U64(id.length);
-    Uint8List __tmp_6 = (U64(inventory.lengthInBytes) + __index).toBytes();
-    for (int i = 0; i < 8; i++) {
-      dst[33 + i] = __tmp_6[i];
-    }
-    Uint8List __tmp_7 = inventory.toBytes();
-    for (int i = 0; i < inventory.lengthInBytes; i++) {
-      dst[(__index + U64(i)).value.toInt()] = __tmp_7[i];
-    }
-    return dst;
-  }
+        __index = 41
+    	__tmp_3 = (len(id) + __index).to_bytes(8, 'little')
+    	dst[25:33] = __tmp_3
+        __tmp_4 = id.encode('utf-8')
+    	dst[__index:__index+len(__tmp_4)] = __tmp_4
+    	__index = __index + len(id)
+    	__tmp_5 = (inventory.__len__() + __index).to_bytes(8, 'little')
+    	dst[33:41] = __tmp_5
+    	__tmp_6 = inventory.toBytes()
+    	dst[__index:__index+len(__tmp_6)] = __tmp_6
+    	return dst
 
   Speices get type {
     return Speices.values[vData[0]];
