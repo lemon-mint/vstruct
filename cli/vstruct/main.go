@@ -11,6 +11,7 @@ import (
 
 	"github.com/lemon-mint/vstruct/compile/backend/dart"
 	"github.com/lemon-mint/vstruct/compile/backend/golang"
+	"github.com/lemon-mint/vstruct/compile/backend/python"
 	"github.com/lemon-mint/vstruct/compile/backend/rust"
 	"github.com/lemon-mint/vstruct/compile/frontend"
 	"github.com/lemon-mint/vstruct/ir"
