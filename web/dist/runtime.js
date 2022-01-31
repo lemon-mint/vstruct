@@ -46,10 +46,11 @@ var v_loaded = false;
         const langgo = document.getElementById("go");
         const langdart = document.getElementById("dart");
         const langrust = document.getElementById("rust");
+        const langpython = document.getElementById("python");
 
         compileBtn.addEventListener("click", () => {
             const code = input.value;
-            const lang = langgo.checked ? "go" : langdart.checked ? "dart" : langrust.checked ? "rust" : "invalid";
+            const lang = langgo.checked ? "go" : langdart.checked ? "dart" : langrust.checked ? "rust" : langpython.checked ? "python" : "invalid";
             const result = compile(lang, pkgname.value, code);
             if (result) {
                 errordiv.hidden = true;

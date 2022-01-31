@@ -8,6 +8,7 @@ import (
 
 	"github.com/lemon-mint/vstruct/compile/backend/dart"
 	"github.com/lemon-mint/vstruct/compile/backend/golang"
+	"github.com/lemon-mint/vstruct/compile/backend/python"
 	"github.com/lemon-mint/vstruct/compile/backend/rust"
 	"github.com/lemon-mint/vstruct/compile/frontend"
 	"github.com/lemon-mint/vstruct/lexer"
@@ -67,6 +68,8 @@ func main() {
 				err = rust.Generate(&buf, goir, pkgname)
 			case "dart":
 				err = dart.Generate(&buf, goir, pkgname)
+			case "python":
+				err = python.Generate(&buf, goir, pkgname)
 			default:
 				err = fmt.Errorf("Unknown language: %s", lang)
 			}
