@@ -43,7 +43,7 @@ class Coordinate():
         return self.vData
 
     @staticmethod
-    def fromBytes(b: bytearray) -> Coordinate:
+    def fromBytes(b: bytearray) -> 'Coordinate':
         self = Coordinate.__new__()
         self.vData = b
         return self
@@ -83,7 +83,7 @@ class Item():
         return self.vData
 
     @staticmethod
-    def fromBytes(b: bytearray) -> Item:
+    def fromBytes(b: bytearray) -> 'Item':
         self = Item.__new__()
         self.vData = b
         return self
@@ -147,7 +147,7 @@ class Inventory():
         return self.vData
 
     @staticmethod
-    def fromBytes(b: bytearray) -> Inventory:
+    def fromBytes(b: bytearray) -> 'Inventory':
         self = Inventory.__new__()
         self.vData = b
         return self
@@ -189,7 +189,7 @@ class Inventory():
         __off3 = len(self.vData)
 
         if __off0 <= __off1 and __off1 <= __off2 and __off2 <= __off3:
-            return rightHand.vStructValidate() and leftHand.vStructValidate()
+            return self.rightHand.vStructValidate() and self.leftHand.vStructValidate()
         return False
 
 
@@ -207,7 +207,7 @@ class Entity():
         return self.vData
 
     @staticmethod
-    def fromBytes(b: bytearray) -> Entity:
+    def fromBytes(b: bytearray) -> 'Entity':
         self = Entity.__new__()
         self.vData = b
         return self
@@ -269,7 +269,7 @@ class Entity():
         __off3 = len(self.vData)
 
         if __off0 <= __off1 and __off1 <= __off2 and __off2 <= __off3:
-            return inventory.vStructValidate()
+            return self.inventory.vStructValidate()
         return False
 
 

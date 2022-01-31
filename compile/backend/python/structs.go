@@ -66,7 +66,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		//fmt.Fprintf(w, "    vData = b;\n")
 		//fmt.Fprintf(w, "  }\n\n")
 		fmt.Fprintf(w, "    @staticmethod\n")
-		fmt.Fprintf(w, "    def fromBytes(b: bytearray) -> %s:\n", TypeConv(s.Name))
+		fmt.Fprintf(w, "    def fromBytes(b: bytearray) -> '%s':\n", TypeConv(s.Name))
 		fmt.Fprintf(w, "        self = %s.__new__()\n", TypeConv(s.Name))
 		fmt.Fprintf(w, "        self.vData = b\n")
 		fmt.Fprintf(w, "        return self\n\n")
@@ -310,7 +310,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 				fmt.Fprintf(w, ":\n")
 				fmt.Fprintf(w, "            return ")
 				for i, f := range dynStructFields {
-					fmt.Fprintf(w, "%s.vStructValidate()", NameConv(f.Name))
+					fmt.Fprintf(w, "self.%s.vStructValidate()", NameConv(f.Name))
 					if i != len(dynStructFields)-1 {
 						//fmt.Fprintf(w, " && ")
 						fmt.Fprintf(w, " and ")
