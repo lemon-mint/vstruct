@@ -4,6 +4,7 @@
 
 from enum import Enum, unique
 from typing import TypeAlias
+import struct
 
 UUID: TypeAlias = str
 
@@ -58,13 +59,11 @@ class Coordinate():
 
     @property
     def x(self) -> int:
-    	_value = int.from_bytes(s[0:8], byteorder='little')
-  }
+    	return int.from_bytes(s[0:8], byteorder='little')
 
     @property
     def y(self) -> int:
-    	_value = int.from_bytes(s[8:16], byteorder='little')
-  }
+    	return int.from_bytes(s[8:16], byteorder='little')
 
   bool vStructValidate() {
     return vData.lengthInBytes >= 16;
@@ -109,25 +108,21 @@ class Item():
 
     @property
     def type(self) -> ItemType:
-    return ItemType.values[vData[0]];
-  }
+    return ItemType(s[0])
 
     @property
     def damage(self) -> int:
-    	_value = int.from_bytes(s[1:9], byteorder='little')
-  }
+    	return int.from_bytes(s[1:9], byteorder='little')
 
     @property
     def armor(self) -> int:
-    	_value = int.from_bytes(s[9:17], byteorder='little')
-  }
+    	return int.from_bytes(s[9:17], byteorder='little')
 
   str get name {
     U64 __off0 = U64(25);
     U64 __off1 = U64.fromBytes(vData.sublist(17, 25));
 
     return utf8.decode(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
-  }
 
   bool vStructValidate() {
     if (vData.lengthInBytes < 25) {
@@ -179,14 +174,12 @@ class Inventory():
     U64 __off1 = U64.fromBytes(vData.sublist(0, 8));
 
     return Item.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
-  }
 
   Item get leftHand {
     U64 __off0 = U64.fromBytes(vData.sublist(0, 8));
     U64 __off1 = U64.fromBytes(vData.sublist(8, 16));
 
     return Item.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
-  }
 
   bool vStructValidate() {
     if (vData.lengthInBytes < 16) {
@@ -248,32 +241,27 @@ class Entity():
 
     @property
     def type(self) -> Speices:
-    return Speices.values[vData[0]];
-  }
+    return Speices(s[0])
 
     @property
     def position(self) -> Coordinate:
-    return Coordinate.fromBytes(vData.sublist(1, 17));
-  }
+    	return Coordinate.fromBytes(s[1:17])
 
     @property
     def hp(self) -> int:
-    	_value = int.from_bytes(s[17:25], byteorder='little')
-  }
+    	return int.from_bytes(s[17:25], byteorder='little')
 
   UUID get id {
     U64 __off0 = U64(41);
     U64 __off1 = U64.fromBytes(vData.sublist(25, 33));
 
     return utf8.decode(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
-  }
 
   Inventory get inventory {
     U64 __off0 = U64.fromBytes(vData.sublist(25, 33));
     U64 __off1 = U64.fromBytes(vData.sublist(33, 41));
 
     return Inventory.fromBytes(vData.sublist(__off0.value.toInt(), __off1.value.toInt()));
-  }
 
   bool vStructValidate() {
     if (vData.lengthInBytes < 41) {

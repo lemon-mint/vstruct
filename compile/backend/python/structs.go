@@ -190,26 +190,30 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			case ir.FieldType_UINT:
 				//fmt.Fprintf(w, "    U%d _value = U%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
 				//fmt.Fprintf(w, "    return _value;\n")
-				fmt.Fprintf(w, "    	_value = %s.from_bytes(s[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
+				fmt.Fprintf(w, "    	return %s.from_bytes(s[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
 			case ir.FieldType_INT:
-				fmt.Fprintf(w, "    	_value = %s.from_bytes(s[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
+				fmt.Fprintf(w, "    	return %s.from_bytes(s[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
 			case ir.FieldType_FLOAT:
 				//fmt.Fprintf(w, "    F%d _value = F%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
 				//fmt.Fprintf(w, "    return _value;\n")
 				switch f.TypeInfo.Size {
 				case 4:
-					fmt.Fprintf(w, "    	_value = struct.unpack('<f', s[%d:%d])[0]\n", f.Offset, f.Offset+f.TypeInfo.Size)
+					fmt.Fprintf(w, "    	return struct.unpack('<f', s[%d:%d])[0]\n", f.Offset, f.Offset+f.TypeInfo.Size)
 				case 8:
-					fmt.Fprintf(w, "    	_value = struct.unpack('<d', s[%d:%d])[0]\n", f.Offset, f.Offset+f.TypeInfo.Size)
+					fmt.Fprintf(w, "    	return struct.unpack('<d', s[%d:%d])[0]\n", f.Offset, f.Offset+f.TypeInfo.Size)
 				}
 			case ir.FieldType_STRUCT:
-				fmt.Fprintf(w, "    return %s.fromBytes(vData.sublist(%d, %d));\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
+				//fmt.Fprintf(w, "    return %s.fromBytes(vData.sublist(%d, %d));\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
+				fmt.Fprintf(w, "    	return %s.fromBytes(s[%d:%d])\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
 			case ir.FieldType_ENUM:
 				if f.TypeInfo.Size == 1 {
-					fmt.Fprintf(w, "    return %s.values[vData[%d]];\n", TypeConv(f.Type), f.Offset)
+					//fmt.Fprintf(w, "    return %s.values[vData[%d]];\n", TypeConv(f.Type), f.Offset)
+					fmt.Fprintf(w, "    return %s(s[%d])\n", TypeConv(f.Type), f.Offset)
 				} else {
-					fmt.Fprintf(w, "    U%d _value = U%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
-					fmt.Fprintf(w, "    return %s.values[_value.value];\n", TypeConv(f.Type))
+					//fmt.Fprintf(w, "    U%d _value = U%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
+					//fmt.Fprintf(w, "    return %s.values[_value.value];\n", TypeConv(f.Type))
+					fmt.Fprintf(w, "    _value = %s.from_bytes(s[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
+					fmt.Fprintf(w, "    return %s(_value)\n", TypeConv(f.Type))
 				}
 			}
 			fmt.Fprintf(w, "\n")
