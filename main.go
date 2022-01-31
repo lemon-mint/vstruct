@@ -9,6 +9,7 @@ import (
 
 	"github.com/lemon-mint/vstruct/compile/backend/dart"
 	"github.com/lemon-mint/vstruct/compile/backend/golang"
+	"github.com/lemon-mint/vstruct/compile/backend/python"
 	"github.com/lemon-mint/vstruct/compile/backend/rust"
 	"github.com/lemon-mint/vstruct/compile/frontend"
 	"github.com/lemon-mint/vstruct/lexer"
@@ -46,11 +47,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	goir := front.Output()
-	goir.Options.UseUnsafe = true
+	IRData := front.Output()
+	IRData.Options.UseUnsafe = true
 
 	var buf bytes.Buffer
-	err = golang.Generate(&buf, goir, "main")
+	err = golang.Generate(&buf, IRData, "main")
 	if err != nil {
 		fmt.Println(buf.String())
 		panic(err)
@@ -65,7 +66,7 @@ func main() {
 	f.Close()
 
 	buf.Reset()
-	err = rust.Generate(&buf, goir, "main")
+	err = rust.Generate(&buf, IRData, "main")
 	if err != nil {
 		fmt.Println(buf.String())
 		panic(err)
@@ -80,7 +81,7 @@ func main() {
 	f.Close()
 
 	buf.Reset()
-	err = dart.Generate(&buf, goir, "main")
+	err = dart.Generate(&buf, IRData, "main")
 	if err != nil {
 		fmt.Println(buf.String())
 		panic(err)
@@ -88,6 +89,21 @@ func main() {
 	out = buf.String()
 	fmt.Println(out)
 	f, err = os.Create("./_out/bin/main.dart")
+	if err != nil {
+		panic(err)
+	}
+	f.WriteString(out)
+	f.Close()
+
+	buf.Reset()
+	err = python.Generate(&buf, IRData, "main")
+	if err != nil {
+		fmt.Println(buf.String())
+		panic(err)
+	}
+	out = buf.String()
+	fmt.Println(out)
+	f, err = os.Create("./_out/main.python")
 	if err != nil {
 		panic(err)
 	}
