@@ -181,7 +181,9 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		//fmt.Fprintf(w, "  }\n\n")
 
 		for _, f := range s.FixedFields {
-			fmt.Fprintf(w, "  %s get %s {\n", TypeConv(f.Type), NameConv(f.Name))
+			//fmt.Fprintf(w, "  %s get %s {\n", TypeConv(f.Type), NameConv(f.Name))
+			fmt.Fprintf(w, "    @property\n")
+			fmt.Fprintf(w, "    def %s(self): -> %s\n", NameConv(f.Name), TypeConv(f.Type))
 			switch f.TypeInfo.FieldType {
 			case ir.FieldType_BOOL:
 				fmt.Fprintf(w, "    return s[%d] != 0;\n", f.Offset)

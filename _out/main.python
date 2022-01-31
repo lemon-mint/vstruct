@@ -3,6 +3,9 @@
 # Package Name: main
 
 from enum import Enum, unique
+from typing import TypeAlias
+
+UUID: TypeAlias = String
 
 @unique
 class Speices(Enum):
@@ -53,12 +56,14 @@ class Coordinate():
 
     	return dst
 
-  I64 get x {
+    @property
+    def x(self): -> I64
     I64 _value = I64.fromBytes(vData.sublist(0, 8));
     return _value;
   }
 
-  I64 get y {
+    @property
+    def y(self): -> I64
     I64 _value = I64.fromBytes(vData.sublist(8, 16));
     return _value;
   }
@@ -104,16 +109,19 @@ class Item():
     	dst[__index:__index+len(__tmp_4)] = __tmp_4
     	return dst
 
-  ItemType get type {
+    @property
+    def type(self): -> ItemType
     return ItemType.values[vData[0]];
   }
 
-  I64 get damage {
+    @property
+    def damage(self): -> I64
     I64 _value = I64.fromBytes(vData.sublist(1, 9));
     return _value;
   }
 
-  I64 get armor {
+    @property
+    def armor(self): -> I64
     I64 _value = I64.fromBytes(vData.sublist(9, 17));
     return _value;
   }
@@ -242,15 +250,18 @@ class Entity():
     	dst[__index:__index+len(__tmp_6)] = __tmp_6
     	return dst
 
-  Speices get type {
+    @property
+    def type(self): -> Speices
     return Speices.values[vData[0]];
   }
 
-  Coordinate get position {
+    @property
+    def position(self): -> Coordinate
     return Coordinate.fromBytes(vData.sublist(1, 17));
   }
 
-  I64 get hp {
+    @property
+    def hp(self): -> I64
     I64 _value = I64.fromBytes(vData.sublist(17, 25));
     return _value;
   }
@@ -287,5 +298,4 @@ class Entity():
 
 }
 
-typedef UUID = String;
 
