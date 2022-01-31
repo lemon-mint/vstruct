@@ -5,7 +5,7 @@
 from enum import Enum, unique
 from typing import TypeAlias
 
-UUID: TypeAlias = String
+UUID: TypeAlias = str
 
 @unique
 class Speices(Enum):
@@ -29,7 +29,7 @@ class ItemType(Enum):
     potion = 2
 
 class Coordinate():
-    def __init__(self, x: I64, y: I64) {
+    def __init__(self, x: int, y: int) {
         vSize = 16
         vData = bytearray(vSize)
         vData = self.vSerialize(self.vData, x, y)
@@ -47,7 +47,7 @@ class Coordinate():
         self.vData = b
         return self
 
-    def vSerialize(self, dst: bytearray, x: I64, y: I64) -> bytearray:
+    def vSerialize(self, dst: bytearray, x: int, y: int) -> bytearray:
         __tmp_0 = x.to_bytes(8, 'little')
         dst[0:8] = __tmp_0
 
@@ -57,13 +57,13 @@ class Coordinate():
     	return dst
 
     @property
-    def x(self) -> I64:
-    	_value = I64.from_bytes(s[0:8], byteorder='little')
+    def x(self) -> int:
+    	_value = int.from_bytes(s[0:8], byteorder='little')
   }
 
     @property
-    def y(self) -> I64:
-    	_value = I64.from_bytes(s[8:16], byteorder='little')
+    def y(self) -> int:
+    	_value = int.from_bytes(s[8:16], byteorder='little')
   }
 
   bool vStructValidate() {
@@ -73,7 +73,7 @@ class Coordinate():
 }
 
 class Item():
-    def __init__(self, type: ItemType, damage: I64, armor: I64, name: String) {
+    def __init__(self, type: ItemType, damage: int, armor: int, name: str) {
         vSize = 25 + len(name)
         vData = bytearray(vSize)
         vData = self.vSerialize(self.vData, type, damage, armor, name)
@@ -91,7 +91,7 @@ class Item():
         self.vData = b
         return self
 
-    def vSerialize(self, dst: bytearray, type: ItemType, damage: I64, armor: I64, name: String) -> bytearray:
+    def vSerialize(self, dst: bytearray, type: ItemType, damage: int, armor: int, name: str) -> bytearray:
         dst[0] = type.value
 
         __tmp_1 = damage.to_bytes(8, 'little')
@@ -113,16 +113,16 @@ class Item():
   }
 
     @property
-    def damage(self) -> I64:
-    	_value = I64.from_bytes(s[1:9], byteorder='little')
+    def damage(self) -> int:
+    	_value = int.from_bytes(s[1:9], byteorder='little')
   }
 
     @property
-    def armor(self) -> I64:
-    	_value = I64.from_bytes(s[9:17], byteorder='little')
+    def armor(self) -> int:
+    	_value = int.from_bytes(s[9:17], byteorder='little')
   }
 
-  String get name {
+  str get name {
     U64 __off0 = U64(25);
     U64 __off1 = U64.fromBytes(vData.sublist(17, 25));
 
@@ -207,7 +207,7 @@ class Inventory():
 }
 
 class Entity():
-    def __init__(self, type: Speices, position: Coordinate, hp: I64, id: UUID, inventory: Inventory) {
+    def __init__(self, type: Speices, position: Coordinate, hp: int, id: UUID, inventory: Inventory) {
         vSize = 41 + len(id) + len(inventory)
         vData = bytearray(vSize)
         vData = self.vSerialize(self.vData, type, position, hp, id, inventory)
@@ -225,7 +225,7 @@ class Entity():
         self.vData = b
         return self
 
-    def vSerialize(self, dst: bytearray, type: Speices, position: Coordinate, hp: I64, id: UUID, inventory: Inventory) -> bytearray:
+    def vSerialize(self, dst: bytearray, type: Speices, position: Coordinate, hp: int, id: UUID, inventory: Inventory) -> bytearray:
         dst[0] = type.value
 
         __tmp_1 = position.toBytes()
@@ -257,8 +257,8 @@ class Entity():
   }
 
     @property
-    def hp(self) -> I64:
-    	_value = I64.from_bytes(s[17:25], byteorder='little')
+    def hp(self) -> int:
+    	_value = int.from_bytes(s[17:25], byteorder='little')
   }
 
   UUID get id {
