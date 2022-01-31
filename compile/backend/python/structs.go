@@ -194,8 +194,14 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			case ir.FieldType_INT:
 				fmt.Fprintf(w, "    	_value = %s.from_bytes(s[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
 			case ir.FieldType_FLOAT:
-				fmt.Fprintf(w, "    F%d _value = F%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
-				fmt.Fprintf(w, "    return _value;\n")
+				//fmt.Fprintf(w, "    F%d _value = F%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
+				//fmt.Fprintf(w, "    return _value;\n")
+				switch f.TypeInfo.Size {
+				case 4:
+					fmt.Fprintf(w, "    	_value = struct.unpack('<f', s[%d:%d])[0]\n", f.Offset, f.Offset+f.TypeInfo.Size)
+				case 8:
+					fmt.Fprintf(w, "    	_value = struct.unpack('<d', s[%d:%d])[0]\n", f.Offset, f.Offset+f.TypeInfo.Size)
+				}
 			case ir.FieldType_STRUCT:
 				fmt.Fprintf(w, "    return %s.fromBytes(vData.sublist(%d, %d));\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
 			case ir.FieldType_ENUM:
@@ -206,7 +212,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 					fmt.Fprintf(w, "    return %s.values[_value.value];\n", TypeConv(f.Type))
 				}
 			}
-			fmt.Fprintf(w, "  }\n\n")
+			fmt.Fprintf(w, "\n")
 		}
 
 		for i, f := range s.DynamicFields {
@@ -227,7 +233,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			case ir.FieldType_BYTES:
 				fmt.Fprintf(w, "\n    return vData.sublist(__off0.value.toInt(), __off1.value.toInt());\n")
 			}
-			fmt.Fprintf(w, "  }\n\n")
+			fmt.Fprintf(w, "\n")
 		}
 
 		fmt.Fprintf(w, "  bool vStructValidate() {\n")
