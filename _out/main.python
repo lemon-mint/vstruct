@@ -57,15 +57,13 @@ class Coordinate():
     	return dst
 
     @property
-    def x(self): -> I64
-    I64 _value = I64.fromBytes(vData.sublist(0, 8));
-    return _value;
+    def x(self) -> I64:
+    	_value = I64.from_bytes(s[0:8], byteorder='little')
   }
 
     @property
-    def y(self): -> I64
-    I64 _value = I64.fromBytes(vData.sublist(8, 16));
-    return _value;
+    def y(self) -> I64:
+    	_value = I64.from_bytes(s[8:16], byteorder='little')
   }
 
   bool vStructValidate() {
@@ -110,20 +108,18 @@ class Item():
     	return dst
 
     @property
-    def type(self): -> ItemType
+    def type(self) -> ItemType:
     return ItemType.values[vData[0]];
   }
 
     @property
-    def damage(self): -> I64
-    I64 _value = I64.fromBytes(vData.sublist(1, 9));
-    return _value;
+    def damage(self) -> I64:
+    	_value = I64.from_bytes(s[1:9], byteorder='little')
   }
 
     @property
-    def armor(self): -> I64
-    I64 _value = I64.fromBytes(vData.sublist(9, 17));
-    return _value;
+    def armor(self) -> I64:
+    	_value = I64.from_bytes(s[9:17], byteorder='little')
   }
 
   String get name {
@@ -251,19 +247,18 @@ class Entity():
     	return dst
 
     @property
-    def type(self): -> Speices
+    def type(self) -> Speices:
     return Speices.values[vData[0]];
   }
 
     @property
-    def position(self): -> Coordinate
+    def position(self) -> Coordinate:
     return Coordinate.fromBytes(vData.sublist(1, 17));
   }
 
     @property
-    def hp(self): -> I64
-    I64 _value = I64.fromBytes(vData.sublist(17, 25));
-    return _value;
+    def hp(self) -> I64:
+    	_value = I64.from_bytes(s[17:25], byteorder='little')
   }
 
   UUID get id {

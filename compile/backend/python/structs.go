@@ -183,16 +183,16 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		for _, f := range s.FixedFields {
 			//fmt.Fprintf(w, "  %s get %s {\n", TypeConv(f.Type), NameConv(f.Name))
 			fmt.Fprintf(w, "    @property\n")
-			fmt.Fprintf(w, "    def %s(self): -> %s\n", NameConv(f.Name), TypeConv(f.Type))
+			fmt.Fprintf(w, "    def %s(self) -> %s:\n", NameConv(f.Name), TypeConv(f.Type))
 			switch f.TypeInfo.FieldType {
 			case ir.FieldType_BOOL:
-				fmt.Fprintf(w, "    return s[%d] != 0;\n", f.Offset)
+				fmt.Fprintf(w, "    	return s[%d] != 0;\n", f.Offset)
 			case ir.FieldType_UINT:
-				fmt.Fprintf(w, "    U%d _value = U%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
-				fmt.Fprintf(w, "    return _value;\n")
+				//fmt.Fprintf(w, "    U%d _value = U%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
+				//fmt.Fprintf(w, "    return _value;\n")
+				fmt.Fprintf(w, "    	_value = %s.from_bytes(s[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
 			case ir.FieldType_INT:
-				fmt.Fprintf(w, "    I%d _value = I%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
-				fmt.Fprintf(w, "    return _value;\n")
+				fmt.Fprintf(w, "    	_value = %s.from_bytes(s[%d:%d], byteorder='little')\n", TypeConv(f.Type), f.Offset, f.Offset+f.TypeInfo.Size)
 			case ir.FieldType_FLOAT:
 				fmt.Fprintf(w, "    F%d _value = F%d.fromBytes(vData.sublist(%d, %d));\n", f.TypeInfo.Size*8, f.TypeInfo.Size*8, f.Offset, f.Offset+f.TypeInfo.Size)
 				fmt.Fprintf(w, "    return _value;\n")
