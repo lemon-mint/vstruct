@@ -47,9 +47,3 @@ struct Entity {
 
     Inventory inventory;
 }
-
-service TestService {
-    Coordinate InitCoordinate();
-    Coordinate Move(Coordinate position);
-    Item NewItem(ItemType type, string name, int64 damage, int64 armor);
-}
