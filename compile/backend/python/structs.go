@@ -254,21 +254,28 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		fmt.Fprintf(w, "    def vStructValidate(self) -> bool:\n")
 
 		if s.IsFixed && len(s.DynamicFields) == 0 {
-			fmt.Fprintf(w, "    return vData.lengthInBytes >= %d;\n", s.TotalFixedFieldSize)
+			//fmt.Fprintf(w, "    return vData.lengthInBytes >= %d;\n", s.TotalFixedFieldSize)
+			fmt.Fprintf(w, "        return len(s) >= %d\n", s.TotalFixedFieldSize)
 		} else {
-			fmt.Fprintf(w, "    if (vData.lengthInBytes < %d) {\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
-			fmt.Fprintf(w, "      return false;\n")
-			fmt.Fprintf(w, "    }\n")
+			//fmt.Fprintf(w, "    if (vData.lengthInBytes < %d) {\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+			fmt.Fprintf(w, "        if len(s) < %d:\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+			//fmt.Fprintf(w, "      return false;\n")
+			fmt.Fprintf(w, "            return false\n")
+			//fmt.Fprintf(w, "    }\n")
 			for i, f := range s.DynamicFieldHeadOffsets {
 				_ = f
-				fmt.Fprintf(w, "\n    U64 __off%d = ", i)
+				//fmt.Fprintf(w, "\n    U64 __off%d = ", i)
+				fmt.Fprintf(w, "\n        __off%d = ", i)
 				if i == 0 {
-					fmt.Fprintf(w, "U64(%d);", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+					//fmt.Fprintf(w, "U64(%d);", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+					fmt.Fprintf(w, "%d", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
 				} else {
-					fmt.Fprintf(w, "U64.fromBytes(vData.sublist(%d, %d));", s.DynamicFieldHeadOffsets[i]-8, s.DynamicFieldHeadOffsets[i])
+					//fmt.Fprintf(w, "U64.fromBytes(vData.sublist(%d, %d));", s.DynamicFieldHeadOffsets[i]-8, s.DynamicFieldHeadOffsets[i])
+					fmt.Fprintf(w, "int.from_bytes(s[%d:%d], byteorder='little')", s.DynamicFieldHeadOffsets[i]-8, s.DynamicFieldHeadOffsets[i])
 				}
 			}
-			fmt.Fprintf(w, "\n    U64 __off%d = U64(vData.lengthInBytes);", len(s.DynamicFieldHeadOffsets))
+			//fmt.Fprintf(w, "\n    U64 __off%d = U64(vData.lengthInBytes);", len(s.DynamicFieldHeadOffsets))
+			fmt.Fprintf(w, "\n        __off%d = len(s)\n", len(s.DynamicFieldHeadOffsets))
 			var dynStructFields []*ir.Field
 			for _, f := range s.DynamicFields {
 				if f.TypeInfo.FieldType == ir.FieldType_STRUCT {
@@ -276,38 +283,46 @@ func writeStructs(w io.Writer, i *ir.IR) {
 				}
 			}
 			if len(dynStructFields) == 0 {
-				fmt.Fprintf(w, "\n    return ")
+				//fmt.Fprintf(w, "\n    return ")
+				fmt.Fprintf(w, "\n        return ")
 				for i, f := range s.DynamicFieldHeadOffsets {
-					fmt.Fprintf(w, "__off%d <= __off%d ", i, i+1)
+					fmt.Fprintf(w, "__off%d <= __off%d", i, i+1)
 					if i != len(s.DynamicFieldHeadOffsets)-1 {
-						fmt.Fprintf(w, "&& ")
+						//fmt.Fprintf(w, "&& ")
+						fmt.Fprintf(w, " and ")
 					}
 					_ = f
 				}
-				fmt.Fprintf(w, ";\n")
+				//fmt.Fprintf(w, ";\n")
 			} else {
-				fmt.Fprintf(w, "\n    if (")
+				//fmt.Fprintf(w, "\n    if (")
+				fmt.Fprintf(w, "\n        if ")
 				for i, f := range s.DynamicFieldHeadOffsets {
-					fmt.Fprintf(w, "__off%d <= __off%d ", i, i+1)
+					fmt.Fprintf(w, "__off%d <= __off%d", i, i+1)
 					if i != len(s.DynamicFieldHeadOffsets)-1 {
-						fmt.Fprintf(w, "&& ")
+						//fmt.Fprintf(w, "&& ")
+						fmt.Fprintf(w, " and ")
 					}
 					_ = f
 				}
-				fmt.Fprintf(w, ") {\n")
-				fmt.Fprintf(w, "      return ")
+				//fmt.Fprintf(w, ") {\n")
+				fmt.Fprintf(w, ":\n")
+				fmt.Fprintf(w, "            return ")
 				for i, f := range dynStructFields {
 					fmt.Fprintf(w, "%s.vStructValidate()", NameConv(f.Name))
 					if i != len(dynStructFields)-1 {
-						fmt.Fprintf(w, " && ")
+						//fmt.Fprintf(w, " && ")
+						fmt.Fprintf(w, " and ")
 					}
 				}
-				fmt.Fprintf(w, ";")
-				fmt.Fprintf(w, "\n    }\n")
-				fmt.Fprintf(w, "\n    return false;\n")
+				//fmt.Fprintf(w, ";")
+				//fmt.Fprintf(w, "\n    }\n")
+				//fmt.Fprintf(w, "\n    return false;\n")
+				fmt.Fprintf(w, "\n        return false\n")
 			}
 		}
-		fmt.Fprintf(w, "  }\n\n")
-		fmt.Fprintf(w, "}\n\n")
+		//fmt.Fprintf(w, "  }\n\n")
+		fmt.Fprintf(w, "\n\n")
+		//fmt.Fprintf(w, "}\n\n")
 	}
 }

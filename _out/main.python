@@ -66,10 +66,8 @@ class Coordinate():
     	return int.from_bytes(s[8:16], byteorder='little')
 
     def vStructValidate(self) -> bool:
-    return vData.lengthInBytes >= 16;
-  }
+        return len(s) >= 16
 
-}
 
 class Item():
     def __init__(self, type: ItemType, damage: int, armor: int, name: str) {
@@ -126,17 +124,14 @@ class Item():
         return s[__off0:__off1].decode('utf-8')
 
     def vStructValidate(self) -> bool:
-    if (vData.lengthInBytes < 25) {
-      return false;
-    }
+        if len(s) < 25:
+            return false
 
-    U64 __off0 = U64(25);
-    U64 __off1 = U64.fromBytes(vData.sublist(17, 25));
-    U64 __off2 = U64(vData.lengthInBytes);
-    return __off0 <= __off1 && __off1 <= __off2 ;
-  }
+        __off0 = 25
+        __off1 = int.from_bytes(s[17:25], byteorder='little')
+        __off2 = len(s)
 
-}
+        return __off0 <= __off1 and __off1 <= __off2
 
 class Inventory():
     def __init__(self, rightHand: Item, leftHand: Item) {
@@ -185,22 +180,18 @@ class Inventory():
         return Item.fromBytes(s[__off0:__off1])
 
     def vStructValidate(self) -> bool:
-    if (vData.lengthInBytes < 16) {
-      return false;
-    }
+        if len(s) < 16:
+            return false
 
-    U64 __off0 = U64(16);
-    U64 __off1 = U64.fromBytes(vData.sublist(0, 8));
-    U64 __off2 = U64.fromBytes(vData.sublist(8, 16));
-    U64 __off3 = U64(vData.lengthInBytes);
-    if (__off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3 ) {
-      return rightHand.vStructValidate() && leftHand.vStructValidate();
-    }
+        __off0 = 16
+        __off1 = int.from_bytes(s[0:8], byteorder='little')
+        __off2 = int.from_bytes(s[8:16], byteorder='little')
+        __off3 = len(s)
 
-    return false;
-  }
+        if __off0 <= __off1 and __off1 <= __off2 and __off2 <= __off3:
+            return rightHand.vStructValidate() and leftHand.vStructValidate()
+        return false
 
-}
 
 class Entity():
     def __init__(self, type: Speices, position: Coordinate, hp: int, id: UUID, inventory: Inventory) {
@@ -269,21 +260,17 @@ class Entity():
         return Inventory.fromBytes(s[__off0:__off1])
 
     def vStructValidate(self) -> bool:
-    if (vData.lengthInBytes < 41) {
-      return false;
-    }
+        if len(s) < 41:
+            return false
 
-    U64 __off0 = U64(41);
-    U64 __off1 = U64.fromBytes(vData.sublist(25, 33));
-    U64 __off2 = U64.fromBytes(vData.sublist(33, 41));
-    U64 __off3 = U64(vData.lengthInBytes);
-    if (__off0 <= __off1 && __off1 <= __off2 && __off2 <= __off3 ) {
-      return inventory.vStructValidate();
-    }
+        __off0 = 41
+        __off1 = int.from_bytes(s[25:33], byteorder='little')
+        __off2 = int.from_bytes(s[33:41], byteorder='little')
+        __off3 = len(s)
 
-    return false;
-  }
+        if __off0 <= __off1 and __off1 <= __off2 and __off2 <= __off3:
+            return inventory.vStructValidate()
+        return false
 
-}
 
 
