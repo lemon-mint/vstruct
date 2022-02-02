@@ -65,9 +65,9 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		//fmt.Fprintf(w, "  %s.fromBytes(Uint8List b) {\n", TypeConv(s.Name))
 		//fmt.Fprintf(w, "    vData = b;\n")
 		//fmt.Fprintf(w, "  }\n\n")
-		fmt.Fprintf(w, "    @staticmethod\n")
-		fmt.Fprintf(w, "    def fromBytes(b: bytearray) -> '%s':\n", TypeConv(s.Name))
-		fmt.Fprintf(w, "        self = %s.__new__()\n", TypeConv(s.Name))
+		fmt.Fprintf(w, "    @classmethod\n")
+		fmt.Fprintf(w, "    def fromBytes(cls, b: bytearray) -> '%s':\n", TypeConv(s.Name))
+		fmt.Fprintf(w, "        self = cls.__new__(cls)\n")
 		fmt.Fprintf(w, "        self.vData = b\n")
 		fmt.Fprintf(w, "        return self\n\n")
 

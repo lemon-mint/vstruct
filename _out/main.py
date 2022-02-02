@@ -42,9 +42,9 @@ class Coordinate():
     def toBytes(self) -> bytearray:
         return self.vData
 
-    @staticmethod
-    def fromBytes(b: bytearray) -> 'Coordinate':
-        self = Coordinate.__new__()
+    @classmethod
+    def fromBytes(cls, b: bytearray) -> 'Coordinate':
+        self = cls.__new__(cls)
         self.vData = b
         return self
 
@@ -82,9 +82,9 @@ class Item():
     def toBytes(self) -> bytearray:
         return self.vData
 
-    @staticmethod
-    def fromBytes(b: bytearray) -> 'Item':
-        self = Item.__new__()
+    @classmethod
+    def fromBytes(cls, b: bytearray) -> 'Item':
+        self = cls.__new__(cls)
         self.vData = b
         return self
 
@@ -146,9 +146,9 @@ class Inventory():
     def toBytes(self) -> bytearray:
         return self.vData
 
-    @staticmethod
-    def fromBytes(b: bytearray) -> 'Inventory':
-        self = Inventory.__new__()
+    @classmethod
+    def fromBytes(cls, b: bytearray) -> 'Inventory':
+        self = cls.__new__(cls)
         self.vData = b
         return self
 
@@ -206,9 +206,9 @@ class Entity():
     def toBytes(self) -> bytearray:
         return self.vData
 
-    @staticmethod
-    def fromBytes(b: bytearray) -> 'Entity':
-        self = Entity.__new__()
+    @classmethod
+    def fromBytes(cls, b: bytearray) -> 'Entity':
+        self = cls.__new__(cls)
         self.vData = b
         return self
 
