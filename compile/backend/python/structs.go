@@ -9,10 +9,31 @@ import (
 
 func writeStructs(w io.Writer, i *ir.IR) {
 	for _, s := range i.Structs {
-		fmt.Fprintf(w, "class %s():\n", NameConv(s.Name))
 		var allFields []*ir.Field
 		allFields = append(allFields, s.FixedFields...)
 		allFields = append(allFields, s.DynamicFields...)
+
+		fmt.Fprintf(w, "#[struct(")
+		for i, f := range allFields {
+			if i > 0 {
+				fmt.Fprintf(w, ", ")
+			}
+			fmt.Fprintf(w, "%s=%s", NameConv(f.Name), TypeConv(f.Type))
+		}
+		fmt.Fprintf(w, ")]\n")
+
+		fmt.Fprintf(w, "class %s():\n", NameConv(s.Name))
+
+		fmt.Fprintf(w, "    # BEGIN VSTRUCT TYPE INFO\n")
+		for _, f := range s.FixedFields {
+			fmt.Fprintf(w, "	#[vstruct.fixed(start=%d, end=%d, size=%d, type=%s, name=%s)]\n", f.Offset, f.Offset+f.TypeInfo.Size, f.TypeInfo.Size, TypeConv(f.Type), NameConv(f.Name))
+		}
+		for _, f := range s.DynamicFields {
+			fmt.Fprintf(w, "	#[vstruct.dynamic(type=%s, name=%s)]\n", TypeConv(f.Type), NameConv(f.Name))
+		}
+		fmt.Fprintf(w, "    # END VSTRUCT TYPE INFO\n")
+		fmt.Fprintf(w, "\n")
+
 		fmt.Fprintf(w, "    def __init__(self, ")
 		for i, f := range allFields {
 			if i != 0 {
@@ -62,6 +83,27 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		fmt.Fprintf(w, "    def toBytes(self) -> bytearray:\n")
 		fmt.Fprintf(w, "        return self.vData\n\n")
 
+		fmt.Fprintf(w, "    def __str__(self) -> str:\n")
+		fmt.Fprintf(w, "        return self.toString()\n\n")
+
+		fmt.Fprintf(w, "    def __repr__(self) -> str:\n")
+		fmt.Fprintf(w, "        return self.toString()\n\n")
+
+		fmt.Fprintf(w, "    def toString(self) -> str:\n")
+		fmt.Fprintf(w, "        if not self.vStructValidate():\n")
+		fmt.Fprintf(w, "            return \"<class \\'%s\\' (invalid)>\"\n", NameConv(s.Name))
+
+		fmt.Fprintf(w, "        return f'<class \\'%s\\' (", NameConv(s.Name))
+		for i, f := range allFields {
+			if i != 0 {
+				fmt.Fprintf(w, ", ")
+			}
+			fmt.Fprintf(w, "%s={self.%s}", NameConv(f.Name), NameConv(f.Name))
+		}
+		quotedFileName := fmt.Sprintf("%q", i.FileName)
+
+		fmt.Fprintf(w, ") from \\'%s\\'>'\n\n", quotedFileName[1:len(quotedFileName)-1])
+
 		//fmt.Fprintf(w, "  %s.fromBytes(Uint8List b) {\n", TypeConv(s.Name))
 		//fmt.Fprintf(w, "    vData = b;\n")
 		//fmt.Fprintf(w, "  }\n\n")
@@ -83,6 +125,8 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		var IsFixed bool = len(s.DynamicFields) == 0
 		var tmpIdx int = 0
 		for _, f := range s.FixedFields {
+			fmt.Fprintf(w, "		#[vstruct.fixed(start=%d, end=%d, size=%d, type=%s, name=%s)]\n", f.Offset, f.Offset+f.TypeInfo.Size, f.TypeInfo.Size, TypeConv(f.Type), NameConv(f.Name))
+
 			switch f.TypeInfo.FieldType {
 			case ir.FieldType_STRUCT:
 				//fmt.Fprintf(w, "    Uint8List __tmp_%d = %s.toBytes();\n", tmpIdx, NameConv(f.Name))
@@ -119,8 +163,11 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		}
 		if !IsFixed {
 			//fmt.Fprintf(w, "    U64 __index = U64(%d);\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
-			fmt.Fprintf(w, "        __index = %d\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+			fmt.Fprintf(w, "        #[vstruct.index(start=%d)]\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+			fmt.Fprintf(w, "        __index = %d\n\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
 			for i, f := range s.DynamicFields {
+				fmt.Fprintf(w, "        #[vstruct.dynamic(type=%s, name=%s)]\n", TypeConv(f.Type), NameConv(f.Name))
+
 				switch f.TypeInfo.FieldType {
 				case ir.FieldType_BYTES:
 					//fmt.Fprintf(w, "    Uint8List __tmp_%d = (U64(%s.lengthInBytes) + __index).toBytes();\n", tmpIdx, NameConv(f.Name))
@@ -175,6 +222,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 					}
 				}
 				tmpIdx++
+				fmt.Fprintf(w, "        \n")
 			}
 		}
 		//fmt.Fprintf(w, "    return dst;\n")
@@ -183,6 +231,8 @@ func writeStructs(w io.Writer, i *ir.IR) {
 
 		for _, f := range s.FixedFields {
 			//fmt.Fprintf(w, "  %s get %s {\n", TypeConv(f.Type), NameConv(f.Name))
+			fmt.Fprintf(w, "    #[vstruct.fixed(start=%d, end=%d, size=%d, type=%s, name=%s)]\n", f.Offset, f.Offset+f.TypeInfo.Size, f.TypeInfo.Size, TypeConv(f.Type), NameConv(f.Name))
+
 			fmt.Fprintf(w, "    @property\n")
 			fmt.Fprintf(w, "    def %s(self) -> %s:\n", NameConv(f.Name), TypeConv(f.Type))
 			switch f.TypeInfo.FieldType {
@@ -221,6 +271,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		}
 
 		for i, f := range s.DynamicFields {
+			fmt.Fprintf(w, "    #[vstruct.dynamic(type=%s, name=%s)]\n", TypeConv(f.Type), NameConv(f.Name))
 			//fmt.Fprintf(w, "  %s get %s {\n", TypeConv(f.Type), NameConv(f.Name))
 			fmt.Fprintf(w, "    @property\n")
 			fmt.Fprintf(w, "    def %s(self) -> %s:\n", NameConv(f.Name), TypeConv(f.Type))

@@ -6,8 +6,10 @@ from enum import Enum, unique
 from typing import TypeAlias
 import struct
 
+#[alias(UUID=str)]
 UUID: TypeAlias = str
 
+#[enum(human=0, elf=1, orc=2, dwarf=3, gnome=4, halfling=5, halfElf=6, halfOrc=7, dragonborn=8, tiefling=9, gnoll=10, goblin=11)]
 @unique
 class Speices(Enum):
     human = 0
@@ -23,13 +25,20 @@ class Speices(Enum):
     gnoll = 10
     goblin = 11
 
+#[enum(weapon=0, armor=1, potion=2)]
 @unique
 class ItemType(Enum):
     weapon = 0
     armor = 1
     potion = 2
 
+#[struct(x=int, y=int)]
 class Coordinate():
+    # BEGIN VSTRUCT TYPE INFO
+	#[vstruct.fixed(start=0, end=8, size=8, type=int, name=x)]
+	#[vstruct.fixed(start=8, end=16, size=8, type=int, name=y)]
+    # END VSTRUCT TYPE INFO
+
     def __init__(self, x: int, y: int):
         vSize = 16
         self.vData = bytearray(vSize)
@@ -42,6 +51,17 @@ class Coordinate():
     def toBytes(self) -> bytearray:
         return self.vData
 
+    def __str__(self) -> str:
+        return self.toString()
+
+    def __repr__(self) -> str:
+        return self.toString()
+
+    def toString(self) -> str:
+        if not self.vStructValidate():
+            return "<class \'Coordinate\' (invalid)>"
+        return f'<class \'Coordinate\' (x={self.x}, y={self.y}) from \'G:\\mega\\golang\\projectv3\\vstruct\\test.vstruct\'>'
+
     @classmethod
     def fromBytes(cls, b: bytearray) -> 'Coordinate':
         self = cls.__new__(cls)
@@ -49,18 +69,22 @@ class Coordinate():
         return self
 
     def vSerialize(self, dst: bytearray, x: int, y: int) -> bytearray:
+		#[vstruct.fixed(start=0, end=8, size=8, type=int, name=x)]
         __tmp_0 = x.to_bytes(8, 'little')
         dst[0:8] = __tmp_0
 
+		#[vstruct.fixed(start=8, end=16, size=8, type=int, name=y)]
         __tmp_1 = y.to_bytes(8, 'little')
         dst[8:16] = __tmp_1
 
         return dst
 
+    #[vstruct.fixed(start=0, end=8, size=8, type=int, name=x)]
     @property
     def x(self) -> int:
         return int.from_bytes(self.vData[0:8], byteorder='little')
 
+    #[vstruct.fixed(start=8, end=16, size=8, type=int, name=y)]
     @property
     def y(self) -> int:
         return int.from_bytes(self.vData[8:16], byteorder='little')
@@ -69,7 +93,15 @@ class Coordinate():
         return len(self.vData) >= 16
 
 
+#[struct(type=ItemType, damage=int, armor=int, name=str)]
 class Item():
+    # BEGIN VSTRUCT TYPE INFO
+	#[vstruct.fixed(start=0, end=1, size=1, type=ItemType, name=type)]
+	#[vstruct.fixed(start=1, end=9, size=8, type=int, name=damage)]
+	#[vstruct.fixed(start=9, end=17, size=8, type=int, name=armor)]
+	#[vstruct.dynamic(type=str, name=name)]
+    # END VSTRUCT TYPE INFO
+
     def __init__(self, type: ItemType, damage: int, armor: int, name: str):
         vSize = 25 + len(name)
         self.vData = bytearray(vSize)
@@ -82,6 +114,17 @@ class Item():
     def toBytes(self) -> bytearray:
         return self.vData
 
+    def __str__(self) -> str:
+        return self.toString()
+
+    def __repr__(self) -> str:
+        return self.toString()
+
+    def toString(self) -> str:
+        if not self.vStructValidate():
+            return "<class \'Item\' (invalid)>"
+        return f'<class \'Item\' (type={self.type}, damage={self.damage}, armor={self.armor}, name={self.name}) from \'G:\\mega\\golang\\projectv3\\vstruct\\test.vstruct\'>'
+
     @classmethod
     def fromBytes(cls, b: bytearray) -> 'Item':
         self = cls.__new__(cls)
@@ -89,33 +132,44 @@ class Item():
         return self
 
     def vSerialize(self, dst: bytearray, type: ItemType, damage: int, armor: int, name: str) -> bytearray:
+		#[vstruct.fixed(start=0, end=1, size=1, type=ItemType, name=type)]
         dst[0] = type.value
 
+		#[vstruct.fixed(start=1, end=9, size=8, type=int, name=damage)]
         __tmp_1 = damage.to_bytes(8, 'little')
         dst[1:9] = __tmp_1
 
+		#[vstruct.fixed(start=9, end=17, size=8, type=int, name=armor)]
         __tmp_2 = armor.to_bytes(8, 'little')
         dst[9:17] = __tmp_2
 
+        #[vstruct.index(start=25)]
         __index = 25
+
+        #[vstruct.dynamic(type=str, name=name)]
         __tmp_3 = (len(name) + __index).to_bytes(8, 'little')
         dst[17:25] = __tmp_3
         __tmp_4 = name.encode('utf-8')
         dst[__index:__index+len(__tmp_4)] = __tmp_4
+        
         return dst
 
+    #[vstruct.fixed(start=0, end=1, size=1, type=ItemType, name=type)]
     @property
     def type(self) -> ItemType:
         return ItemType(self.vData[0])
 
+    #[vstruct.fixed(start=1, end=9, size=8, type=int, name=damage)]
     @property
     def damage(self) -> int:
         return int.from_bytes(self.vData[1:9], byteorder='little')
 
+    #[vstruct.fixed(start=9, end=17, size=8, type=int, name=armor)]
     @property
     def armor(self) -> int:
         return int.from_bytes(self.vData[9:17], byteorder='little')
 
+    #[vstruct.dynamic(type=str, name=name)]
     @property
     def name(self) -> str:
         __off0 = 25
@@ -133,7 +187,13 @@ class Item():
 
         return __off0 <= __off1 and __off1 <= __off2
 
+#[struct(rightHand=Item, leftHand=Item)]
 class Inventory():
+    # BEGIN VSTRUCT TYPE INFO
+	#[vstruct.dynamic(type=Item, name=rightHand)]
+	#[vstruct.dynamic(type=Item, name=leftHand)]
+    # END VSTRUCT TYPE INFO
+
     def __init__(self, rightHand: Item, leftHand: Item):
         vSize = 16 + len(rightHand) + len(leftHand)
         self.vData = bytearray(vSize)
@@ -146,6 +206,17 @@ class Inventory():
     def toBytes(self) -> bytearray:
         return self.vData
 
+    def __str__(self) -> str:
+        return self.toString()
+
+    def __repr__(self) -> str:
+        return self.toString()
+
+    def toString(self) -> str:
+        if not self.vStructValidate():
+            return "<class \'Inventory\' (invalid)>"
+        return f'<class \'Inventory\' (rightHand={self.rightHand}, leftHand={self.leftHand}) from \'G:\\mega\\golang\\projectv3\\vstruct\\test.vstruct\'>'
+
     @classmethod
     def fromBytes(cls, b: bytearray) -> 'Inventory':
         self = cls.__new__(cls)
@@ -153,18 +224,25 @@ class Inventory():
         return self
 
     def vSerialize(self, dst: bytearray, rightHand: Item, leftHand: Item) -> bytearray:
+        #[vstruct.index(start=16)]
         __index = 16
+
+        #[vstruct.dynamic(type=Item, name=rightHand)]
         __tmp_0 = (rightHand.__len__() + __index).to_bytes(8, 'little')
         dst[0:8] = __tmp_0
         __tmp_1 = rightHand.toBytes()
         dst[__index:__index+len(__tmp_1)] = __tmp_1
         __index = __index + rightHand.__len__()
+        
+        #[vstruct.dynamic(type=Item, name=leftHand)]
         __tmp_2 = (leftHand.__len__() + __index).to_bytes(8, 'little')
         dst[8:16] = __tmp_2
         __tmp_3 = leftHand.toBytes()
         dst[__index:__index+len(__tmp_3)] = __tmp_3
+        
         return dst
 
+    #[vstruct.dynamic(type=Item, name=rightHand)]
     @property
     def rightHand(self) -> Item:
         __off0 = 16
@@ -172,6 +250,7 @@ class Inventory():
 
         return Item.fromBytes(self.vData[__off0:__off1])
 
+    #[vstruct.dynamic(type=Item, name=leftHand)]
     @property
     def leftHand(self) -> Item:
         __off0 = int.from_bytes(self.vData[0:8], byteorder='little')
@@ -193,7 +272,16 @@ class Inventory():
         return False
 
 
+#[struct(type=Speices, position=Coordinate, hp=int, id=UUID, inventory=Inventory)]
 class Entity():
+    # BEGIN VSTRUCT TYPE INFO
+	#[vstruct.fixed(start=0, end=1, size=1, type=Speices, name=type)]
+	#[vstruct.fixed(start=1, end=17, size=16, type=Coordinate, name=position)]
+	#[vstruct.fixed(start=17, end=25, size=8, type=int, name=hp)]
+	#[vstruct.dynamic(type=UUID, name=id)]
+	#[vstruct.dynamic(type=Inventory, name=inventory)]
+    # END VSTRUCT TYPE INFO
+
     def __init__(self, type: Speices, position: Coordinate, hp: int, id: UUID, inventory: Inventory):
         vSize = 41 + len(id) + len(inventory)
         self.vData = bytearray(vSize)
@@ -206,6 +294,17 @@ class Entity():
     def toBytes(self) -> bytearray:
         return self.vData
 
+    def __str__(self) -> str:
+        return self.toString()
+
+    def __repr__(self) -> str:
+        return self.toString()
+
+    def toString(self) -> str:
+        if not self.vStructValidate():
+            return "<class \'Entity\' (invalid)>"
+        return f'<class \'Entity\' (type={self.type}, position={self.position}, hp={self.hp}, id={self.id}, inventory={self.inventory}) from \'G:\\mega\\golang\\projectv3\\vstruct\\test.vstruct\'>'
+
     @classmethod
     def fromBytes(cls, b: bytearray) -> 'Entity':
         self = cls.__new__(cls)
@@ -213,38 +312,51 @@ class Entity():
         return self
 
     def vSerialize(self, dst: bytearray, type: Speices, position: Coordinate, hp: int, id: UUID, inventory: Inventory) -> bytearray:
+		#[vstruct.fixed(start=0, end=1, size=1, type=Speices, name=type)]
         dst[0] = type.value
 
+		#[vstruct.fixed(start=1, end=17, size=16, type=Coordinate, name=position)]
         __tmp_1 = position.toBytes()
         dst[1:1+len(__tmp_1)] = __tmp_1
 
+		#[vstruct.fixed(start=17, end=25, size=8, type=int, name=hp)]
         __tmp_2 = hp.to_bytes(8, 'little')
         dst[17:25] = __tmp_2
 
+        #[vstruct.index(start=41)]
         __index = 41
+
+        #[vstruct.dynamic(type=UUID, name=id)]
         __tmp_3 = (len(id) + __index).to_bytes(8, 'little')
         dst[25:33] = __tmp_3
         __tmp_4 = id.encode('utf-8')
         dst[__index:__index+len(__tmp_4)] = __tmp_4
         __index = __index + len(id)
+        
+        #[vstruct.dynamic(type=Inventory, name=inventory)]
         __tmp_5 = (inventory.__len__() + __index).to_bytes(8, 'little')
         dst[33:41] = __tmp_5
         __tmp_6 = inventory.toBytes()
         dst[__index:__index+len(__tmp_6)] = __tmp_6
+        
         return dst
 
+    #[vstruct.fixed(start=0, end=1, size=1, type=Speices, name=type)]
     @property
     def type(self) -> Speices:
         return Speices(self.vData[0])
 
+    #[vstruct.fixed(start=1, end=17, size=16, type=Coordinate, name=position)]
     @property
     def position(self) -> Coordinate:
         return Coordinate.fromBytes(self.vData[1:17])
 
+    #[vstruct.fixed(start=17, end=25, size=8, type=int, name=hp)]
     @property
     def hp(self) -> int:
         return int.from_bytes(self.vData[17:25], byteorder='little')
 
+    #[vstruct.dynamic(type=UUID, name=id)]
     @property
     def id(self) -> UUID:
         __off0 = 41
@@ -252,6 +364,7 @@ class Entity():
 
         return self.vData[__off0:__off1].decode('utf-8')
 
+    #[vstruct.dynamic(type=Inventory, name=inventory)]
     @property
     def inventory(self) -> Inventory:
         __off0 = int.from_bytes(self.vData[25:33], byteorder='little')

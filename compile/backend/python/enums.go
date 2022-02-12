@@ -18,6 +18,15 @@ func writeEnums(w io.Writer, i *ir.IR) {
 		}
 	*/
 	for _, e := range i.Enums {
+		fmt.Fprintf(w, "#[enum(")
+		for i, v := range e.Options {
+			if i > 0 {
+				fmt.Fprintf(w, ", ")
+			}
+			fmt.Fprintf(w, "%s=%d", NameConv(v), i)
+		}
+
+		fmt.Fprintf(w, ")]\n")
 		fmt.Fprintf(w, "@unique\n")
 		fmt.Fprintf(w, "class %s(Enum):\n", NameConv(e.Name))
 		for i, v := range e.Options {
