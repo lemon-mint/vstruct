@@ -17,7 +17,7 @@ fs.mkdirSync(npmbin, { recursive: true });
 
 const filepath = path.join(npmbin, 'vstruct');
 
-const ws = fs.createWriteStream(filepath);
+//const ws = fs.createWriteStream(filepath);
 
 const version = packageJSON.version;
 
