@@ -98,7 +98,23 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			if i != 0 {
 				fmt.Fprintf(w, ", ")
 			}
-			fmt.Fprintf(w, "%s={self.%s}", NameConv(f.Name), NameConv(f.Name))
+			fmt.Fprintf(w, "%s=", NameConv(f.Name))
+			switch f.TypeInfo.FieldType {
+			case ir.FieldType_BYTES:
+				fmt.Fprintf(w, "{self.%s}", NameConv(f.Name))
+			case ir.FieldType_STRING:
+				fmt.Fprintf(w, "\"{re.escape(self.%s)}\"", NameConv(f.Name))
+			case ir.FieldType_STRUCT:
+				fmt.Fprintf(w, "{self.%s}", NameConv(f.Name))
+			case ir.FieldType_UINT:
+				fmt.Fprintf(w, "{self.%s}", NameConv(f.Name))
+			case ir.FieldType_INT:
+				fmt.Fprintf(w, "{self.%s}", NameConv(f.Name))
+			case ir.FieldType_BOOL:
+				fmt.Fprintf(w, "{self.%s}", NameConv(f.Name))
+			case ir.FieldType_ENUM:
+				fmt.Fprintf(w, "{self.%s}", NameConv(f.Name))
+			}
 		}
 		fmt.Fprintf(w, ")'\n\n")
 

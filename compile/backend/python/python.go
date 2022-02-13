@@ -21,6 +21,7 @@ func Generate(w io.Writer, i *ir.IR, packageName string) error {
 from enum import Enum, unique
 from typing import TypeAlias
 import struct
+import re
 
 %s
 `,

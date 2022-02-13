@@ -5,6 +5,7 @@
 from enum import Enum, unique
 from typing import TypeAlias
 import struct
+import re
 
 #[alias(UUID=str)]
 UUID: TypeAlias = str
@@ -123,7 +124,7 @@ class Item():
     def toString(self) -> str:
         if not self.vStructValidate():
             return "<class \'Item\' (invalid)>"
-        return f'Item(type={self.type}, damage={self.damage}, armor={self.armor}, name={self.name})'
+        return f'Item(type={self.type}, damage={self.damage}, armor={self.armor}, name="{re.escape(self.name)}")'
 
     @classmethod
     def fromBytes(cls, b: bytearray) -> 'Item':
@@ -303,7 +304,7 @@ class Entity():
     def toString(self) -> str:
         if not self.vStructValidate():
             return "<class \'Entity\' (invalid)>"
-        return f'Entity(type={self.type}, position={self.position}, hp={self.hp}, id={self.id}, inventory={self.inventory})'
+        return f'Entity(type={self.type}, position={self.position}, hp={self.hp}, id="{re.escape(self.id)}", inventory={self.inventory})'
 
     @classmethod
     def fromBytes(cls, b: bytearray) -> 'Entity':
