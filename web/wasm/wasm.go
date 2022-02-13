@@ -4,18 +4,10 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
-	"fmt"
 	"syscall/js"
 
-	"github.com/lemon-mint/vstruct/compile/backend/dart"
-	"github.com/lemon-mint/vstruct/compile/backend/golang"
-	"github.com/lemon-mint/vstruct/compile/backend/python"
-	"github.com/lemon-mint/vstruct/compile/backend/rust"
-	"github.com/lemon-mint/vstruct/compile/frontend"
-	"github.com/lemon-mint/vstruct/lexer"
-	"github.com/lemon-mint/vstruct/parser"
+	"github.com/lemon-mint/vstruct/utils"
 )
 
 type CompilerOut struct {
@@ -28,67 +20,11 @@ func main() {
 		// args[0] : language (go|rust|dart)
 		// args[1] : pkgname (string)
 		// args[2] : input vstruct file (string)
-		output := func() CompilerOut {
-			if len(args) != 3 {
-				return CompilerOut{
-					Err: "Invalid arguments",
-				}
-			}
-
-			lang := args[0].String()
-			pkgname := args[1].String()
-			input := args[2].String() + "\n"
-
-			if pkgname == "" {
-				pkgname = "main"
-			}
-
-			lex := lexer.NewLexer([]rune(input), "/usr/local/vstruct/playground.vstruct")
-			p := parser.New(lex)
-			file, err := p.Parse()
-			if err != nil {
-				return CompilerOut{
-					Err: err.Error(),
-				}
-			}
-			front := frontend.New(file)
-			err = front.Compile()
-			if err != nil {
-				return CompilerOut{
-					Err: err.Error(),
-				}
-			}
-
-			goir := front.Output()
-			goir.Options.UseUnsafe = true
-
-			var buf bytes.Buffer
-
-			switch lang {
-			case "go":
-				err = golang.Generate(&buf, goir, pkgname)
-			case "rust":
-				err = rust.Generate(&buf, goir, pkgname)
-			case "dart":
-				err = dart.Generate(&buf, goir, pkgname)
-			case "python":
-				err = python.Generate(&buf, goir, pkgname)
-			default:
-				err = fmt.Errorf("Unknown language: %s", lang)
-			}
-
-			if err != nil {
-				return CompilerOut{
-					Err: err.Error(),
-				}
-			}
-
-			return CompilerOut{
-				Code: buf.String(),
-				Err:  "",
-			}
-		}()
-
+		stringArgs := make([]string, len(args))
+		for i, arg := range args {
+			stringArgs[i] = arg.String()
+		}
+		output := utils.BuildVstructCLI(stringArgs)
 		if output.Err != "" {
 			js.Global().Get("console").Call("error", output.Err)
 		}
