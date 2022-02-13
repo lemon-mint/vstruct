@@ -93,16 +93,14 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		fmt.Fprintf(w, "        if not self.vStructValidate():\n")
 		fmt.Fprintf(w, "            return \"<class \\'%s\\' (invalid)>\"\n", NameConv(s.Name))
 
-		fmt.Fprintf(w, "        return f'<class \\'%s\\' (", NameConv(s.Name))
+		fmt.Fprintf(w, "        return f'%s(", NameConv(s.Name))
 		for i, f := range allFields {
 			if i != 0 {
 				fmt.Fprintf(w, ", ")
 			}
 			fmt.Fprintf(w, "%s={self.%s}", NameConv(f.Name), NameConv(f.Name))
 		}
-		quotedFileName := fmt.Sprintf("%q", i.FileName)
-
-		fmt.Fprintf(w, ") from \\'%s\\'>'\n\n", quotedFileName[1:len(quotedFileName)-1])
+		fmt.Fprintf(w, ")'\n\n")
 
 		//fmt.Fprintf(w, "  %s.fromBytes(Uint8List b) {\n", TypeConv(s.Name))
 		//fmt.Fprintf(w, "    vData = b;\n")

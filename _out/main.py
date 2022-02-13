@@ -60,7 +60,7 @@ class Coordinate():
     def toString(self) -> str:
         if not self.vStructValidate():
             return "<class \'Coordinate\' (invalid)>"
-        return f'<class \'Coordinate\' (x={self.x}, y={self.y}) from \'G:\\mega\\golang\\projectv3\\vstruct\\test.vstruct\'>'
+        return f'Coordinate(x={self.x}, y={self.y})'
 
     @classmethod
     def fromBytes(cls, b: bytearray) -> 'Coordinate':
@@ -123,7 +123,7 @@ class Item():
     def toString(self) -> str:
         if not self.vStructValidate():
             return "<class \'Item\' (invalid)>"
-        return f'<class \'Item\' (type={self.type}, damage={self.damage}, armor={self.armor}, name={self.name}) from \'G:\\mega\\golang\\projectv3\\vstruct\\test.vstruct\'>'
+        return f'Item(type={self.type}, damage={self.damage}, armor={self.armor}, name={self.name})'
 
     @classmethod
     def fromBytes(cls, b: bytearray) -> 'Item':
@@ -215,7 +215,7 @@ class Inventory():
     def toString(self) -> str:
         if not self.vStructValidate():
             return "<class \'Inventory\' (invalid)>"
-        return f'<class \'Inventory\' (rightHand={self.rightHand}, leftHand={self.leftHand}) from \'G:\\mega\\golang\\projectv3\\vstruct\\test.vstruct\'>'
+        return f'Inventory(rightHand={self.rightHand}, leftHand={self.leftHand})'
 
     @classmethod
     def fromBytes(cls, b: bytearray) -> 'Inventory':
@@ -303,7 +303,7 @@ class Entity():
     def toString(self) -> str:
         if not self.vStructValidate():
             return "<class \'Entity\' (invalid)>"
-        return f'<class \'Entity\' (type={self.type}, position={self.position}, hp={self.hp}, id={self.id}, inventory={self.inventory}) from \'G:\\mega\\golang\\projectv3\\vstruct\\test.vstruct\'>'
+        return f'Entity(type={self.type}, position={self.position}, hp={self.hp}, id={self.id}, inventory={self.inventory})'
 
     @classmethod
     def fromBytes(cls, b: bytearray) -> 'Entity':
