@@ -18,7 +18,7 @@ type CompilerOut struct {
 	Code string `json:"code"`
 }
 
-func BuildVstructCLI(args []string) CompilerOut {
+func BuildVstructCLI(args []string, fileName string) CompilerOut {
 	if len(args) != 3 {
 		return CompilerOut{
 			Err: "Invalid arguments",
@@ -33,7 +33,7 @@ func BuildVstructCLI(args []string) CompilerOut {
 		pkgname = "main"
 	}
 
-	lex := lexer.NewLexer([]rune(input), "/usr/local/vstruct/playground.vstruct")
+	lex := lexer.NewLexer([]rune(input), fileName)
 	p := parser.New(lex)
 	file, err := p.Parse()
 	if err != nil {

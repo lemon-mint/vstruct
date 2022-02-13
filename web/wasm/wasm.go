@@ -24,7 +24,7 @@ func main() {
 		for i, arg := range args {
 			stringArgs[i] = arg.String()
 		}
-		output := utils.BuildVstructCLI(stringArgs)
+		output := utils.BuildVstructCLI(stringArgs, "/usr/local/vstruct/playground.vstruct")
 		if output.Err != "" {
 			js.Global().Get("console").Call("error", output.Err)
 		}
