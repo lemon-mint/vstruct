@@ -12,7 +12,9 @@ import (
 	"github.com/lemon-mint/vstruct/utils"
 )
 
-const VersionInfo = "vsc1.0.2 " + runtime.GOOS + "/" + runtime.GOARCH
+var Version string
+
+var VersionInfo = "vsc" + Version + " " + runtime.GOOS + "/" + runtime.GOARCH
 
 //go:embed LICENSE.txt
 var license string

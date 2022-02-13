@@ -1,0 +1,29 @@
+{
+  "name": "vstruct",
+  "version": "1.0.3",
+  "description": "Vstruct is a Code Generation Based High Speed Data Serialization Tool",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "node npm/install.js",
+    "uninstall": "node npm/uninstall.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lemon-mint/vstruct.git"
+  },
+  "keywords": [
+    "codegen",
+    "golang",
+    "Data",
+    "Serialization",
+    "vstruct",
+    "High",
+    "Speed"
+  ],
+  "author": "lemon-mint",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lemon-mint/vstruct/issues"
+  },
+  "homepage": "https://github.com/lemon-mint/vstruct#readme"
+}
