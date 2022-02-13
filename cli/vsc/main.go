@@ -12,9 +12,9 @@ import (
 	"github.com/lemon-mint/vstruct/utils"
 )
 
-const VersionInfo = "vsc1.0.0 " + runtime.GOOS + "/" + runtime.GOARCH
+const VersionInfo = "vsc1.0.1 " + runtime.GOOS + "/" + runtime.GOARCH
 
-//go:embed LICENSE
+//go:embed LICENSE.txt
 var license string
 
 func PrintUsage() {

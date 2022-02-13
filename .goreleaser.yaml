@@ -16,6 +16,8 @@ builds:
 archives:
   - replacements:
       386: i386
+  - files:
+      - ./cli/vsc/LICENSE.txt
 checksum:
   name_template: 'checksums.txt'
 snapshot:
