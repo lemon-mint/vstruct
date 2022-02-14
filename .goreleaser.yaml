@@ -31,6 +31,7 @@ builds:
 archives:
   - files:
     - ./cli/vsc/LICENSE.txt
+    - ./README.md
 checksum:
   name_template: 'checksums.txt'
 snapshot:
