@@ -23,3 +23,7 @@ bin/
 node_modules/
 
 _out
+
+main.go
+
+web
