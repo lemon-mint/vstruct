@@ -4,10 +4,7 @@ import path from "path";
 const __dirname = path.resolve();
 const npmbin = path.join(__dirname, "bin");
 
-let ext = "";
-if (process.platform === "win32") {
-    ext = ".exe";
-}
+const ext = ".exe";
 
 console.log("removing vstruct from "+path.join(npmbin, "vstruct" + ext));
 

@@ -21,3 +21,5 @@ dist/
 bin/
 
 node_modules/
+
+_out

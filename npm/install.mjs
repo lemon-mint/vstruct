@@ -100,7 +100,7 @@ const tag = `v${version}`;
             ext = ".exe";
         }
         console.log("Installing vstruct to "+path.join(npmbin, "vstruct" + ext));
-        fs.copyFileSync(path.join(filepath+".dir", "vstruct"+ext), filepath+ext);
+        fs.copyFileSync(path.join(filepath+".dir", "vstruct"+ext), filepath+".exe");
         if (fs.existsSync(filepath+".dir")) {
             fs.rmdirSync(filepath+".dir", { recursive: true, force: true });
         }
