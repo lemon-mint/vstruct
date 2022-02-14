@@ -8,6 +8,8 @@ if (process.platform === "win32") {
     ext = ".exe";
 }
 
+console.log("removing vstruct from "+path.join(npmbin, "vstruct" + ext));
+
 if (fs.existsSync(path.join(npmbin, "vstruct" + ext))) {
     fs.unlinkSync(path.join(npmbin, 'vstruct' + ext));
 }

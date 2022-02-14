@@ -81,6 +81,7 @@ const tag = `v${version}`;
         process.exit(1);
     }
 
+    console.log(`Downloading ${asset.name}`);
     const f = await got.get(asset.browser_download_url, {
         headers: {
             'Accept': 'application/octet-stream',
@@ -89,6 +90,8 @@ const tag = `v${version}`;
         followRedirect: true,
     })
     fs.writeFileSync(filepath+".tar.gz", f.body);
+
+    console.log(`Extracting ${asset.name}`);
     fs.createReadStream(filepath+".tar.gz").pipe(zlib.createGunzip()).pipe(tarfs.extract(filepath+".dir")).on('finish', () => {
         if (fs.existsSync(filepath+".tar.gz")) {
             fs.unlinkSync(filepath+".tar.gz");
@@ -97,6 +100,7 @@ const tag = `v${version}`;
         if (platform === "windows") {
             ext = ".exe";
         }
+        console.log("Installing vstruct to "+path.join(npmbin, "vstruct" + ext));
         fs.copyFileSync(path.join(filepath+".dir", "vstruct"+ext), filepath+ext);
         if (fs.existsSync(filepath+".dir")) {
             fs.rmdirSync(filepath+".dir", { recursive: true, force: true });
