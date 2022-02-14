@@ -1,15 +1,14 @@
-import child_process from "child_process";
 import fs from "fs";
 import path from "path";
-const __dirname = path.resolve();
 import { Octokit } from "octokit";
 const octokit = new Octokit();
 import got from 'got';
 import tarfs from "tar-fs";
 import zlib from "zlib";
-const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, './package.json'), 'utf8'));
 
-const npmbin = child_process.execSync('npm bin').toString().trim();
+const __dirname = path.resolve();
+const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, './package.json'), 'utf8'));
+const npmbin = path.join(__dirname, "bin");
 
 //console.log('npm bin:', npmbin);
 

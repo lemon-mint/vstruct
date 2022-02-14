@@ -1,11 +1,14 @@
 {
   "name": "vstruct",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Vstruct is a Code Generation Based High Speed Data Serialization Tool",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "install": "node npm/install.mjs",
     "uninstall": "node npm/uninstall.mjs"
+  },
+  "bin": {
+    "vstruct": "./bin/vstruct"
   },
   "repository": {
     "type": "git",
