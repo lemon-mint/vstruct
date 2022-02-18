@@ -242,6 +242,8 @@ func (s Item) Vstruct_Validate() bool {
 		return false
 	}
 
+	_ = s[24]
+
 	var __off0 uint64 = 25
 	var __off1 uint64 = uint64(s[17]) |
 		uint64(s[18])<<8 |
@@ -317,6 +319,8 @@ func (s Inventory) Vstruct_Validate() bool {
 	if len(s) < 16 {
 		return false
 	}
+
+	_ = s[15]
 
 	var __off0 uint64 = 16
 	var __off1 uint64 = uint64(s[0]) |
@@ -422,6 +426,8 @@ func (s Entity) Vstruct_Validate() bool {
 	if len(s) < 41 {
 		return false
 	}
+
+	_ = s[40]
 
 	var __off0 uint64 = 41
 	var __off1 uint64 = uint64(s[25]) |

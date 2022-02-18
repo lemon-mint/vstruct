@@ -105,6 +105,11 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			fmt.Fprintf(w, "if len(s) < %d {\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
 			fmt.Fprintf(w, "return false\n")
 			fmt.Fprintf(w, "}\n")
+			if s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1] > 0 {
+				// Add Bounds Check Elimination
+				fmt.Fprintf(w, "\n_ = s[%d]\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1]-1)
+			}
+
 			for i, f := range s.DynamicFieldHeadOffsets {
 				_ = f
 				fmt.Fprintf(w, "\nvar __off%d uint64 = ", i)
