@@ -32,4 +32,6 @@ func main() {
 		panic(err)
 	}
 	b64out.Close()
+	bufOutFile.Flush()
+	outputFile.Sync()
 }
