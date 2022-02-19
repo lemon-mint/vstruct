@@ -15,15 +15,21 @@ Code Generation Based High Speed Data Serialization Tool
 npm install -g vstruct
 ```
 
-## 2. From Source
+## 2. Go Get (Go Install) (also recommended)
+
+```bash
+go install github.com/lemon-mint/vstruct/cli/vstruct@latest
+```
+
+## 3. From Source
 
 ```
 git clone https://github.com/lemon-mint/vstruct.git
 cd vstruct
-go build -o vstruct ./cli/vsc
+go build -o vstruct ./cli/vstruct
 ```
 
-## 3. Pre-compiled binaries
+## 4. Pre-compiled binaries
 
 [https://github.com/lemon-mint/vstruct/releases/latest](https://github.com/lemon-mint/vstruct/releases/latest)
 
