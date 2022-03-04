@@ -14,14 +14,14 @@ import (
 
 var Version string
 
-var VersionInfo = "vsc" + Version + " " + runtime.GOOS + "/" + runtime.GOARCH
+var VersionInfo = "vstruct" + Version + " " + runtime.GOOS + "/" + runtime.GOARCH
 
 //go:embed LICENSE.txt
 var license string
 
 func PrintUsage() {
 	fmt.Printf("\nvstruct compiler\n")
-	fmt.Printf("Usage:\n\n\t%s [options] <lang> <package name> <input file>\n", os.Args[0])
+	fmt.Printf("Usage:\n\n\tvstruct [options] <lang> <package name> <input file>\n")
 
 	fmt.Printf("\n\nOptions:\n")
 	fmt.Printf("\t-o <output>\t\tOutput file name (default: <inputfile>.ext where ext is the language extension)\n")
@@ -51,7 +51,7 @@ func main() {
 		if strings.HasPrefix(args[i], "-") {
 			switch args[i] {
 			case "-v":
-				fmt.Printf("vsc version: %s\n", VersionInfo)
+				fmt.Printf("vstruct version: %s\n", VersionInfo)
 				os.Exit(0)
 			case "-h":
 				PrintUsage()
