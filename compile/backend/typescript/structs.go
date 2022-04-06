@@ -195,18 +195,18 @@ func writeStructs(w io.Writer, i *ir.IR) {
 				fmt.Fprintf(w, "let __tmp_%d = BigInt(%s)\n", tmpIdx, NameConv(f.Name))
 				for i := 0; i < f.TypeInfo.Size; i++ {
 					if i == 0 {
-						fmt.Fprintf(w, "dst.value[%d] = Number(__tmp_%d)\n", f.Offset+i, tmpIdx)
+						fmt.Fprintf(w, "dst.value[%d] = Number(__tmp_%d & 0xFFn)\n", f.Offset+i, tmpIdx)
 					} else {
-						fmt.Fprintf(w, "dst.value[%d] = Number(__tmp_%d >> %dn)\n", f.Offset+i, tmpIdx, 8*i)
+						fmt.Fprintf(w, "dst.value[%d] = Number((__tmp_%d >> %dn) & 0xFFn)\n", f.Offset+i, tmpIdx, 8*i)
 					}
 				}
 			case ir.FieldType_UINT:
 				fmt.Fprintf(w, "let __tmp_%d = BigInt(%s)\n", tmpIdx, NameConv(f.Name))
 				for i := 0; i < f.TypeInfo.Size; i++ {
 					if i == 0 {
-						fmt.Fprintf(w, "dst.value[%d] = Number(__tmp_%d)\n", f.Offset+i, tmpIdx)
+						fmt.Fprintf(w, "dst.value[%d] = Number(__tmp_%d & 0xFFn)\n", f.Offset+i, tmpIdx)
 					} else {
-						fmt.Fprintf(w, "dst.value[%d] = Number(__tmp_%d >> %dn)\n", f.Offset+i, tmpIdx, 8*i)
+						fmt.Fprintf(w, "dst.value[%d] = Number((__tmp_%d >> %dn) & 0xFFn)\n", f.Offset+i, tmpIdx, 8*i)
 					}
 				}
 			case ir.FieldType_FLOAT:
