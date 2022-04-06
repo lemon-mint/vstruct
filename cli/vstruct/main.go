@@ -72,9 +72,10 @@ func main() {
 				continue
 			}
 
+			langSet := map[string]bool{"go": true, "python": true, "rust": true, "dart": true, "typescript": true}
 			if lang == "" {
 				lang = args[i]
-				if lang != "go" && lang != "python" && lang != "rust" && lang != "dart" {
+				if !langSet[lang] {
 					fmt.Printf("Error: Unknown language: %s\n", lang)
 					PrintUsage()
 					os.Exit(1)
@@ -101,10 +102,11 @@ func main() {
 	}
 
 	var langExt map[string]string = map[string]string{
-		"go":     ".go",
-		"python": ".py",
-		"rust":   ".rs",
-		"dart":   ".dart",
+		"go":         ".go",
+		"python":     ".py",
+		"rust":       ".rs",
+		"dart":       ".dart",
+		"typescript": ".ts",
 	}
 
 	var outputFileName string = inputfile + langExt[lang]
