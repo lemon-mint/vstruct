@@ -9,6 +9,6 @@ import (
 
 func writeAliases(w io.Writer, i *ir.IR) {
 	for _, a := range i.Aliases {
-		fmt.Fprintf(w, "type %s = %s\n", NameConv(a.Name), TypeConv(a.OriginalType))
+		fmt.Fprintf(w, "export type %s = %s\n", NameConv(a.Name), TypeConv(a.OriginalType))
 	}
 }
