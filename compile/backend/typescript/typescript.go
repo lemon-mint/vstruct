@@ -2,7 +2,6 @@ package typescript
 
 import (
 	"fmt"
-	"go/format"
 	"io"
 	"strings"
 
@@ -23,11 +22,6 @@ func Generate(w io.Writer, i *ir.IR, packageName string) error {
 		packageName,
 		codedataBuf.String(),
 	)
-	fmted, err := format.Source([]byte(output))
-	if err != nil {
-		fmt.Println(output)
-		return err
-	}
-	_, err = w.Write(fmted)
+	_, err := w.Write([]byte(output))
 	return err
 }
