@@ -1,7 +1,7 @@
 var v_loaded = false;
 
 (function () {
-    const GoVersion = "1.17";
+    const GoVersion = "1.18";
 
     const RuntimeURL = `https://cdn.jsdelivr.net/gh/golang/go@release-branch.go${GoVersion}/misc/wasm/wasm_exec.min.js`;
 
