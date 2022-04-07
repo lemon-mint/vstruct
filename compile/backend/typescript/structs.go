@@ -39,9 +39,9 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			case ir.FieldType_FLOAT:
 				switch f.TypeInfo.Size {
 				case 4:
-					fmt.Fprintf(w, "\nreturn %s(new Float32Array(this.value.slice(%d, %d+4))[0])\n", TypeConv(f.Type), f.Offset, f.Offset)
+					fmt.Fprintf(w, "\nreturn Number(new Float32Array(this.value.slice(%d, %d).buffer)[0])\n", f.Offset, f.Offset+4)
 				case 8:
-					fmt.Fprintf(w, "\nreturn %s(new Float64Array(this.value.slice(%d, %d+8))[0])\n", TypeConv(f.Type), f.Offset, f.Offset)
+					fmt.Fprintf(w, "\nreturn Number(new Float64Array(this.value.slice(%d, %d).buffer)[0])\n", f.Offset, f.Offset+8)
 				default:
 					panic("unsupported float size")
 				}
@@ -210,20 +210,16 @@ func writeStructs(w io.Writer, i *ir.IR) {
 					}
 				}
 			case ir.FieldType_FLOAT:
-				fmt.Fprintf(w, "var __tmp_%d = new Uint8Array(%d)\n", tmpIdx, f.TypeInfo.Size)
+				fmt.Fprintf(w, "let __tmp_%d = new Uint8Array(%d);\n", tmpIdx, f.TypeInfo.Size)
 				fmt.Fprintf(w, "(new Float%dArray(__tmp_%d.buffer))[0] = %s\n", f.TypeInfo.Size*8, tmpIdx, NameConv(f.Name))
 				for i := 0; i < f.TypeInfo.Size; i++ {
-					if i == 0 {
-						fmt.Fprintf(w, "dst.value[%d] = __tmp_%d[%d]\n", f.Offset+i, tmpIdx, i)
-					} else {
-						fmt.Fprintf(w, "dst.value[%d] = __tmp_%d[%d] >> %d\n", f.Offset+i, tmpIdx, i, 8*i)
-					}
+					fmt.Fprintf(w, "dst.value[%d] = __tmp_%d[%d]\n", f.Offset+i, tmpIdx, i)
 				}
 			case ir.FieldType_ENUM:
 				if f.TypeInfo.Size == 1 {
 					fmt.Fprintf(w, "dst.value[%d] = Number(%s)\n", f.Offset, NameConv(f.Name))
 				} else {
-					fmt.Fprintf(w, "var __tmp_%d = BigInt(%s)\n", tmpIdx, NameConv(f.Name))
+					fmt.Fprintf(w, "let __tmp_%d = BigInt(%s)\n", tmpIdx, NameConv(f.Name))
 					for i := 0; i < f.TypeInfo.Size; i++ {
 						if i == 0 {
 							fmt.Fprintf(w, "dst.value[%d] = Number(__tmp_%d)\n", f.Offset+i, tmpIdx)
