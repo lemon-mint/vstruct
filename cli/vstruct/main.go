@@ -35,7 +35,8 @@ func PrintUsage() {
 	fmt.Printf("\tpython\t\t\tPython (https://www.python.org/)\n")
 	fmt.Printf("\trust\t\t\tRust (https://www.rust-lang.org/)\n")
 	fmt.Printf("\tdart\t\t\tDart (https://dart.dev/)\n")
-	fmt.Printf("\ttypescript\t\t\tTypescript (https://www.typescriptlang.org/)\n")
+	fmt.Printf("\tts\t\t\tTypescript (https://www.typescriptlang.org/)\n")
+	fmt.Printf("\tcs\t\t\tC# (https://docs.microsoft.com/en-us/dotnet/csharp/)\n")
 
 	fmt.Printf("\n")
 	os.Exit(1)
@@ -73,7 +74,7 @@ func main() {
 				continue
 			}
 
-			langSet := map[string]bool{"go": true, "python": true, "rust": true, "dart": true, "typescript": true}
+			langSet := map[string]bool{"go": true, "python": true, "rust": true, "dart": true, "ts": true, "cs": true}
 			if lang == "" {
 				lang = args[i]
 				if !langSet[lang] {
@@ -103,11 +104,12 @@ func main() {
 	}
 
 	var langExt map[string]string = map[string]string{
-		"go":         ".go",
-		"python":     ".py",
-		"rust":       ".rs",
-		"dart":       ".dart",
-		"typescript": ".ts",
+		"go":     ".go",
+		"python": ".py",
+		"rust":   ".rs",
+		"dart":   ".dart",
+		"ts":     ".ts",
+		"cs":     ".cs",
 	}
 
 	var outputFileName string = inputfile + langExt[lang]

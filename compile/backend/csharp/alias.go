@@ -1,4 +1,4 @@
-package typescript
+package csharp
 
 import (
 	"fmt"
@@ -9,6 +9,6 @@ import (
 
 func writeAliases(w io.Writer, i *ir.IR) {
 	for _, a := range i.Aliases {
-		fmt.Fprintf(w, "export type %s = %s;\n", NameConv(a.Name), TypeConv(a.OriginalType))
+		fmt.Fprintf(w, "\tusing %s = %s;\n", NameConv(a.Name), AliasConv(TypeConv(a.OriginalType)))
 	}
 }
