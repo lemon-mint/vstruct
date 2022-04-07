@@ -65,7 +65,7 @@ func BuildVstructCLI(args []string, fileName string) CompilerOut {
 		err = dart.Generate(&buf, goir, pkgname)
 	case "python":
 		err = python.Generate(&buf, goir, pkgname)
-	case "typescript":
+	case "ts":
 		err = typescript.Generate(&buf, goir, pkgname)
 	case "cs":
 		err = csharp.Generate(&buf, goir, pkgname)
