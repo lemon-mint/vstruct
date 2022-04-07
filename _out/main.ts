@@ -285,18 +285,18 @@ dst.value[14] = Number((__tmp_2 >> 40n) & 0xFFn)
 dst.value[15] = Number((__tmp_2 >> 48n) & 0xFFn)
 dst.value[16] = Number((__tmp_2 >> 56n) & 0xFFn)
 
-var __index = Number(25)
-let __tmp_3 = (new TextEncoder().encode(Name)).length +__index
-dst.value[17] = Number(__tmp_3)
-dst.value[18] = Number(__tmp_3 >> 8)
-dst.value[19] = Number(__tmp_3 >> 16)
-dst.value[20] = Number(__tmp_3 >> 24)
-dst.value[21] = Number(__tmp_3 >> 32)
-dst.value[22] = Number(__tmp_3 >> 40)
-dst.value[23] = Number(__tmp_3 >> 48)
-dst.value[24] = Number(__tmp_3 >> 56)
+let __index = BigInt(25)
+let __tmp_3 = BigInt((new TextEncoder().encode(Name)).length) +__index
+dst.value[17] = Number(__tmp_3 & 0xFFn)
+dst.value[18] = Number((__tmp_3 >> 8n) & 0xFFn)
+dst.value[19] = Number((__tmp_3 >> 16n) & 0xFFn)
+dst.value[20] = Number((__tmp_3 >> 24n) & 0xFFn)
+dst.value[21] = Number((__tmp_3 >> 32n) & 0xFFn)
+dst.value[22] = Number((__tmp_3 >> 40n) & 0xFFn)
+dst.value[23] = Number((__tmp_3 >> 48n) & 0xFFn)
+dst.value[24] = Number((__tmp_3 >> 56n) & 0xFFn)
 let __tmp_3_str = new TextEncoder().encode(Name)
-__tmp_3_str.forEach((v, i) => { dst.value[i+__index] = v })
+__tmp_3_str.forEach((v, i) => { dst.value[i+Number(__index)] = v })
 return dst
 }
 
@@ -309,28 +309,28 @@ return __vstruct__buf
 
 export function Serialize_Inventory(dst: Inventory, RightHand: Item, LeftHand: Item): Inventory {
 
-var __index = Number(16)
-let __tmp_0 = RightHand.value.length +__index
-dst.value[0] = Number(__tmp_0)
-dst.value[1] = Number(__tmp_0 >> 8)
-dst.value[2] = Number(__tmp_0 >> 16)
-dst.value[3] = Number(__tmp_0 >> 24)
-dst.value[4] = Number(__tmp_0 >> 32)
-dst.value[5] = Number(__tmp_0 >> 40)
-dst.value[6] = Number(__tmp_0 >> 48)
-dst.value[7] = Number(__tmp_0 >> 56)
-dst.value.forEach((v, i) => { if (__tmp_0 > i && i >= __index) dst.value[i] = RightHand.value[i-__index] })
-__index += RightHand.value.length
-let __tmp_1 = LeftHand.value.length +__index
-dst.value[8] = Number(__tmp_1)
-dst.value[9] = Number(__tmp_1 >> 8)
-dst.value[10] = Number(__tmp_1 >> 16)
-dst.value[11] = Number(__tmp_1 >> 24)
-dst.value[12] = Number(__tmp_1 >> 32)
-dst.value[13] = Number(__tmp_1 >> 40)
-dst.value[14] = Number(__tmp_1 >> 48)
-dst.value[15] = Number(__tmp_1 >> 56)
-dst.value.forEach((v, i) => { if (__tmp_1 > i && i >= __index) dst.value[i] = LeftHand.value[i-__index] })
+let __index = BigInt(16)
+let __tmp_0 = BigInt(RightHand.value.length) +__index
+dst.value[0] = Number(__tmp_0 & 0xFFn)
+dst.value[1] = Number((__tmp_0 >> 8n) & 0xFFn)
+dst.value[2] = Number((__tmp_0 >> 16n) & 0xFFn)
+dst.value[3] = Number((__tmp_0 >> 24n) & 0xFFn)
+dst.value[4] = Number((__tmp_0 >> 32n) & 0xFFn)
+dst.value[5] = Number((__tmp_0 >> 40n) & 0xFFn)
+dst.value[6] = Number((__tmp_0 >> 48n) & 0xFFn)
+dst.value[7] = Number((__tmp_0 >> 56n) & 0xFFn)
+dst.value.forEach((v, i) => { if (__tmp_0 > i && i >= Number(__index)) dst.value[i] = RightHand.value[i-Number(__index)] })
+__index += BigInt(RightHand.value.length)
+let __tmp_1 = BigInt(LeftHand.value.length) +__index
+dst.value[8] = Number(__tmp_1 & 0xFFn)
+dst.value[9] = Number((__tmp_1 >> 8n) & 0xFFn)
+dst.value[10] = Number((__tmp_1 >> 16n) & 0xFFn)
+dst.value[11] = Number((__tmp_1 >> 24n) & 0xFFn)
+dst.value[12] = Number((__tmp_1 >> 32n) & 0xFFn)
+dst.value[13] = Number((__tmp_1 >> 40n) & 0xFFn)
+dst.value[14] = Number((__tmp_1 >> 48n) & 0xFFn)
+dst.value[15] = Number((__tmp_1 >> 56n) & 0xFFn)
+dst.value.forEach((v, i) => { if (__tmp_1 > i && i >= Number(__index)) dst.value[i] = LeftHand.value[i-Number(__index)] })
 return dst
 }
 
@@ -354,29 +354,29 @@ dst.value[22] = Number((__tmp_2 >> 40n) & 0xFFn)
 dst.value[23] = Number((__tmp_2 >> 48n) & 0xFFn)
 dst.value[24] = Number((__tmp_2 >> 56n) & 0xFFn)
 
-var __index = Number(41)
-let __tmp_3 = (new TextEncoder().encode(Id)).length +__index
-dst.value[25] = Number(__tmp_3)
-dst.value[26] = Number(__tmp_3 >> 8)
-dst.value[27] = Number(__tmp_3 >> 16)
-dst.value[28] = Number(__tmp_3 >> 24)
-dst.value[29] = Number(__tmp_3 >> 32)
-dst.value[30] = Number(__tmp_3 >> 40)
-dst.value[31] = Number(__tmp_3 >> 48)
-dst.value[32] = Number(__tmp_3 >> 56)
+let __index = BigInt(41)
+let __tmp_3 = BigInt((new TextEncoder().encode(Id)).length) +__index
+dst.value[25] = Number(__tmp_3 & 0xFFn)
+dst.value[26] = Number((__tmp_3 >> 8n) & 0xFFn)
+dst.value[27] = Number((__tmp_3 >> 16n) & 0xFFn)
+dst.value[28] = Number((__tmp_3 >> 24n) & 0xFFn)
+dst.value[29] = Number((__tmp_3 >> 32n) & 0xFFn)
+dst.value[30] = Number((__tmp_3 >> 40n) & 0xFFn)
+dst.value[31] = Number((__tmp_3 >> 48n) & 0xFFn)
+dst.value[32] = Number((__tmp_3 >> 56n) & 0xFFn)
 let __tmp_3_str = new TextEncoder().encode(Id)
-__tmp_3_str.forEach((v, i) => { dst.value[i+__index] = v })
-__index += (new TextEncoder().encode(Id)).length
-let __tmp_4 = Inventory.value.length +__index
-dst.value[33] = Number(__tmp_4)
-dst.value[34] = Number(__tmp_4 >> 8)
-dst.value[35] = Number(__tmp_4 >> 16)
-dst.value[36] = Number(__tmp_4 >> 24)
-dst.value[37] = Number(__tmp_4 >> 32)
-dst.value[38] = Number(__tmp_4 >> 40)
-dst.value[39] = Number(__tmp_4 >> 48)
-dst.value[40] = Number(__tmp_4 >> 56)
-dst.value.forEach((v, i) => { if (__tmp_4 > i && i >= __index) dst.value[i] = Inventory.value[i-__index] })
+__tmp_3_str.forEach((v, i) => { dst.value[i+Number(__index)] = v })
+__index += BigInt((new TextEncoder().encode(Id)).length)
+let __tmp_4 = BigInt(Inventory.value.length) +__index
+dst.value[33] = Number(__tmp_4 & 0xFFn)
+dst.value[34] = Number((__tmp_4 >> 8n) & 0xFFn)
+dst.value[35] = Number((__tmp_4 >> 16n) & 0xFFn)
+dst.value[36] = Number((__tmp_4 >> 24n) & 0xFFn)
+dst.value[37] = Number((__tmp_4 >> 32n) & 0xFFn)
+dst.value[38] = Number((__tmp_4 >> 40n) & 0xFFn)
+dst.value[39] = Number((__tmp_4 >> 48n) & 0xFFn)
+dst.value[40] = Number((__tmp_4 >> 56n) & 0xFFn)
+dst.value.forEach((v, i) => { if (__tmp_4 > i && i >= Number(__index)) dst.value[i] = Inventory.value[i-Number(__index)] })
 return dst
 }
 
