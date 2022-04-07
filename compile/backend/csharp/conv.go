@@ -66,3 +66,35 @@ func TypeConv(in string) string {
 		return NameConv(in)
 	}
 }
+
+func AliasConv(primitive string) string {
+	switch primitive {
+	case "bool":
+		return "System.Boolean"
+	case "byte":
+		return "System.Byte"
+	case "sbyte":
+		return "System.SByte"
+	case "short":
+		return "System.Int16"
+	case "ushort":
+		return "System.UInt16"
+	case "int":
+		return "System.Int32"
+	case "uint":
+		return "System.UInt32"
+	case "long":
+		return "System.Int64"
+	case "ulong":
+		return "System.UInt64"
+	case "float":
+		return "System.Single"
+	case "double":
+		return "System.Double"
+	case "string":
+		return "System.String"
+	case "bytes":
+		return "System.Byte[]"
+	}
+	return primitive
+}
