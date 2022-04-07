@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/lemon-mint/vstruct/compile/backend/csharp"
 	"github.com/lemon-mint/vstruct/compile/backend/dart"
 	"github.com/lemon-mint/vstruct/compile/backend/golang"
 	"github.com/lemon-mint/vstruct/compile/backend/python"
@@ -66,6 +67,8 @@ func BuildVstructCLI(args []string, fileName string) CompilerOut {
 		err = python.Generate(&buf, goir, pkgname)
 	case "typescript":
 		err = typescript.Generate(&buf, goir, pkgname)
+	case "cs":
+		err = csharp.Generate(&buf, goir, pkgname)
 	default:
 		err = fmt.Errorf("unknown language: %s", lang)
 	}
