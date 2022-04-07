@@ -79,14 +79,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 				default:
 					fmt.Fprintf(w, "\t\t\tvar __tmp_%d = (ulong)%s.value.Length +__index;\n", tmpIdx, NameConv(f.Name))
 				}
-				switch f.TypeInfo.FieldType {
-				case ir.FieldType_STRING:
-					fmt.Fprintf(w, "\t\t\tvar __tmp_%d_len = BitConverter.GetBytes((long)System.Text.Encoding.UTF8.GetBytes(%s).Length);\n", tmpIdx, NameConv(f.Name))
-				case ir.FieldType_BYTES:
-					fmt.Fprintf(w, "\t\t\tvar __tmp_%d_len = BitConverter.GetBytes((long)%s.Length);\n", tmpIdx, NameConv(f.Name))
-				default:
-					fmt.Fprintf(w, "\t\t\tvar __tmp_%d_len = BitConverter.GetBytes((long)%s.value.Length);\n", tmpIdx, NameConv(f.Name))
-				}
+				fmt.Fprintf(w, "\t\t\tvar __tmp_%d_len = BitConverter.GetBytes(__tmp_%d);\n", tmpIdx, tmpIdx)
 				fmt.Fprintf(w, "\t\t\tif (!BitConverter.IsLittleEndian)\n\t\t\t{\n\t\t\t\tArray.Reverse(__tmp_%d_len);\n\t\t\t}\n", tmpIdx)
 				fmt.Fprintf(w, "\t\t\tArray.Copy(__tmp_%d_len, 0, dst.value, %d, 8);\n", tmpIdx, s.DynamicFieldHeadOffsets[i])
 
@@ -115,7 +108,7 @@ func writeStructs(w io.Writer, i *ir.IR) {
 				if i != len(s.DynamicFields)-1 {
 					switch f.TypeInfo.FieldType {
 					case ir.FieldType_STRING:
-						fallthrough
+						fmt.Fprintf(w, "\t\t\t__index += (ulong)(ulong)System.Text.Encoding.UTF8.GetBytes(%s).Length;\n", NameConv(f.Name))
 					case ir.FieldType_BYTES:
 						fmt.Fprintf(w, "\t\t\t__index += (ulong)%s.Length;\n", NameConv(f.Name))
 					default:
