@@ -6,6 +6,34 @@ func NameConv(in string) string {
 	return strings.Title(in)
 }
 
+func NumberConv(unsigned bool, bit int) string {
+	switch unsigned {
+	case true:
+		switch bit {
+		case 8:
+			return "byte"
+		case 16:
+			return "ushort"
+		case 32:
+			return "uint"
+		case 64:
+			return "ulong"
+		}
+	case false:
+		switch bit {
+		case 8:
+			return "sbyte"
+		case 16:
+			return "short"
+		case 32:
+			return "int"
+		case 64:
+			return "long"
+		}
+	}
+	return "UInt64"
+}
+
 func TypeConv(in string) string {
 	switch in {
 	case "uint8":
