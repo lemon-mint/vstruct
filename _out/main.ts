@@ -3,24 +3,24 @@
 // Package Name: main
 
 export enum Speices {
-Human,
-Elf,
-Orc,
-Dwarf,
-Gnome,
-Halfling,
-HalfElf,
-HalfOrc,
-Dragonborn,
-Tiefling,
-Gnoll,
-Goblin,
+	Human,
+	Elf,
+	Orc,
+	Dwarf,
+	Gnome,
+	Halfling,
+	HalfElf,
+	HalfOrc,
+	Dragonborn,
+	Tiefling,
+	Gnoll,
+	Goblin,
 }
 
 export enum ItemType {
-Weapon,
-Armor,
-Potion,
+	Weapon,
+	Armor,
+	Potion,
 }
 
 export class Coordinate {
@@ -28,36 +28,21 @@ export class Coordinate {
 	constructor(size: number) {
 		this.value = new Uint8Array(size);
 	}
-
 	public static from(value: Uint8Array): Coordinate {
-		let __v = new Coordinate(value.length)
-		__v.value = value
-		return __v
+		let __v = new Coordinate(value.length);
+		__v.value = value;
+		return __v;
 	}
 
-public X(): bigint {
-let __v: bigint = BigInt(this.value[0])|
-BigInt(this.value[1]) << 8n|
-BigInt(this.value[2]) << 16n|
-BigInt(this.value[3]) << 24n|
-BigInt(this.value[4]) << 32n|
-BigInt(this.value[5]) << 40n|
-BigInt(this.value[6]) << 48n|
-BigInt(this.value[7]) << 56n
-return __v
-}
+	public X(): bigint {
+		let __v: bigint = BigInt(this.value[0])|BigInt(this.value[1]) << 8n|BigInt(this.value[2]) << 16n|BigInt(this.value[3]) << 24n|BigInt(this.value[4]) << 32n|BigInt(this.value[5]) << 40n|BigInt(this.value[6]) << 48n|BigInt(this.value[7]) << 56n;
+		return __v;
+	}
 
-public Y(): bigint {
-let __v: bigint = BigInt(this.value[8])|
-BigInt(this.value[9]) << 8n|
-BigInt(this.value[10]) << 16n|
-BigInt(this.value[11]) << 24n|
-BigInt(this.value[12]) << 32n|
-BigInt(this.value[13]) << 40n|
-BigInt(this.value[14]) << 48n|
-BigInt(this.value[15]) << 56n
-return __v
-}
+	public Y(): bigint {
+		let __v: bigint = BigInt(this.value[8])|BigInt(this.value[9]) << 8n|BigInt(this.value[10]) << 16n|BigInt(this.value[11]) << 24n|BigInt(this.value[12]) << 32n|BigInt(this.value[13]) << 40n|BigInt(this.value[14]) << 48n|BigInt(this.value[15]) << 56n;
+		return __v;
+	}
 
 }
 
@@ -66,55 +51,32 @@ export class Item {
 	constructor(size: number) {
 		this.value = new Uint8Array(size);
 	}
-
 	public static from(value: Uint8Array): Item {
-		let __v = new Item(value.length)
-		__v.value = value
-		return __v
+		let __v = new Item(value.length);
+		__v.value = value;
+		return __v;
 	}
 
-public Type(): ItemType {
-return <ItemType><unknown>ItemType[this.value[0]]
-}
+	public Type(): ItemType {
+		return <ItemType><unknown>ItemType[this.value[0]];
+	}
 
-public Damage(): bigint {
-let __v: bigint = BigInt(this.value[1])|
-BigInt(this.value[2]) << 8n|
-BigInt(this.value[3]) << 16n|
-BigInt(this.value[4]) << 24n|
-BigInt(this.value[5]) << 32n|
-BigInt(this.value[6]) << 40n|
-BigInt(this.value[7]) << 48n|
-BigInt(this.value[8]) << 56n
-return __v
-}
+	public Damage(): bigint {
+		let __v: bigint = BigInt(this.value[1])|BigInt(this.value[2]) << 8n|BigInt(this.value[3]) << 16n|BigInt(this.value[4]) << 24n|BigInt(this.value[5]) << 32n|BigInt(this.value[6]) << 40n|BigInt(this.value[7]) << 48n|BigInt(this.value[8]) << 56n;
+		return __v;
+	}
 
-public Armor(): bigint {
-let __v: bigint = BigInt(this.value[9])|
-BigInt(this.value[10]) << 8n|
-BigInt(this.value[11]) << 16n|
-BigInt(this.value[12]) << 24n|
-BigInt(this.value[13]) << 32n|
-BigInt(this.value[14]) << 40n|
-BigInt(this.value[15]) << 48n|
-BigInt(this.value[16]) << 56n
-return __v
-}
+	public Armor(): bigint {
+		let __v: bigint = BigInt(this.value[9])|BigInt(this.value[10]) << 8n|BigInt(this.value[11]) << 16n|BigInt(this.value[12]) << 24n|BigInt(this.value[13]) << 32n|BigInt(this.value[14]) << 40n|BigInt(this.value[15]) << 48n|BigInt(this.value[16]) << 56n;
+		return __v;
+	}
 
-public Name(): string {
-let __off0 = 25
-let __off1 = this.value[17]|
-this.value[18] << 8|
-this.value[19] << 16|
-this.value[20] << 24|
-this.value[21] << 32|
-this.value[22] << 40|
-this.value[23] << 48|
-this.value[24] << 56
-let __v = this.value.slice(__off0, __off1)
-
-return new TextDecoder("utf-8").decode(__v)
-}
+	public Name(): string {
+		let __off0 = 25;
+		let __off1 = this.value[17]|this.value[18] << 8|this.value[19] << 16|this.value[20] << 24|this.value[21] << 32|this.value[22] << 40|this.value[23] << 48|this.value[24] << 56;
+		let __v = this.value.slice(__off0, __off1);
+		return new TextDecoder("utf-8").decode(__v);
+	}
 
 }
 
@@ -123,45 +85,23 @@ export class Inventory {
 	constructor(size: number) {
 		this.value = new Uint8Array(size);
 	}
-
 	public static from(value: Uint8Array): Inventory {
-		let __v = new Inventory(value.length)
-		__v.value = value
-		return __v
+		let __v = new Inventory(value.length);
+		__v.value = value;
+		return __v;
 	}
 
-public RightHand(): Item {
-let __off0 = 16
-let __off1 = this.value[0]|
-this.value[1] << 8|
-this.value[2] << 16|
-this.value[3] << 24|
-this.value[4] << 32|
-this.value[5] << 40|
-this.value[6] << 48|
-this.value[7] << 56
-return Item.from(this.value.slice(__off0, __off1))
-}
+	public RightHand(): Item {
+		let __off0 = 16;
+		let __off1 = this.value[0]|this.value[1] << 8|this.value[2] << 16|this.value[3] << 24|this.value[4] << 32|this.value[5] << 40|this.value[6] << 48|this.value[7] << 56;
+		return Item.from(this.value.slice(__off0, __off1));
+	}
 
-public LeftHand(): Item {
-let __off0 = this.value[0]|
-this.value[1] << 8|
-this.value[2] << 16|
-this.value[3] << 24|
-this.value[4] << 32|
-this.value[5] << 40|
-this.value[6] << 48|
-this.value[7] << 56
-let __off1 = this.value[8]|
-this.value[9] << 8|
-this.value[10] << 16|
-this.value[11] << 24|
-this.value[12] << 32|
-this.value[13] << 40|
-this.value[14] << 48|
-this.value[15] << 56
-return Item.from(this.value.slice(__off0, __off1))
-}
+	public LeftHand(): Item {
+		let __off0 = this.value[0]|this.value[1] << 8|this.value[2] << 16|this.value[3] << 24|this.value[4] << 32|this.value[5] << 40|this.value[6] << 48|this.value[7] << 56;
+		let __off1 = this.value[8]|this.value[9] << 8|this.value[10] << 16|this.value[11] << 24|this.value[12] << 32|this.value[13] << 40|this.value[14] << 48|this.value[15] << 56;
+		return Item.from(this.value.slice(__off0, __off1));
+	}
 
 }
 
@@ -170,222 +110,188 @@ export class Entity {
 	constructor(size: number) {
 		this.value = new Uint8Array(size);
 	}
-
 	public static from(value: Uint8Array): Entity {
-		let __v = new Entity(value.length)
-		__v.value = value
-		return __v
+		let __v = new Entity(value.length);
+		__v.value = value;
+		return __v;
 	}
 
-public Type(): Speices {
-return <Speices><unknown>Speices[this.value[0]]
-}
+	public Type(): Speices {
+		return <Speices><unknown>Speices[this.value[0]];
+	}
 
-public Position(): Coordinate {
-return Coordinate.from(this.value.slice(1, 17))
-}
+	public Position(): Coordinate {
+		return Coordinate.from(this.value.slice(1, 17));
+	}
 
-public Hp(): bigint {
-let __v: bigint = BigInt(this.value[17])|
-BigInt(this.value[18]) << 8n|
-BigInt(this.value[19]) << 16n|
-BigInt(this.value[20]) << 24n|
-BigInt(this.value[21]) << 32n|
-BigInt(this.value[22]) << 40n|
-BigInt(this.value[23]) << 48n|
-BigInt(this.value[24]) << 56n
-return __v
-}
+	public Hp(): bigint {
+		let __v: bigint = BigInt(this.value[17])|BigInt(this.value[18]) << 8n|BigInt(this.value[19]) << 16n|BigInt(this.value[20]) << 24n|BigInt(this.value[21]) << 32n|BigInt(this.value[22]) << 40n|BigInt(this.value[23]) << 48n|BigInt(this.value[24]) << 56n;
+		return __v;
+	}
 
-public Id(): UUID {
-let __off0 = 41
-let __off1 = this.value[25]|
-this.value[26] << 8|
-this.value[27] << 16|
-this.value[28] << 24|
-this.value[29] << 32|
-this.value[30] << 40|
-this.value[31] << 48|
-this.value[32] << 56
-let __v = this.value.slice(__off0, __off1)
+	public Id(): UUID {
+		let __off0 = 41;
+		let __off1 = this.value[25]|this.value[26] << 8|this.value[27] << 16|this.value[28] << 24|this.value[29] << 32|this.value[30] << 40|this.value[31] << 48|this.value[32] << 56;
+		let __v = this.value.slice(__off0, __off1);
+		return new TextDecoder("utf-8").decode(__v);
+	}
 
-return new TextDecoder("utf-8").decode(__v)
-}
-
-public Inventory(): Inventory {
-let __off0 = this.value[25]|
-this.value[26] << 8|
-this.value[27] << 16|
-this.value[28] << 24|
-this.value[29] << 32|
-this.value[30] << 40|
-this.value[31] << 48|
-this.value[32] << 56
-let __off1 = this.value[33]|
-this.value[34] << 8|
-this.value[35] << 16|
-this.value[36] << 24|
-this.value[37] << 32|
-this.value[38] << 40|
-this.value[39] << 48|
-this.value[40] << 56
-return Inventory.from(this.value.slice(__off0, __off1))
-}
+	public Inventory(): Inventory {
+		let __off0 = this.value[25]|this.value[26] << 8|this.value[27] << 16|this.value[28] << 24|this.value[29] << 32|this.value[30] << 40|this.value[31] << 48|this.value[32] << 56;
+		let __off1 = this.value[33]|this.value[34] << 8|this.value[35] << 16|this.value[36] << 24|this.value[37] << 32|this.value[38] << 40|this.value[39] << 48|this.value[40] << 56;
+		return Inventory.from(this.value.slice(__off0, __off1));
+	}
 
 }
 
 export function Serialize_Coordinate(dst: Coordinate, X: bigint, Y: bigint): Coordinate {
-let __tmp_0 = BigInt(X)
-dst.value[0] = Number(__tmp_0 & 0xFFn)
-dst.value[1] = Number((__tmp_0 >> 8n) & 0xFFn)
-dst.value[2] = Number((__tmp_0 >> 16n) & 0xFFn)
-dst.value[3] = Number((__tmp_0 >> 24n) & 0xFFn)
-dst.value[4] = Number((__tmp_0 >> 32n) & 0xFFn)
-dst.value[5] = Number((__tmp_0 >> 40n) & 0xFFn)
-dst.value[6] = Number((__tmp_0 >> 48n) & 0xFFn)
-dst.value[7] = Number((__tmp_0 >> 56n) & 0xFFn)
-let __tmp_1 = BigInt(Y)
-dst.value[8] = Number(__tmp_1 & 0xFFn)
-dst.value[9] = Number((__tmp_1 >> 8n) & 0xFFn)
-dst.value[10] = Number((__tmp_1 >> 16n) & 0xFFn)
-dst.value[11] = Number((__tmp_1 >> 24n) & 0xFFn)
-dst.value[12] = Number((__tmp_1 >> 32n) & 0xFFn)
-dst.value[13] = Number((__tmp_1 >> 40n) & 0xFFn)
-dst.value[14] = Number((__tmp_1 >> 48n) & 0xFFn)
-dst.value[15] = Number((__tmp_1 >> 56n) & 0xFFn)
-
-return dst
+	let __tmp_0 = BigInt(X);
+	dst.value[0] = Number(__tmp_0 & 0xFFn);
+	dst.value[1] = Number((__tmp_0 >> 8n) & 0xFFn);
+	dst.value[2] = Number((__tmp_0 >> 16n) & 0xFFn);
+	dst.value[3] = Number((__tmp_0 >> 24n) & 0xFFn);
+	dst.value[4] = Number((__tmp_0 >> 32n) & 0xFFn);
+	dst.value[5] = Number((__tmp_0 >> 40n) & 0xFFn);
+	dst.value[6] = Number((__tmp_0 >> 48n) & 0xFFn);
+	dst.value[7] = Number((__tmp_0 >> 56n) & 0xFFn);
+	let __tmp_1 = BigInt(Y);
+	dst.value[8] = Number(__tmp_1 & 0xFFn);
+	dst.value[9] = Number((__tmp_1 >> 8n) & 0xFFn);
+	dst.value[10] = Number((__tmp_1 >> 16n) & 0xFFn);
+	dst.value[11] = Number((__tmp_1 >> 24n) & 0xFFn);
+	dst.value[12] = Number((__tmp_1 >> 32n) & 0xFFn);
+	dst.value[13] = Number((__tmp_1 >> 40n) & 0xFFn);
+	dst.value[14] = Number((__tmp_1 >> 48n) & 0xFFn);
+	dst.value[15] = Number((__tmp_1 >> 56n) & 0xFFn);
+	return dst;
 }
 
 export function New_Coordinate(X: bigint, Y: bigint): Coordinate {
-let __vstruct__size = 16
-let __vstruct__buf = new Coordinate(__vstruct__size)
-__vstruct__buf = Serialize_Coordinate(__vstruct__buf, X, Y)
-return __vstruct__buf
+	let __vstruct__size = 16;
+	let __vstruct__buf = new Coordinate(__vstruct__size);
+	__vstruct__buf = Serialize_Coordinate(__vstruct__buf, X, Y);
+	return __vstruct__buf;
 }
 
 export function Serialize_Item(dst: Item, Type: ItemType, Damage: bigint, Armor: bigint, Name: string): Item {
-dst.value[0] = Number(Type)
-let __tmp_1 = BigInt(Damage)
-dst.value[1] = Number(__tmp_1 & 0xFFn)
-dst.value[2] = Number((__tmp_1 >> 8n) & 0xFFn)
-dst.value[3] = Number((__tmp_1 >> 16n) & 0xFFn)
-dst.value[4] = Number((__tmp_1 >> 24n) & 0xFFn)
-dst.value[5] = Number((__tmp_1 >> 32n) & 0xFFn)
-dst.value[6] = Number((__tmp_1 >> 40n) & 0xFFn)
-dst.value[7] = Number((__tmp_1 >> 48n) & 0xFFn)
-dst.value[8] = Number((__tmp_1 >> 56n) & 0xFFn)
-let __tmp_2 = BigInt(Armor)
-dst.value[9] = Number(__tmp_2 & 0xFFn)
-dst.value[10] = Number((__tmp_2 >> 8n) & 0xFFn)
-dst.value[11] = Number((__tmp_2 >> 16n) & 0xFFn)
-dst.value[12] = Number((__tmp_2 >> 24n) & 0xFFn)
-dst.value[13] = Number((__tmp_2 >> 32n) & 0xFFn)
-dst.value[14] = Number((__tmp_2 >> 40n) & 0xFFn)
-dst.value[15] = Number((__tmp_2 >> 48n) & 0xFFn)
-dst.value[16] = Number((__tmp_2 >> 56n) & 0xFFn)
-
-let __index = BigInt(25)
-let __tmp_3 = BigInt((new TextEncoder().encode(Name)).length) +__index
-dst.value[17] = Number(__tmp_3 & 0xFFn)
-dst.value[18] = Number((__tmp_3 >> 8n) & 0xFFn)
-dst.value[19] = Number((__tmp_3 >> 16n) & 0xFFn)
-dst.value[20] = Number((__tmp_3 >> 24n) & 0xFFn)
-dst.value[21] = Number((__tmp_3 >> 32n) & 0xFFn)
-dst.value[22] = Number((__tmp_3 >> 40n) & 0xFFn)
-dst.value[23] = Number((__tmp_3 >> 48n) & 0xFFn)
-dst.value[24] = Number((__tmp_3 >> 56n) & 0xFFn)
-let __tmp_3_str = new TextEncoder().encode(Name)
-__tmp_3_str.forEach((v, i) => { dst.value[i+Number(__index)] = v })
-return dst
+	dst.value[0] = Number(Type);
+	let __tmp_1 = BigInt(Damage);
+	dst.value[1] = Number(__tmp_1 & 0xFFn);
+	dst.value[2] = Number((__tmp_1 >> 8n) & 0xFFn);
+	dst.value[3] = Number((__tmp_1 >> 16n) & 0xFFn);
+	dst.value[4] = Number((__tmp_1 >> 24n) & 0xFFn);
+	dst.value[5] = Number((__tmp_1 >> 32n) & 0xFFn);
+	dst.value[6] = Number((__tmp_1 >> 40n) & 0xFFn);
+	dst.value[7] = Number((__tmp_1 >> 48n) & 0xFFn);
+	dst.value[8] = Number((__tmp_1 >> 56n) & 0xFFn);
+	let __tmp_2 = BigInt(Armor);
+	dst.value[9] = Number(__tmp_2 & 0xFFn);
+	dst.value[10] = Number((__tmp_2 >> 8n) & 0xFFn);
+	dst.value[11] = Number((__tmp_2 >> 16n) & 0xFFn);
+	dst.value[12] = Number((__tmp_2 >> 24n) & 0xFFn);
+	dst.value[13] = Number((__tmp_2 >> 32n) & 0xFFn);
+	dst.value[14] = Number((__tmp_2 >> 40n) & 0xFFn);
+	dst.value[15] = Number((__tmp_2 >> 48n) & 0xFFn);
+	dst.value[16] = Number((__tmp_2 >> 56n) & 0xFFn);
+	let __index = BigInt(25);
+	let __tmp_3 = BigInt((new TextEncoder().encode(Name)).length) +__index;
+	dst.value[17] = Number(__tmp_3 & 0xFFn);
+	dst.value[18] = Number((__tmp_3 >> 8n) & 0xFFn);
+	dst.value[19] = Number((__tmp_3 >> 16n) & 0xFFn);
+	dst.value[20] = Number((__tmp_3 >> 24n) & 0xFFn);
+	dst.value[21] = Number((__tmp_3 >> 32n) & 0xFFn);
+	dst.value[22] = Number((__tmp_3 >> 40n) & 0xFFn);
+	dst.value[23] = Number((__tmp_3 >> 48n) & 0xFFn);
+	dst.value[24] = Number((__tmp_3 >> 56n) & 0xFFn);
+	let __tmp_3_str = new TextEncoder().encode(Name);
+	__tmp_3_str.forEach((v, i) => { dst.value[i+Number(__index)] = v });
+	return dst;
 }
 
 export function New_Item(Type: ItemType, Damage: bigint, Armor: bigint, Name: string): Item {
-let __vstruct__size = 25+(new TextEncoder().encode(Name)).length
-let __vstruct__buf = new Item(__vstruct__size)
-__vstruct__buf = Serialize_Item(__vstruct__buf, Type, Damage, Armor, Name)
-return __vstruct__buf
+	let __vstruct__size = 25+(new TextEncoder().encode(Name)).length;
+	let __vstruct__buf = new Item(__vstruct__size);
+	__vstruct__buf = Serialize_Item(__vstruct__buf, Type, Damage, Armor, Name);
+	return __vstruct__buf;
 }
 
 export function Serialize_Inventory(dst: Inventory, RightHand: Item, LeftHand: Item): Inventory {
-
-let __index = BigInt(16)
-let __tmp_0 = BigInt(RightHand.value.length) +__index
-dst.value[0] = Number(__tmp_0 & 0xFFn)
-dst.value[1] = Number((__tmp_0 >> 8n) & 0xFFn)
-dst.value[2] = Number((__tmp_0 >> 16n) & 0xFFn)
-dst.value[3] = Number((__tmp_0 >> 24n) & 0xFFn)
-dst.value[4] = Number((__tmp_0 >> 32n) & 0xFFn)
-dst.value[5] = Number((__tmp_0 >> 40n) & 0xFFn)
-dst.value[6] = Number((__tmp_0 >> 48n) & 0xFFn)
-dst.value[7] = Number((__tmp_0 >> 56n) & 0xFFn)
-dst.value.forEach((v, i) => { if (__tmp_0 > i && i >= Number(__index)) dst.value[i] = RightHand.value[i-Number(__index)] })
-__index += BigInt(RightHand.value.length)
-let __tmp_1 = BigInt(LeftHand.value.length) +__index
-dst.value[8] = Number(__tmp_1 & 0xFFn)
-dst.value[9] = Number((__tmp_1 >> 8n) & 0xFFn)
-dst.value[10] = Number((__tmp_1 >> 16n) & 0xFFn)
-dst.value[11] = Number((__tmp_1 >> 24n) & 0xFFn)
-dst.value[12] = Number((__tmp_1 >> 32n) & 0xFFn)
-dst.value[13] = Number((__tmp_1 >> 40n) & 0xFFn)
-dst.value[14] = Number((__tmp_1 >> 48n) & 0xFFn)
-dst.value[15] = Number((__tmp_1 >> 56n) & 0xFFn)
-dst.value.forEach((v, i) => { if (__tmp_1 > i && i >= Number(__index)) dst.value[i] = LeftHand.value[i-Number(__index)] })
-return dst
+	let __index = BigInt(16);
+	let __tmp_0 = BigInt(RightHand.value.length) +__index;
+	dst.value[0] = Number(__tmp_0 & 0xFFn);
+	dst.value[1] = Number((__tmp_0 >> 8n) & 0xFFn);
+	dst.value[2] = Number((__tmp_0 >> 16n) & 0xFFn);
+	dst.value[3] = Number((__tmp_0 >> 24n) & 0xFFn);
+	dst.value[4] = Number((__tmp_0 >> 32n) & 0xFFn);
+	dst.value[5] = Number((__tmp_0 >> 40n) & 0xFFn);
+	dst.value[6] = Number((__tmp_0 >> 48n) & 0xFFn);
+	dst.value[7] = Number((__tmp_0 >> 56n) & 0xFFn);
+	dst.value.forEach((v, i) => { if (__tmp_0 > i && i >= Number(__index)) dst.value[i] = RightHand.value[i-Number(__index)] });
+	__index += BigInt(RightHand.value.length);
+	let __tmp_1 = BigInt(LeftHand.value.length) +__index;
+	dst.value[8] = Number(__tmp_1 & 0xFFn);
+	dst.value[9] = Number((__tmp_1 >> 8n) & 0xFFn);
+	dst.value[10] = Number((__tmp_1 >> 16n) & 0xFFn);
+	dst.value[11] = Number((__tmp_1 >> 24n) & 0xFFn);
+	dst.value[12] = Number((__tmp_1 >> 32n) & 0xFFn);
+	dst.value[13] = Number((__tmp_1 >> 40n) & 0xFFn);
+	dst.value[14] = Number((__tmp_1 >> 48n) & 0xFFn);
+	dst.value[15] = Number((__tmp_1 >> 56n) & 0xFFn);
+	dst.value.forEach((v, i) => { if (__tmp_1 > i && i >= Number(__index)) dst.value[i] = LeftHand.value[i-Number(__index)] });
+	return dst;
 }
 
 export function New_Inventory(RightHand: Item, LeftHand: Item): Inventory {
-let __vstruct__size = 16+RightHand.value.length+LeftHand.value.length
-let __vstruct__buf = new Inventory(__vstruct__size)
-__vstruct__buf = Serialize_Inventory(__vstruct__buf, RightHand, LeftHand)
-return __vstruct__buf
+	let __vstruct__size = 16+RightHand.value.length+LeftHand.value.length;
+	let __vstruct__buf = new Inventory(__vstruct__size);
+	__vstruct__buf = Serialize_Inventory(__vstruct__buf, RightHand, LeftHand);
+	return __vstruct__buf;
 }
 
 export function Serialize_Entity(dst: Entity, Type: Speices, Position: Coordinate, Hp: bigint, Id: UUID, Inventory: Inventory): Entity {
-dst.value[0] = Number(Type)
-dst.value.forEach((v, i) => { if (17 > i && i >= 1) dst.value[i] = Position.value[i-1] })
-let __tmp_2 = BigInt(Hp)
-dst.value[17] = Number(__tmp_2 & 0xFFn)
-dst.value[18] = Number((__tmp_2 >> 8n) & 0xFFn)
-dst.value[19] = Number((__tmp_2 >> 16n) & 0xFFn)
-dst.value[20] = Number((__tmp_2 >> 24n) & 0xFFn)
-dst.value[21] = Number((__tmp_2 >> 32n) & 0xFFn)
-dst.value[22] = Number((__tmp_2 >> 40n) & 0xFFn)
-dst.value[23] = Number((__tmp_2 >> 48n) & 0xFFn)
-dst.value[24] = Number((__tmp_2 >> 56n) & 0xFFn)
-
-let __index = BigInt(41)
-let __tmp_3 = BigInt((new TextEncoder().encode(Id)).length) +__index
-dst.value[25] = Number(__tmp_3 & 0xFFn)
-dst.value[26] = Number((__tmp_3 >> 8n) & 0xFFn)
-dst.value[27] = Number((__tmp_3 >> 16n) & 0xFFn)
-dst.value[28] = Number((__tmp_3 >> 24n) & 0xFFn)
-dst.value[29] = Number((__tmp_3 >> 32n) & 0xFFn)
-dst.value[30] = Number((__tmp_3 >> 40n) & 0xFFn)
-dst.value[31] = Number((__tmp_3 >> 48n) & 0xFFn)
-dst.value[32] = Number((__tmp_3 >> 56n) & 0xFFn)
-let __tmp_3_str = new TextEncoder().encode(Id)
-__tmp_3_str.forEach((v, i) => { dst.value[i+Number(__index)] = v })
-__index += BigInt((new TextEncoder().encode(Id)).length)
-let __tmp_4 = BigInt(Inventory.value.length) +__index
-dst.value[33] = Number(__tmp_4 & 0xFFn)
-dst.value[34] = Number((__tmp_4 >> 8n) & 0xFFn)
-dst.value[35] = Number((__tmp_4 >> 16n) & 0xFFn)
-dst.value[36] = Number((__tmp_4 >> 24n) & 0xFFn)
-dst.value[37] = Number((__tmp_4 >> 32n) & 0xFFn)
-dst.value[38] = Number((__tmp_4 >> 40n) & 0xFFn)
-dst.value[39] = Number((__tmp_4 >> 48n) & 0xFFn)
-dst.value[40] = Number((__tmp_4 >> 56n) & 0xFFn)
-dst.value.forEach((v, i) => { if (__tmp_4 > i && i >= Number(__index)) dst.value[i] = Inventory.value[i-Number(__index)] })
-return dst
+	dst.value[0] = Number(Type);
+	dst.value.forEach((v, i) => { if (17 > i && i >= 1) dst.value[i] = Position.value[i-1] });
+	let __tmp_2 = BigInt(Hp);
+	dst.value[17] = Number(__tmp_2 & 0xFFn);
+	dst.value[18] = Number((__tmp_2 >> 8n) & 0xFFn);
+	dst.value[19] = Number((__tmp_2 >> 16n) & 0xFFn);
+	dst.value[20] = Number((__tmp_2 >> 24n) & 0xFFn);
+	dst.value[21] = Number((__tmp_2 >> 32n) & 0xFFn);
+	dst.value[22] = Number((__tmp_2 >> 40n) & 0xFFn);
+	dst.value[23] = Number((__tmp_2 >> 48n) & 0xFFn);
+	dst.value[24] = Number((__tmp_2 >> 56n) & 0xFFn);
+	let __index = BigInt(41);
+	let __tmp_3 = BigInt((new TextEncoder().encode(Id)).length) +__index;
+	dst.value[25] = Number(__tmp_3 & 0xFFn);
+	dst.value[26] = Number((__tmp_3 >> 8n) & 0xFFn);
+	dst.value[27] = Number((__tmp_3 >> 16n) & 0xFFn);
+	dst.value[28] = Number((__tmp_3 >> 24n) & 0xFFn);
+	dst.value[29] = Number((__tmp_3 >> 32n) & 0xFFn);
+	dst.value[30] = Number((__tmp_3 >> 40n) & 0xFFn);
+	dst.value[31] = Number((__tmp_3 >> 48n) & 0xFFn);
+	dst.value[32] = Number((__tmp_3 >> 56n) & 0xFFn);
+	let __tmp_3_str = new TextEncoder().encode(Id);
+	__tmp_3_str.forEach((v, i) => { dst.value[i+Number(__index)] = v });
+	__index += BigInt((new TextEncoder().encode(Id)).length);
+	let __tmp_4 = BigInt(Inventory.value.length) +__index;
+	dst.value[33] = Number(__tmp_4 & 0xFFn);
+	dst.value[34] = Number((__tmp_4 >> 8n) & 0xFFn);
+	dst.value[35] = Number((__tmp_4 >> 16n) & 0xFFn);
+	dst.value[36] = Number((__tmp_4 >> 24n) & 0xFFn);
+	dst.value[37] = Number((__tmp_4 >> 32n) & 0xFFn);
+	dst.value[38] = Number((__tmp_4 >> 40n) & 0xFFn);
+	dst.value[39] = Number((__tmp_4 >> 48n) & 0xFFn);
+	dst.value[40] = Number((__tmp_4 >> 56n) & 0xFFn);
+	dst.value.forEach((v, i) => { if (__tmp_4 > i && i >= Number(__index)) dst.value[i] = Inventory.value[i-Number(__index)] });
+	return dst;
 }
 
 export function New_Entity(Type: Speices, Position: Coordinate, Hp: bigint, Id: UUID, Inventory: Inventory): Entity {
-let __vstruct__size = 41+(new TextEncoder().encode(Id)).length+Inventory.value.length
-let __vstruct__buf = new Entity(__vstruct__size)
-__vstruct__buf = Serialize_Entity(__vstruct__buf, Type, Position, Hp, Id, Inventory)
-return __vstruct__buf
+	let __vstruct__size = 41+(new TextEncoder().encode(Id)).length+Inventory.value.length;
+	let __vstruct__buf = new Entity(__vstruct__size);
+	__vstruct__buf = Serialize_Entity(__vstruct__buf, Type, Position, Hp, Id, Inventory);
+	return __vstruct__buf;
 }
 
-export type UUID = string
+export type UUID = string;
 

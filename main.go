@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/lemon-mint/vstruct/compile/backend/csharp"
 	"github.com/lemon-mint/vstruct/compile/backend/dart"
 	"github.com/lemon-mint/vstruct/compile/backend/golang"
 	"github.com/lemon-mint/vstruct/compile/backend/python"
@@ -121,6 +122,21 @@ func main() {
 	out = buf.String()
 	fmt.Println(out)
 	f, err = os.Create("./_out/main.ts")
+	if err != nil {
+		panic(err)
+	}
+	f.WriteString(out)
+	f.Close()
+
+	buf.Reset()
+	err = csharp.Generate(&buf, IRData, "main")
+	if err != nil {
+		fmt.Println(buf.String())
+		panic(err)
+	}
+	out = buf.String()
+	fmt.Println(out)
+	f, err = os.Create("./_out/main.cs")
 	if err != nil {
 		panic(err)
 	}
