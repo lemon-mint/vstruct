@@ -39,9 +39,9 @@ func writeStructs(w io.Writer, i *ir.IR) {
 			case ir.FieldType_FLOAT:
 				switch f.TypeInfo.Size {
 				case 4:
-					fmt.Fprintf(w, "\nreturn %s(new Float32Array(this.value.slice(%d, %d+4))[0])\n", TypeConv(f.Type), f.Offset, f.Offset)
+					fmt.Fprintf(w, "\nreturn Number(new Float32Array(this.value.slice(%d, %d).buffer)[0])\n", f.Offset, f.Offset+4)
 				case 8:
-					fmt.Fprintf(w, "\nreturn %s(new Float64Array(this.value.slice(%d, %d+8))[0])\n", TypeConv(f.Type), f.Offset, f.Offset)
+					fmt.Fprintf(w, "\nreturn Number(new Float64Array(this.value.slice(%d, %d).buffer)[0])\n", f.Offset, f.Offset+8)
 				default:
 					panic("unsupported float size")
 				}
@@ -210,20 +210,16 @@ func writeStructs(w io.Writer, i *ir.IR) {
 					}
 				}
 			case ir.FieldType_FLOAT:
-				fmt.Fprintf(w, "var __tmp_%d = new Uint8Array(%d)\n", tmpIdx, f.TypeInfo.Size)
+				fmt.Fprintf(w, "let __tmp_%d = new Uint8Array(%d);\n", tmpIdx, f.TypeInfo.Size)
 				fmt.Fprintf(w, "(new Float%dArray(__tmp_%d.buffer))[0] = %s\n", f.TypeInfo.Size*8, tmpIdx, NameConv(f.Name))
 				for i := 0; i < f.TypeInfo.Size; i++ {
-					if i == 0 {
-						fmt.Fprintf(w, "dst.value[%d] = __tmp_%d[%d]\n", f.Offset+i, tmpIdx, i)
-					} else {
-						fmt.Fprintf(w, "dst.value[%d] = __tmp_%d[%d] >> %d\n", f.Offset+i, tmpIdx, i, 8*i)
-					}
+					fmt.Fprintf(w, "dst.value[%d] = __tmp_%d[%d]\n", f.Offset+i, tmpIdx, i)
 				}
 			case ir.FieldType_ENUM:
 				if f.TypeInfo.Size == 1 {
 					fmt.Fprintf(w, "dst.value[%d] = Number(%s)\n", f.Offset, NameConv(f.Name))
 				} else {
-					fmt.Fprintf(w, "var __tmp_%d = BigInt(%s)\n", tmpIdx, NameConv(f.Name))
+					fmt.Fprintf(w, "let __tmp_%d = BigInt(%s)\n", tmpIdx, NameConv(f.Name))
 					for i := 0; i < f.TypeInfo.Size; i++ {
 						if i == 0 {
 							fmt.Fprintf(w, "dst.value[%d] = Number(__tmp_%d)\n", f.Offset+i, tmpIdx)
@@ -237,36 +233,36 @@ func writeStructs(w io.Writer, i *ir.IR) {
 		}
 		fmt.Fprintf(w, "\n")
 		if !IsFixed {
-			fmt.Fprintf(w, "var __index = Number(%d)\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
+			fmt.Fprintf(w, "let __index = BigInt(%d)\n", s.DynamicFieldHeadOffsets[len(s.DynamicFieldHeadOffsets)-1])
 			for i, f := range s.DynamicFields {
 				switch f.TypeInfo.FieldType {
 				case ir.FieldType_STRING:
-					fmt.Fprintf(w, "let __tmp_%d = (new TextEncoder().encode(%s)).length +__index\n", tmpIdx, NameConv(f.Name))
+					fmt.Fprintf(w, "let __tmp_%d = BigInt((new TextEncoder().encode(%s)).length) +__index\n", tmpIdx, NameConv(f.Name))
 				default:
-					fmt.Fprintf(w, "let __tmp_%d = %s.value.length +__index\n", tmpIdx, NameConv(f.Name))
+					fmt.Fprintf(w, "let __tmp_%d = BigInt(%s.value.length) +__index\n", tmpIdx, NameConv(f.Name))
 				}
 				for j := 0; j < 8; j++ {
 					if j == 0 {
-						fmt.Fprintf(w, "dst.value[%d] = Number(__tmp_%d)\n", s.DynamicFieldHeadOffsets[i]+j, tmpIdx)
+						fmt.Fprintf(w, "dst.value[%d] = Number(__tmp_%d & 0xFFn)\n", s.DynamicFieldHeadOffsets[i]+j, tmpIdx)
 					} else {
-						fmt.Fprintf(w, "dst.value[%d] = Number(__tmp_%d >> %d)\n", s.DynamicFieldHeadOffsets[i]+j, tmpIdx, 8*j)
+						fmt.Fprintf(w, "dst.value[%d] = Number((__tmp_%d >> %dn) & 0xFFn)\n", s.DynamicFieldHeadOffsets[i]+j, tmpIdx, 8*j)
 					}
 				}
 				switch f.TypeInfo.FieldType {
 				case ir.FieldType_STRUCT:
-					fmt.Fprintf(w, "dst.value.forEach((v, i) => { if (__tmp_%d > i && i >= __index) dst.value[i] = %s.value[i-__index] })\n", tmpIdx, NameConv(f.Name))
+					fmt.Fprintf(w, "dst.value.forEach((v, i) => { if (__tmp_%d > i && i >= Number(__index)) dst.value[i] = %s.value[i-Number(__index)] })\n", tmpIdx, NameConv(f.Name))
 				case ir.FieldType_BYTES:
-					fmt.Fprintf(w, "dst.value.forEach((v, i) => { if (__tmp_%d > i && i >= __index) dst.value[i] = %s.value[i-__index] })\n", tmpIdx, NameConv(f.Name))
+					fmt.Fprintf(w, "dst.value.forEach((v, i) => { if (__tmp_%d > i && i >= Number(__index)) dst.value[i] = %s.value[i-Number(__index)] })\n", tmpIdx, NameConv(f.Name))
 				case ir.FieldType_STRING:
 					fmt.Fprintf(w, "let __tmp_%d_str = new TextEncoder().encode(%s)\n", tmpIdx, NameConv(f.Name))
-					fmt.Fprintf(w, "__tmp_%d_str.forEach((v, i) => { dst.value[i+__index] = v })\n", tmpIdx)
+					fmt.Fprintf(w, "__tmp_%d_str.forEach((v, i) => { dst.value[i+Number(__index)] = v })\n", tmpIdx)
 				}
 				if i != len(s.DynamicFields)-1 {
 					switch f.TypeInfo.FieldType {
 					case ir.FieldType_STRING:
-						fmt.Fprintf(w, "__index += (new TextEncoder().encode(%s)).length\n", NameConv(f.Name))
+						fmt.Fprintf(w, "__index += BigInt((new TextEncoder().encode(%s)).length)\n", NameConv(f.Name))
 					default:
-						fmt.Fprintf(w, "__index += %s.value.length\n", NameConv(f.Name))
+						fmt.Fprintf(w, "__index += BigInt(%s.value.length)\n", NameConv(f.Name))
 					}
 				}
 				tmpIdx++

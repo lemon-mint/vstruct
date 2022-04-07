@@ -35,6 +35,7 @@ func PrintUsage() {
 	fmt.Printf("\tpython\t\t\tPython (https://www.python.org/)\n")
 	fmt.Printf("\trust\t\t\tRust (https://www.rust-lang.org/)\n")
 	fmt.Printf("\tdart\t\t\tDart (https://dart.dev/)\n")
+	fmt.Printf("\ttypescript\t\t\tTypescript (https://www.typescriptlang.org/)\n")
 
 	fmt.Printf("\n")
 	os.Exit(1)
