@@ -107,6 +107,48 @@ func (e Speices) Match(
 	}
 }
 
+func (e Speices) MatchS(s struct {
+	onHuman      func()
+	onElf        func()
+	onOrc        func()
+	onDwarf      func()
+	onGnome      func()
+	onHalfling   func()
+	onHalfElf    func()
+	onHalfOrc    func()
+	onDragonborn func()
+	onTiefling   func()
+	onGnoll      func()
+	onGoblin     func()
+}) {
+	switch e {
+	case Speices_Human:
+		s.onHuman()
+	case Speices_Elf:
+		s.onElf()
+	case Speices_Orc:
+		s.onOrc()
+	case Speices_Dwarf:
+		s.onDwarf()
+	case Speices_Gnome:
+		s.onGnome()
+	case Speices_Halfling:
+		s.onHalfling()
+	case Speices_HalfElf:
+		s.onHalfElf()
+	case Speices_HalfOrc:
+		s.onHalfOrc()
+	case Speices_Dragonborn:
+		s.onDragonborn()
+	case Speices_Tiefling:
+		s.onTiefling()
+	case Speices_Gnoll:
+		s.onGnoll()
+	case Speices_Goblin:
+		s.onGoblin()
+	}
+}
+
 type ItemType uint8
 
 const (
@@ -139,6 +181,21 @@ func (e ItemType) Match(
 		onArmor()
 	case ItemType_Potion:
 		onPotion()
+	}
+}
+
+func (e ItemType) MatchS(s struct {
+	onWeapon func()
+	onArmor  func()
+	onPotion func()
+}) {
+	switch e {
+	case ItemType_Weapon:
+		s.onWeapon()
+	case ItemType_Armor:
+		s.onArmor()
+	case ItemType_Potion:
+		s.onPotion()
 	}
 }
 

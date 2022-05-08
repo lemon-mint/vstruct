@@ -38,5 +38,18 @@ func writeEnums(w io.Writer, i *ir.IR) {
 		}
 		fmt.Fprintf(w, "}\n")
 		fmt.Fprintf(w, "}\n\n")
+
+		fmt.Fprintf(w, "func (e %s) MatchS(s struct {\n", NameConv(e.Name))
+		for _, o := range e.Options {
+			fmt.Fprintf(w, "on%s func()\n", NameConv(o))
+		}
+		fmt.Fprintf(w, "}) {\n")
+		fmt.Fprintf(w, "switch e {\n")
+		for _, o := range e.Options {
+			fmt.Fprintf(w, "case %s_%s:\n", NameConv(e.Name), NameConv(o))
+			fmt.Fprintf(w, "s.on%s()\n", NameConv(o))
+		}
+		fmt.Fprintf(w, "}\n")
+		fmt.Fprintf(w, "}\n\n")
 	}
 }
