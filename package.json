@@ -1,6 +1,6 @@
 {
   "name": "vstruct",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Code Generation Based High Speed Data Serialization Tool",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
