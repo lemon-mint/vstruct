@@ -31,7 +31,7 @@
   "homepage": "https://github.com/lemon-mint/vstruct#readme",
   "dependencies": {
     "got": "12.1.0",
-    "octokit": "1.8.1",
+    "octokit": "2.0.4",
     "tar-fs": "2.1.1"
   }
 }
